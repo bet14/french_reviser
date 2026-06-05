@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Français — Vies minuscules : Dufourneau</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: #faf8f4; color: #2c2c2c; line-height: 1.8; }
+  header { background: #2c3e50; color: white; padding: 2rem; text-align: center; }
+  header h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: 0.05em; }
+  header p { font-size: 0.9rem; color: #aaa; margin-top: 0.3rem; }
+  .container { max-width: 860px; margin: 2rem auto; padding: 0 1.5rem; }
+  section { background: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.1rem; color: #2c3e50; border-bottom: 2px solid #e8e0d0; padding-bottom: 0.5rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .passage { background: #f5f2ec; border-left: 4px solid #8b7355; padding: 1.5rem; border-radius: 4px; font-style: italic; font-size: 1rem; }
+  .source { text-align: right; font-size: 0.85rem; color: #888; margin-top: 0.8rem; font-style: normal; }
+
+  /* Vocabulary */
+  .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .vocab-table th { background: #2c3e50; color: white; padding: 0.6rem 0.8rem; text-align: left; }
+  .vocab-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  .vocab-table tr:hover td { background: #f9f7f3; }
+  .word { font-weight: bold; color: #8b5e3c; }
+  .pos { color: #999; font-size: 0.8rem; font-style: italic; }
+
+  /* Grammar */
+  .grammar-card { background: #f0f4f8; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+  .grammar-card .label { font-weight: bold; color: #2c3e50; font-size: 0.9rem; }
+  .grammar-card .example { font-style: italic; color: #555; margin-top: 0.3rem; font-size: 0.9rem; }
+  .grammar-card .note { color: #777; font-size: 0.85rem; margin-top: 0.3rem; }
+
+  /* QCM */
+  .score-bar { background: #e8f4e8; border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .score-num { font-size: 1.8rem; font-weight: bold; color: #27ae60; }
+  .score-label { color: #555; font-size: 0.9rem; }
+  .qcm-item { margin-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 1.5rem; }
+  .qcm-item:last-child { border-bottom: none; }
+  .q-text { font-weight: bold; margin-bottom: 0.7rem; font-size: 0.95rem; }
+  .q-num { color: #8b7355; margin-right: 0.4rem; }
+  .options label { display: block; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-bottom: 0.3rem; transition: background 0.15s; }
+  .options label:hover { background: #f0f4f8; }
+  .options input[type=radio] { margin-right: 0.5rem; }
+  .feedback { display: none; font-size: 0.85rem; padding: 0.5rem 0.8rem; border-radius: 4px; margin-top: 0.5rem; }
+  .feedback.correct { background: #e8f4e8; color: #27ae60; display: block; }
+  .feedback.wrong { background: #fde8e8; color: #c0392b; display: block; }
+  .btn { background: #2c3e50; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; cursor: pointer; font-size: 0.95rem; margin-top: 1rem; }
+  .btn:hover { background: #34495e; }
+  .section-tag { display: inline-block; background: #8b7355; color: white; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .progress-section { background: #2c3e50; color: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+  .progress-section h3 { font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem; }
+  .progress-bar-outer { background: #1a252f; border-radius: 10px; height: 12px; }
+  .progress-bar-inner { height: 12px; border-radius: 10px; background: #27ae60; width: 0%; transition: width 0.4s; }
+  .progress-text { font-size: 0.85rem; color: #ccc; margin-top: 0.4rem; }
+
+  @media(max-width:600px) { .vocab-table { font-size: 0.82rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Session Français — <em>Vies minuscules</em></h1>
+  <p>Pierre Michon · Extrait : Vie d'André Dufourneau</p>
+</header>
+
+<div class="container">
+
+  <!-- TEXTE -->
+  <section>
+    <h2>📖 Extrait</h2>
+    <div class="passage">
+      Puis une petite fille naquit, la guerre vînt, mon grand-père partit. Quatre années passèrent, pendant lesquelles Dufourneau acheva de devenir un homme ; il prit la petite fille dans ses bras ; il courut avertir Élise que le facteur prenait le chemin de la ferme, amenant une des lettres, ponctuelles et appliquées, de Félix ; le soir à la lampe, il pensa aux provinces lointaines où le fracas des batailles rasait des villages qu'il dotait d'un nom glorieux, où il y avait des vainqueurs et des vaincus, des généraux et des soldats, des chevaux morts et des villes imprenables. En 1918, Félix revint avec des armes allemandes, une pipe en écume, quelques rides et un vocabulaire plus étendu qu'à son départ. Dufourneau eut à peine le temps de l'écouter : on l'appelait au service militaire.
+      <br><br>
+      Il vit une ville ; il vit les chevilles des femmes d'officiers quand elles montent en voiture ; il entendit de jeunes hommes qui effleuraient de leurs moustaches l'oreille de belles créatures faites de rires et de soie : c'était la langue qu'il tenait d'Élise, mais elle paraissait une autre tant ses indigènes en connaissaient les pistes, les échos, les roueries. Il sut qu'il était un paysan. Rien ne nous apprendra comment il souffrit, dans quelles circonstances il fut ridicule, le nom du café où il s'enivra.
+      <br><br>
+      Il voulut étudier, dans la mesure où les servitudes militaires le lui permettaient, et il semble qu'il y parvint, car c'était un bon garçon, capable, disait ma grand-mère. Il toucha des manuels d'arithmétique, de géographie ; il les serra dans son paquetage qui sentait le tabac, le jeune homme pauvre ; il les ouvrit et connut la détresse de qui ne comprend pas, la révolte qui passe outre, et, au terme d'une alchimie ténébreuse, le pur diamant d'orgueil dont l'entendement éclaire, le temps d'un souffle, l'esprit toujours opaque.
+    </div>
+    <div class="source">— Pierre Michon, <em>Vies minuscules</em> (1984), « Vie d'André Dufourneau »</div>
+  </section>
+
+  <!-- RÉSUMÉ -->
+  <section>
+    <h2>📝 Résumé du passage</h2>
+    <p>Ce passage retrace la formation de Dufourneau, orphelin de ferme, pendant la Première Guerre mondiale et après. Pendant que son tuteur Félix est au front, Dufourneau grandit et s'occupe de la ferme. En 1918, Félix revient transformé, mais Dufourneau est aussitôt mobilisé à son tour. Le service militaire lui révèle la ville, la bourgeoisie et sa propre condition paysanne : la même langue française devient étrangère dans la bouche des gens cultivés. Humilié mais tenace, il tente de s'instruire par les manuels, éprouvant à la fois la détresse de l'incompréhension et une fierté farouche — ce « pur diamant d'orgueil » qui illumine brièvement un esprit encore opaque. Michon dresse ici le portrait d'un homme du peuple confronté à la mobilité sociale et à la violence symbolique de la culture.</p>
+  </section>
+
+  <!-- VOCABULAIRE -->
+  <section>
+    <h2>📚 Vocabulaire C2 <span class="section-tag">40 mots</span></h2>
+    <table class="vocab-table">
+      <thead><tr><th>Mot</th><th>Classe</th><th>Sens / remarque</th></tr></thead>
+      <tbody>
+        <tr><td><span class="word">ponctuel, -le</span> <span class="pos">adj.</span></td><td></td><td>Régulier, qui arrive à intervalles fixes (ici : lettres envoyées sans manquement)</td></tr>
+        <tr><td><span class="word">appliqué, -e</span> <span class="pos">adj.</span></td><td></td><td>Écrit avec soin, avec effort — sens figuré de diligent</td></tr>
+        <tr><td><span class="word">le fracas</span> <span class="pos">n.m.</span></td><td></td><td>Bruit violent et soudain ; ici métonymie de la guerre</td></tr>
+        <tr><td><span class="word">raser</span> <span class="pos">v.tr.</span></td><td></td><td>Détruire complètement (raser un village = le démolir entièrement)</td></tr>
+        <tr><td><span class="word">doter (de)</span> <span class="pos">v.tr.</span></td><td></td><td>Attribuer, pourvoir de ; conférer mentalement un caractère à quelque chose</td></tr>
+        <tr><td><span class="word">imprenable</span> <span class="pos">adj.</span></td><td></td><td>Qui ne peut être pris, conquis (forteresse imprenable)</td></tr>
+        <tr><td><span class="word">la pipe en écume</span> <span class="pos">n.f.</span></td><td></td><td>Pipe en écume de mer (sépiolite), matériau poreux qui noircit à l'usage — objet de soldat</td></tr>
+        <tr><td><span class="word">effleurer</span> <span class="pos">v.tr.</span></td><td></td><td>Toucher très légèrement ; frôler</td></tr>
+        <tr><td><span class="word">la rouerie</span> <span class="pos">n.f.</span></td><td></td><td>Ruse, artifice perfide ; comportement retors (rare, registre littéraire soutenu)</td></tr>
+        <tr><td><span class="word">indigène</span> <span class="pos">n./adj.</span></td><td></td><td>Natif d'un lieu ; ici les locuteurs naturels de la langue bourgeoise</td></tr>
+        <tr><td><span class="word">la piste</span> <span class="pos">n.f.</span></td><td></td><td>Ici au sens figuré : les chemins secrets, les usages cachés d'une langue</td></tr>
+        <tr><td><span class="word">s'enivrer</span> <span class="pos">v.pron.</span></td><td></td><td>Se soûler ; au figuré, être transporté hors de soi</td></tr>
+        <tr><td><span class="word">la servitude</span> <span class="pos">n.f.</span></td><td></td><td>Contrainte, obligation pesante ; état de dépendance (servitudes militaires)</td></tr>
+        <tr><td><span class="word">parvenir (à)</span> <span class="pos">v.intr.</span></td><td></td><td>Réussir à faire quelque chose après effort</td></tr>
+        <tr><td><span class="word">le paquetage</span> <span class="pos">n.m.</span></td><td></td><td>Ensemble du matériel et des effets d'un soldat emballés dans son sac</td></tr>
+        <tr><td><span class="word">serrer</span> <span class="pos">v.tr.</span></td><td></td><td>Ranger soigneusement, mettre en lieu sûr (archaïsant/régional) + tenir fort</td></tr>
+        <tr><td><span class="word">la détresse</span> <span class="pos">n.f.</span></td><td></td><td>Souffrance morale intense, sentiment d'abandon et d'impuissance</td></tr>
+        <tr><td><span class="word">passer outre</span> <span class="pos">loc.v.</span></td><td></td><td>Ne pas tenir compte d'un obstacle, d'une interdiction ; continuer malgré tout</td></tr>
+        <tr><td><span class="word">ténébreux, -se</span> <span class="pos">adj.</span></td><td></td><td>Plongé dans les ténèbres ; obscur, mystérieux, impénétrable</td></tr>
+        <tr><td><span class="word">l'alchimie</span> <span class="pos">n.f.</span></td><td></td><td>Transformation mystérieuse ; ici : processus intérieur opaque qui produit quelque chose de précieux</td></tr>
+        <tr><td><span class="word">l'entendement</span> <span class="pos">n.m.</span></td><td></td><td>Faculté de comprendre, intelligence ; terme philosophique (Descartes, Kant)</td></tr>
+        <tr><td><span class="word">opaque</span> <span class="pos">adj.</span></td><td></td><td>Qui ne laisse pas passer la lumière ; au figuré, imperméable à la compréhension</td></tr>
+        <tr><td><span class="word">le diamant</span> <span class="pos">n.m.</span></td><td></td><td>Ici métaphore : la fierté pure, cristallisée, dure et brillante, seul trésor du pauvre</td></tr>
+        <tr><td><span class="word">l'orgueil</span> <span class="pos">n.m.</span></td><td></td><td>Haute opinion de soi-même ; ici sentiment de dignité contre l'humiliation sociale</td></tr>
+        <tr><td><span class="word">achever de</span> <span class="pos">loc.v.</span></td><td></td><td>Terminer de (devenir) ; finir un processus — emploi semi-aspectuel</td></tr>
+        <tr><td><span class="word">à peine</span> <span class="pos">loc.adv.</span></td><td></td><td>Presque pas ; à l'instant seulement (avec inversion : à peine eut-il...)</td></tr>
+        <tr><td><span class="word">tant</span> <span class="pos">conj./adv.</span></td><td></td><td>Tellement, dans une telle mesure (concessif : elle paraissait une autre, tant ses indigènes...)</td></tr>
+        <tr><td><span class="word">la cheville</span> <span class="pos">n.f.</span></td><td></td><td>Articulation entre le pied et la jambe ; ici synecdoque érotique du corps féminin inaccessible</td></tr>
+        <tr><td><span class="word">le facteur</span> <span class="pos">n.m.</span></td><td></td><td>Employé des postes qui distribue le courrier (sens courant en français rural)</td></tr>
+        <tr><td><span class="word">la soie</span> <span class="pos">n.f.</span></td><td></td><td>Tissu précieux ; ici métonymie des femmes élégantes, du monde bourgeois</td></tr>
+        <tr><td><span class="word">vainqueur / vaincu</span> <span class="pos">n.m.</span></td><td></td><td>Celui qui gagne / perd la guerre ; paire antithétique classique</td></tr>
+        <tr><td><span class="word">la ride</span> <span class="pos">n.f.</span></td><td></td><td>Pli sur la peau dû à l'âge ou à la fatigue ; signe visible du temps qui passe</td></tr>
+        <tr><td><span class="word">le manuel</span> <span class="pos">n.m.</span></td><td></td><td>Livre scolaire d'enseignement ; outil d'autodidacte</td></tr>
+        <tr><td><span class="word">toucher</span> <span class="pos">v.tr.</span></td><td></td><td>Ici : mettre la main sur, manipuler (il toucha des manuels) — sens physique chargé de désir d'apprendre</td></tr>
+        <tr><td><span class="word">capable</span> <span class="pos">adj.</span></td><td></td><td>Compétent, qui a les aptitudes ; discret éloge populaire</td></tr>
+        <tr><td><span class="word">le terme</span> <span class="pos">n.m.</span></td><td></td><td>La fin, l'aboutissement (au terme de = à la fin de)</td></tr>
+        <tr><td><span class="word">étendu, -e</span> <span class="pos">adj.</span></td><td></td><td>Large, développé (vocabulaire étendu = riche)</td></tr>
+        <tr><td><span class="word">avertir</span> <span class="pos">v.tr.</span></td><td></td><td>Informer, prévenir quelqu'un d'un événement</td></tr>
+        <tr><td><span class="word">la révolte</span> <span class="pos">n.f.</span></td><td></td><td>Refus violent d'accepter une situation ; soulèvement intérieur</td></tr>
+        <tr><td><span class="word">l'arithmétique</span> <span class="pos">n.f.</span></td><td></td><td>Branche des mathématiques traitant des nombres et opérations de base</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- GRAMMAIRE -->
+  <section>
+    <h2>🔧 Structures grammaticales & stylistiques</h2>
+
+    <div class="grammar-card">
+      <div class="label">1. Le passé simple à valeur narrative dense</div>
+      <div class="example">« la guerre vînt, mon grand-père partit » / « Dufourneau eut à peine le temps »</div>
+      <div class="note">Michon enchaîne les passés simples pour créer une prose lapidaire, proche de la chronique médiévale. Chaque verbe est un événement fermé, révolu, gravé.</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">2. Le subjonctif imparfait à valeur d'accord stylistique</div>
+      <div class="example">« la guerre vînt » (subj. imp. de <em>venir</em>)</div>
+      <div class="note">Michon emploie le subjonctif imparfait là où l'usage courant mettrait un indicatif, pour le seul prestige de la forme archaïque. Marque du style soutenu, voire précieux.</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">3. La proposition relative enchâssée à valeur épique</div>
+      <div class="example">« aux provinces lointaines <em>où le fracas des batailles rasait des villages qu'il dotait d'un nom glorieux</em>, <em>où il y avait des vainqueurs et des vaincus</em>… »</div>
+      <div class="note">Accumulation de relatives créant une vision épique, imaginaire, presque enfantine de la guerre — focalisée sur les fantasmes de Dufourneau.</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">4. La négation partielle rhétorique : « Rien ne nous apprendra »</div>
+      <div class="example">« Rien ne nous apprendra comment il souffrit, dans quelles circonstances il fut ridicule, le nom du café où il s'enivra. »</div>
+      <div class="note">Figure d'épanorthose + prétérition : en affirmant qu'on ne saura pas, le narrateur nomme exactement ce qu'il prétend taire. Procédé classique du roman lacunaire.</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">5. L'apposition accumulée à effet de liste</div>
+      <div class="example">« Félix revint avec des armes allemandes, une pipe en écume, quelques rides et un vocabulaire plus étendu »</div>
+      <div class="note">Quatre COI en gradation implicite : du butin de guerre à la transformation intérieure (vocabulaire). La forme catalogue mine discrètement la figure du héros revenu.</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">6. La métaphore filée : alchimie → diamant</div>
+      <div class="example">« au terme d'une alchimie ténébreuse, le pur diamant d'orgueil dont l'entendement éclaire, le temps d'un souffle, l'esprit toujours opaque »</div>
+      <div class="note">Réseau lexical de la transformation (alchimie) et de la lumière (diamant, éclaire, opaque). L'orgueil comme seul capital symbolique du pauvre — thème central de Michon.</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">7. La locution « dans la mesure où » (concessif-conditionnel)</div>
+      <div class="example">« il voulut étudier, <em>dans la mesure où</em> les servitudes militaires le lui permettaient »</div>
+      <div class="note">Subordonnée proportionnelle exprimant une restriction : il étudie autant que les contraintes le permettent. Équivalent formel de « pour autant que ».</div>
+    </div>
+
+    <div class="grammar-card">
+      <div class="label">8. La synecdoque érotique et sociale</div>
+      <div class="example">« il vit les <em>chevilles</em> des femmes d'officiers » / « belles créatures faites de rires et de <em>soie</em> »</div>
+      <div class="note">La partie (cheville, soie) pour le tout (la femme, la bourgeoisie). Le regard de Dufourneau effleure sans pouvoir saisir — distance de classe traduite en focalisation fragmentée.</div>
+    </div>
+  </section>
+
+  <!-- QCM -->
+  <section>
+    <h2>❓ QCM <span class="section-tag">60 questions</span></h2>
+
+    <div class="progress-section">
+      <h3>Progression</h3>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+      <div class="progress-text" id="progressText">0 / 60 répondues</div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-label">/ <span id="scoreTotal">0</span> correct · <span id="scorePct">—</span></div>
+    </div>
+
+    <div id="qcm-container"></div>
+    <button class="btn" onclick="showAllAnswers()">Voir toutes les réponses</button>
+  </section>
+
+</div>
+
+<script>
+const questions = [
+  // COMPRÉHENSION DU TEXTE (1-20)
+  {cat:"Compréhension", q:"Qui est Félix dans le passage ?", opts:["Le père biologique de Dufourneau","Le tuteur / maître de ferme de Dufourneau qui part à la guerre","Un général cité dans les lettres","Le facteur qui apporte les nouvelles"], ans:1, exp:"Félix est le maître de la ferme (grand-père du narrateur) qui part à la guerre en 1914."},
+  {cat:"Compréhension", q:"Combien d'années Félix est-il absent pendant la guerre ?", opts:["Deux ans","Trois ans","Quatre ans","Cinq ans"], ans:2, exp:"« Quatre années passèrent » — Félix part en 1914 et revient en 1918."},
+  {cat:"Compréhension", q:"Que rapporte Félix à son retour de la guerre ?", opts:["Des médailles et des décorations","Des armes allemandes, une pipe en écume, des rides, un vocabulaire étendu","De l'argent et des terres","Des livres et des souvenirs de bataille"], ans:1, exp:"Le texte liste : armes allemandes, pipe en écume, quelques rides, vocabulaire plus étendu."},
+  {cat:"Compréhension", q:"Pourquoi Dufourneau n'a-t-il pas le temps d'écouter Félix à son retour ?", opts:["Il doit travailler aux champs d'urgence","Il part en ville chercher du travail","Il est appelé au service militaire","Il doit s'occuper de la petite fille malade"], ans:2, exp:"« on l'appelait au service militaire » — il est mobilisé dès le retour de Félix."},
+  {cat:"Compréhension", q:"Qu'est-ce que la ville révèle à Dufourneau ?", opts:["Qu'il est fait pour les armes","Sa condition paysanne et son infériorité sociale","Qu'il parle mieux français que les bourgeois","Qu'il peut réussir facilement par le travail"], ans:1, exp:"La ville lui fait prendre conscience qu'il est un paysan — « Il sut qu'il était un paysan »."},
+  {cat:"Compréhension", q:"Quelle est la nature de l'humiliation que ressent Dufourneau face à la langue ?", opts:["Il ne comprend pas le français du tout","Il parle la même langue que les bourgeois mais en ignore les codes, les subtilités et la ruse","Il a un accent qui le trahit immédiatement","Il confond le français et le patois régional"], ans:1, exp:"« c'était la langue qu'il tenait d'Élise, mais elle paraissait une autre tant ses indigènes en connaissaient les pistes, les échos, les roueries »."},
+  {cat:"Compréhension", q:"Comment Michon désigne-t-il les locuteurs de la langue bourgeoise ?", opts:["Les maîtres","Les bourgeois","Les indigènes","Les érudits"], ans:2, exp:"Michon emploie « ses indigènes » — terme colonial ironique appliqué aux natifs de la culture bourgeoise."},
+  {cat:"Compréhension", q:"Qu'apprend Dufourneau en touchant les manuels scolaires ?", opts:["Les mathématiques et la géographie lui viennent naturellement","Il connaît d'abord la détresse de ne pas comprendre, puis la révolte, puis un orgueil pur","Il abandonne rapidement l'idée d'apprendre","Il trouve un maître qui l'aide à progresser"], ans:1, exp:"Le texte détaille : détresse → révolte qui passe outre → diamant d'orgueil."},
+  {cat:"Compréhension", q:"Que signifie l'expression « le pur diamant d'orgueil » dans le contexte du passage ?", opts:["Une richesse matérielle accumulée par Dufourneau","La fierté cristallisée du pauvre comme seul capital face à l'humiliation","Un bijou hérité de sa famille","Un titre de gloire militaire"], ans:1, exp:"Le diamant est une métaphore : l'orgueil pur, dur et précieux, est le seul bien que Dufourneau peut forger de son expérience."},
+  {cat:"Compréhension", q:"L'expression « l'esprit toujours opaque » à la fin du passage indique que :", opts:["Dufourneau est devenu très intelligent","L'entendement éclaire définitivement son esprit","La lumière de la compréhension n'est que brève et passagère","Dufourneau a renoncé à apprendre"], ans:2, exp:"« le temps d'un souffle » + « l'esprit toujours opaque » : la clarté intellectuelle n'est que fugace."},
+  {cat:"Compréhension", q:"Quel rôle joue Élise dans le passage ?", opts:["Elle est la femme de Félix et a transmis la langue française à Dufourneau","Elle est la mère de Dufourneau","Elle est une institutrice du village","Elle envoie des lettres au front"], ans:0, exp:"Dufourneau parle « la langue qu'il tenait d'Élise » — elle lui a transmis le français."},
+  {cat:"Compréhension", q:"Que fait Dufourneau quand le facteur approche de la ferme ?", opts:["Il va chercher la lettre lui-même","Il court avertir Élise","Il prévient Félix par télégraphe","Il attend en silence à la maison"], ans:1, exp:"« il courut avertir Élise que le facteur prenait le chemin de la ferme »."},
+  {cat:"Compréhension", q:"Comment Michon décrit-il les lettres de Félix envoyées depuis le front ?", opts:["Longues et dramatiques","Ponctuelles et appliquées","Rares et illisibles","Joyeuses et pleines d'espoir"], ans:1, exp:"« ponctuelles et appliquées » — régulières et soigneusement écrites."},
+  {cat:"Compréhension", q:"Quelle image Dufourneau se forge-t-il de la guerre dans son imagination ?", opts:["Une réalité sordide de boue et de mort","Une vision épique : provinces lointaines, villes imprenables, vainqueurs et vaincus","Un conflit absurde sans signification","Une aventure commerciale pour les officiers"], ans:1, exp:"Le texte donne une vision épique et romanesque, celle que se fait un enfant de ferme nourri d'imaginaire."},
+  {cat:"Compréhension", q:"Que signifie « Rien ne nous apprendra comment il souffrit » ?", opts:["La souffrance de Dufourneau est documentée dans des archives","Le narrateur avoue l'impossibilité d'accéder à l'intériorité de son personnage","Dufourneau n'a pas souffert de son expérience militaire","Le narrateur refuse délibérément de raconter"], ans:1, exp:"Michon joue la prétérition : il reconnaît les limites de la narration biographique sur la vie des humbles."},
+  {cat:"Compréhension", q:"Quel manuel Dufourneau touche-t-il en premier selon le texte ?", opts:["Géographie","Histoire","Arithmétique","Langue française"], ans:2, exp:"« Il toucha des manuels d'arithmétique, de géographie » — l'arithmétique est citée en premier."},
+  {cat:"Compréhension", q:"Comment le narrateur connaît-il Dufourneau ?", opts:["Il l'a rencontré directement","C'est un personnage historique documenté","Via sa grand-mère (« disait ma grand-mère »)","Via les archives militaires"], ans:2, exp:"« c'était un bon garçon, capable, disait ma grand-mère » — source familiale orale."},
+  {cat:"Compréhension", q:"Que signifie « les servitudes militaires » dans le contexte ?", opts:["Les punitions infligées aux soldats","Les contraintes et obligations liées à la vie militaire","Les dettes contractées pendant la guerre","Les souffrances physiques du service"], ans:1, exp:"Les servitudes = les contraintes, obligations, manque de liberté propres à la condition de soldat."},
+  {cat:"Compréhension", q:"Quelle est la double temporalité du regard de Dufourneau en ville ?", opts:["Le passé de la ferme et l'avenir en Afrique","Ce qu'il voit (chevilles, soie) et ce qu'il ne peut pas atteindre (les codes de la langue bourgeoise)","La guerre qu'il a manquée et la paix revenue","Sa jeunesse paysanne et sa vieillesse future"], ans:1, exp:"Dufourneau voit sans pouvoir accéder : il perçoit les signes extérieurs (chevilles, soie) mais reste exclu des codes intérieurs."},
+  {cat:"Compréhension", q:"La phrase finale « le temps d'un souffle » suggère :", opts:["Que Dufourneau est essoufflé par l'effort physique","Que la clarté intellectuelle est très brève et éphémère","Que le souffle est une technique de méditation","Que Dufourneau souffle sur les pages pour les tourner"], ans:1, exp:"« le temps d'un souffle » = une durée infime, fugace — l'entendement n'illumine qu'un instant."},
+
+  // VOCABULAIRE (21-40)
+  {cat:"Vocabulaire", q:"Dans le texte, « le fracas » désigne :", opts:["Un document officiel","Un bruit violent et soudain","Une technique militaire","Un grade dans l'armée"], ans:1, exp:"Le fracas = bruit violent et confus. Ici métonymie du chaos de la guerre."},
+  {cat:"Vocabulaire", q:"« Doter d'un nom glorieux » signifie :", opts:["Effacer le nom d'un village","Attribuer un nom prestigieux (mentalement)","Renommer officiellement une province","Oublier le nom d'un lieu"], ans:1, exp:"Doter (de) = pouvoir, attribuer — ici Dufourneau imagine les villages avec des noms épiques."},
+  {cat:"Vocabulaire", q:"Une ville « imprenable » est une ville :", opts:["Difficile à trouver sur la carte","Que l'on ne peut pas conquérir militairement","Peu attrayante pour les touristes","Construite en hauteur"], ans:1, exp:"Imprenable = qui ne peut être pris, conquis. Préfixe privatif im- + prenable."},
+  {cat:"Vocabulaire", q:"« Effleurer de leurs moustaches l'oreille » signifie :", opts:["Couper les moustaches d'une oreille","Frôler très légèrement","Ignorer complètement","Parler fort dans l'oreille"], ans:1, exp:"Effleurer = toucher à peine, frôler superficiellement."},
+  {cat:"Vocabulaire", q:"Les « roueries » d'une langue sont :", opts:["Les règles grammaticales","Ses subtilités rusées, ses tours astucieux et retors","Ses mots grossiers","Ses expressions régionales"], ans:1, exp:"La rouerie = ruse, artifice perfide (de roué = condamné à la roue, donc personne sans scrupules)."},
+  {cat:"Vocabulaire", q:"« S'enivrer » signifie littéralement :", opts:["Se reposer","Se soûler, boire jusqu'à l'ivresse","Se battre","S'ennuyer"], ans:1, exp:"S'enivrer = tomber en état d'ivresse (de vin/alcool). Au figuré : être transporté par une émotion."},
+  {cat:"Vocabulaire", q:"« Les servitudes militaires » sont :", opts:["Les récompenses accordées aux soldats méritants","Les contraintes et obligations pesantes du service militaire","Les grades obtenus pendant la guerre","Les permissions accordées aux soldats"], ans:1, exp:"Servitude (du lat. servitudo) = état de dépendance, contrainte. Ici : obligations de la vie de caserne."},
+  {cat:"Vocabulaire", q:"« Passer outre » signifie :", opts:["Passer sous un obstacle","Ne pas tenir compte d'un obstacle, continuer malgré","Passer au-dessus","Traverser une frontière"], ans:1, exp:"Passer outre = aller au-delà d'un obstacle, d'une interdiction, sans en tenir compte."},
+  {cat:"Vocabulaire", q:"« Une alchimie ténébreuse » est :", opts:["Une recette de cuisine ancienne","Un processus mystérieux et obscur","Une méthode militaire secrète","Une technique d'imprimerie médiévale"], ans:1, exp:"Alchimie = transformation mystérieuse. Ténébreux = plongé dans l'obscurité, impénétrable."},
+  {cat:"Vocabulaire", q:"L'« entendement » est :", opts:["L'ouïe, la capacité à entendre les sons","La faculté de comprendre, l'intelligence (terme philosophique)","Le courage face à l'adversité","La mémoire à long terme"], ans:1, exp:"L'entendement (philosophie) = faculté de comprendre, de saisir par la raison. Terme kantien."},
+  {cat:"Vocabulaire", q:"« Ponctuel » dans « lettres ponctuelles » signifie :", opts:["Arrivant à l'heure exacte / régulièrement","Courtes et concises","Ennuyeuses","Sans fautes d'orthographe"], ans:0, exp:"Ponctuel = qui arrive à temps, régulièrement. Les lettres de Félix arrivent sans manquement."},
+  {cat:"Vocabulaire", q:"« Raser des villages » signifie :", opts:["Les rénover","Les détruire entièrement, les aplatir","Les contourner","Les occuper militairement"], ans:1, exp:"Raser = démolir entièrement, réduire à ras du sol."},
+  {cat:"Vocabulaire", q:"Que désigne « le paquetage » d'un soldat ?", opts:["Sa solde mensuelle","L'ensemble de ses effets et matériel emballés","Son uniforme seul","Ses lettres personnelles"], ans:1, exp:"Le paquetage = ensemble du matériel réglementaire d'un soldat, rangé dans son sac."},
+  {cat:"Vocabulaire", q:"« Serrer dans son paquetage » (sens du texte) :", opts:["Comprimer violemment","Ranger soigneusement, mettre en sécurité","Jeter","Abandonner"], ans:1, exp:"Serrer (sens vieilli/régional) = ranger, mettre en lieu sûr. Encore courant dans certaines régions de France."},
+  {cat:"Vocabulaire", q:"« Achever de devenir un homme » signifie :", opts:["Cesser de devenir un homme","Finir / compléter le processus de devenir un homme","Prétendre être un homme","Essayer de devenir un homme"], ans:1, exp:"Achever de + infinitif = terminer de, accomplir entièrement le processus."},
+  {cat:"Vocabulaire", q:"L'adjectif « opaque » signifie au figuré :", opts:["Transparent, facile à comprendre","Imperméable à la lumière/compréhension, obscur","Brillant et réfléchissant","Doux et souple"], ans:1, exp:"Opaque (du lat. opacus) = qui ne laisse pas passer la lumière. Au figuré : incompréhensible, fermé à l'intelligence."},
+  {cat:"Vocabulaire", q:"Une pipe « en écume » est une pipe :", opts:["Qui produit de la fumée colorée","En écume de mer (sépiolite), matériau poreux qui noircit à l'usage","Fabriquée avec de l'écume de rivière","Très fragile"], ans:1, exp:"La pipe en écume de mer = pipe en sépiolite, minéral blanc poreux. Objet de soldat typique de la WWI."},
+  {cat:"Vocabulaire", q:"« Doter » quelqu'un signifie :", opts:["Trahir","Pourvoir de, attribuer quelque chose à","Interdire","Interroger"], ans:1, exp:"Doter (de) = fournir, pouvoir de, conférer. Vient de dot (ce qu'on donne)."},
+  {cat:"Vocabulaire", q:"« Avertir » Élise signifie :", opts:["Punir Élise","Prévenir, informer Élise d'un événement","Mentir à Élise","Ignorer Élise"], ans:1, exp:"Avertir = prévenir, informer quelqu'un d'un fait ou d'un danger."},
+  {cat:"Vocabulaire", q:"Dans « vocabulaire plus étendu qu'à son départ », « étendu » signifie :", opts:["Couché","Large, développé, riche","Oublié","Simplifié"], ans:1, exp:"Étendu = large, développé. Un vocabulaire étendu = un vocabulaire riche, avec beaucoup de mots."},
+
+  // GRAMMAIRE & STYLE (41-55)
+  {cat:"Grammaire & Style", q:"Dans « la guerre vînt », le mode verbal employé est :", opts:["L'indicatif imparfait","Le subjonctif imparfait","Le conditionnel présent","Le subjonctif présent"], ans:1, exp:"Vînt = subjonctif imparfait de venir (3e pers. sing.). Normalement imparfait indicatif attendu ici — emploi stylistique archaïsant."},
+  {cat:"Grammaire & Style", q:"La phrase « Rien ne nous apprendra comment il souffrit » est un exemple de :", opts:["Une hyperbole","Une prétérition (on dit qu'on ne dira pas, mais on dit)","Une métaphore","Un oxymore"], ans:1, exp:"Prétérition = faire semblant de ne pas dire ce qu'on dit. En nommant la souffrance, la honte, l'ivresse, Michon les dit."},
+  {cat:"Grammaire & Style", q:"La figure de style dans « belles créatures faites de rires et de soie » est :", opts:["Une personnification","Une métonymie/synecdoque : les parties (rires, soie) pour le tout (la femme bourgeoise)","Une comparaison","Une antithèse"], ans:1, exp:"Rires et soie = attributs qui désignent la femme par ses éléments les plus saillants pour Dufourneau — synecdoque."},
+  {cat:"Grammaire & Style", q:"La valeur de « tant » dans « elle paraissait une autre tant ses indigènes en connaissaient les pistes » est :", opts:["Temporelle (au moment où)","Causale-intensive (tellement que)","Concessive","Finale"], ans:1, exp:"Tant = tellement — valeur d'intensité causale. Elle paraissait autre PARCE QUE ses locuteurs maîtrisaient si bien ses codes."},
+  {cat:"Grammaire & Style", q:"La métaphore centrale de la fin du passage (alchimie → diamant) associe :", opts:["Le travail des champs à la richesse agricole","La transformation mystérieuse à la cristallisation d'un orgueil pur et précieux","La fonte des métaux à la chaleur des émotions","La chimie militaire aux explosifs de guerre"], ans:1, exp:"Alchimie = processus de transformation. Diamant = résultat précieux, dur. L'orgueil est le « diamant » forgé par la détresse."},
+  {cat:"Grammaire & Style", q:"Dans la liste « des vainqueurs et des vaincus, des généraux et des soldats, des chevaux morts et des villes imprenables », la figure dominante est :", opts:["L'anaphore","L'énumération en paires antithétiques avec gradation","L'hyperbole","L'allitération"], ans:1, exp:"Paires antithétiques (vainqueurs/vaincus, généraux/soldats) + liste — vision binaire, épique, celle d'un enfant."},
+  {cat:"Grammaire & Style", q:"« C'était la langue qu'il tenait d'Élise, mais elle paraissait une autre » — la conjonction « mais » introduit ici :", opts:["Une addition","Une opposition concessive (même chose devenue étrangère)","Une cause","Une conséquence"], ans:1, exp:"Mais = opposition. La même langue est devenue autre dans la bouche des bourgeois — paradoxe de la même langue étrangère."},
+  {cat:"Grammaire & Style", q:"Le pronom « on » dans « on l'appelait au service militaire » est :", opts:["Un pronom personnel défini désignant un individu précis","Un pronom indéfini à valeur institutionnelle (l'armée, l'État)","Le narrateur lui-même","Félix"], ans:1, exp:"On indéfini = une instance anonyme, institutionnelle — l'État qui mobilise. Dufourneau est soumis à une force impersonnelle."},
+  {cat:"Grammaire & Style", q:"L'expression « dans la mesure où » introduit :", opts:["Une cause","Une opposition","Une proposition proportionnelle-concessive (dans la proportion où)","Une hypothèse"], ans:2, exp:"Dans la mesure où = pour autant que, dans la proportion où. Subordonnée proportionnelle à valeur restrictive."},
+  {cat:"Grammaire & Style", q:"« au terme d'une alchimie ténébreuse » — « au terme de » signifie :", opts:["Au début de","À l'intérieur de","À la fin de, au bout de","En dehors de"], ans:2, exp:"Au terme de = à la fin de, à l'aboutissement de. Terme = fin, limite."},
+  {cat:"Grammaire & Style", q:"Le style de Michon dans cet extrait peut être qualifié de :", opts:["Minimaliste et dépouillé","Baroque et ornemental, mêlant archaïsmes et densité lyrique","Journalistique et factuel","Populaire et argotique"], ans:1, exp:"Michon mêle passé simple, subjonctif imparfait, métaphores filées et accumulations — prose lyrique dense, marquée par le baroque littéraire."},
+  {cat:"Grammaire & Style", q:"La répétition de « il vit… il vit… il entendit » au début du paragraphe sur la ville est :", opts:["Une faute stylistique","Une anaphore créant un rythme de découverte progressive","Une zeugme","Une hyperbate"], ans:1, exp:"Anaphore = répétition d'un mot en tête de proposition. Ici elle structure la découverte de la ville par Dufourneau."},
+  {cat:"Grammaire & Style", q:"La phrase « Rien ne nous apprendra comment il souffrit, dans quelles circonstances il fut ridicule, le nom du café où il s'enivra » présente une gradation :", opts:["Descendante (du plus important au moins important)","Ascendante (du général : souffrir, au particulier concret : le café)","Sans gradation réelle","Uniquement temporelle"], ans:1, exp:"Gradation du général au particulier concret : souffrir (vague) → être ridicule (plus précis) → le nom du café (détail saisissant)."},
+  {cat:"Grammaire & Style", q:"Le verbe « toucha » dans « il toucha des manuels d'arithmétique » est ici chargé de :", opts:["Un sens péjoratif (toucher = salir)","Un sens physique fort évoquant le désir de savoir — mettre la main sur les livres comme sur un trésor","Un sens administratif (toucher une allocation)","Un sens anodin"], ans:1, exp:"Michon choisit « toucher » plutôt que « prendre » ou « ouvrir » — le geste physique précède la lecture, il y a un contact presque sacré avec les manuels."},
+  {cat:"Grammaire & Style", q:"La valeur du passé simple dans ce passage est :", opts:["Marquer des actions habituelles répétées","Marquer des actions accomplies, closes, irrévocables — rythme de chronique lapidaire","Exprimer une hypothèse","Atténuer la certitude des faits"], ans:1, exp:"Le passé simple = action close, révolue. Michon l'utilise pour graver chaque événement comme définitif."},
+
+  // CULTURE & CONTEXTE (56-60)
+  {cat:"Culture & Contexte", q:"Pierre Michon publie Vies minuscules en :", opts:["1975","1984","1992","2001"], ans:1, exp:"Vies minuscules paraît en 1984 chez Gallimard — premier livre de Michon, couronné par de nombreux prix."},
+  {cat:"Culture & Contexte", q:"Le projet littéraire de Vies minuscules consiste à :", opts:["Raconter la vie de grands hommes politiques","Donner une voix à des existences obscures, des gens du peuple oubliés par l'histoire","Écrire une autobiographie directe","Décrire la vie paysanne de manière documentaire"], ans:1, exp:"Michon redonne une existence littéraire à des « vies minuscules » — humbles, oubliées, en les traitant avec la grandeur stylistique réservée aux héros."},
+  {cat:"Culture & Contexte", q:"La « violence symbolique » (concept de Bourdieu) illustrée dans ce passage est :", opts:["La violence physique de la guerre","L'exclusion sociale exercée par la possession des codes culturels de la langue dominante","La violence des manuels scolaires","Les punitions militaires"], ans:1, exp:"Bourdieu : la violence symbolique = domination par la culture, sans coercition physique. Dufourneau est dominé par ceux qui maîtrisent les « roueries » de la langue."},
+  {cat:"Culture & Contexte", q:"L'Afrique mentionnée à la fin de l'extrait (hors du passage cité mais dans le même chapitre) est le destin de Dufourneau car :", opts:["Il est envoyé en mission diplomatique","Il fuit la France après un crime","Il part chercher fortune et ascension sociale dans les colonies, seule mobilité possible pour un paysan pauvre","Il suit Félix dans une expédition"], ans:2, exp:"Dufourneau partira en Afrique coloniale — seul espace d'ascension sociale ouvert aux déclassés de la métropole dans l'imaginaire de l'époque."},
+  {cat:"Culture & Contexte", q:"Le terme « indigènes » appliqué aux locuteurs de la langue bourgeoise est :", opts:["Un terme neutre sans connotation","Une ironie coloniale : ceux qui dominent la culture nationale sont eux-mêmes des 'natifs' d'un territoire symbolique inaccessible à Dufourneau","Une erreur stylistique de Michon","Un terme affectueux"], ans:1, exp:"Michon retourne le terme colonial : les bourgeois sont les 'indigènes' d'une culture que Dufourneau, étranger de l'intérieur, ne peut pas habiter."},
+];
+
+let answered = new Set();
+let correct = 0;
+
+function buildQCM() {
+  const container = document.getElementById('qcm-container');
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'qcm-item';
+    div.id = 'q' + i;
+    let opts = q.opts.map((o, j) => `
+      <label>
+        <input type="radio" name="q${i}" value="${j}" onchange="checkAnswer(${i}, ${j})">
+        ${String.fromCharCode(65+j)}. ${o}
+      </label>`).join('');
+    div.innerHTML = `
+      <div class="q-text"><span class="q-num">${i+1}.</span> <span class="section-tag">${q.cat}</span> ${q.q}</div>
+      <div class="options">${opts}</div>
+      <div class="feedback" id="fb${i}"></div>`;
+    container.appendChild(div);
+  });
+  updateScore();
+}
+
+function checkAnswer(qi, val) {
+  if (answered.has(qi)) return;
+  answered.add(qi);
+  const fb = document.getElementById('fb' + qi);
+  const isCorrect = val === questions[qi].ans;
+  if (isCorrect) { correct++; fb.className = 'feedback correct'; fb.textContent = '✓ Correct ! ' + questions[qi].exp; }
+  else { fb.className = 'feedback wrong'; fb.textContent = `✗ Incorrect. La bonne réponse : ${String.fromCharCode(65+questions[qi].ans)}. ${questions[qi].exp}`; }
+  // disable
+  document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled = true);
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('scoreNum').textContent = correct;
+  document.getElementById('scoreTotal').textContent = answered.size;
+  const pct = answered.size ? Math.round(correct/answered.size*100) + '%' : '—';
+  document.getElementById('scorePct').textContent = pct;
+  document.getElementById('progressBar').style.width = (answered.size / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = `${answered.size} / ${questions.length} répondues`;
+}
+
+function showAllAnswers() {
+  questions.forEach((q, i) => {
+    if (answered.has(i)) return;
+    answered.add(i);
+    const fb = document.getElementById('fb' + i);
+    fb.className = 'feedback wrong';
+    fb.textContent = `Réponse : ${String.fromCharCode(65+q.ans)}. ${q.exp}`;
+    document.querySelectorAll(`input[name="q${i}"]`).forEach(r => r.disabled = true);
+  });
+  updateScore();
+}
+
+buildQCM();
+</script>
+</body>
+</html>
