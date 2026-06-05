@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇫🇷 Session Français C2 — Vies minuscules — Achille</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+            --radius: 8px;
+            --sidebar-w: 240px;
+            --transition: 0.22s ease;
+        }
+        [data-theme="dark"] {
+            --bg: #0f1117; --bg2: #181b24; --bg3: #1e2130;
+            --border: #2a2d3e; --text: #e2e8f0; --text-muted: #8892a4;
+            --accent: #6c8ef7; --accent2: #a78bfa;
+            --green: #34d399; --amber: #fbbf24; --red: #f87171;
+        }
+        [data-theme="light"] {
+            --bg: #f4f6fb; --bg2: #ffffff; --bg3: #eaecf4;
+            --border: #d0d5e8; --text: #1a1f36; --text-muted: #6b7280;
+            --accent: #4361ee; --accent2: #7c3aed;
+            --green: #059669; --amber: #d97706; --red: #dc2626;
+        }
+        html { font-family: var(--font-sans); font-size: 15px; line-height: 1.75; color: var(--text); background: var(--bg); }
+        body { background: var(--bg); color: var(--text); }
+        #topbar { position: fixed; top: 0; left: 0; right: 0; height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 16px; z-index: 1000; }
+        #toggle-sidebar-btn, #theme-btn { background: none; border: none; color: var(--text); cursor: pointer; font-size: 18px; padding: 4px 8px; border-radius: var(--radius); transition: background var(--transition); }
+        #toggle-sidebar-btn:hover, #theme-btn:hover { background: var(--bg3); }
+        #topbar-title { flex: 1; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
+        #sidebar { position: fixed; left: 0; top: 52px; width: var(--sidebar-w); height: calc(100vh - 52px); background: var(--bg2); border-right: 1px solid var(--border); padding: 20px 0; overflow-y: auto; z-index: 900; transition: transform var(--transition); }
+        #sidebar.hidden { transform: translateX(calc(-1 * var(--sidebar-w))); }
+        .sidebar-label { padding: 12px 16px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 12px; }
+        .sidebar-label:first-child { margin-top: 0; }
+        .nav-link { display: block; padding: 10px 16px; color: var(--text-muted); text-decoration: none; transition: color var(--transition); cursor: pointer; border-left: 3px solid transparent; }
+        .nav-link:hover { color: var(--text); }
+        .nav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--bg3); }
+        #main { margin-left: var(--sidebar-w); margin-top: 52px; min-height: calc(100vh - 52px); transition: margin-left var(--transition); }
+        #main.expanded { margin-left: 0; }
+        .page { display: none; padding: 36px 48px; max-width: 860px; margin: 0 auto; }
+        .page.active { display: block; }
+        h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; margin-top: 24px; }
+        h3 { font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; margin-top: 20px; }
+        p { margin-bottom: 16px; }
+        .source-label { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px; }
+        .passage { background: var(--bg3); border-left: 4px solid var(--accent); padding: 1.5rem; margin: 1.5rem 0; font-style: italic; line-height: 1.85; border-radius: var(--radius); }
+        .citation-source { text-align: right; font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; }
+        .vocab-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .vocab-table thead { background: var(--bg3); }
+        .vocab-table th, .vocab-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        .vocab-table tbody tr:nth-child(odd) { background: var(--bg2); }
+        .vocab-table tbody tr:nth-child(even) { background: var(--bg3); }
+        .word { color: var(--accent); font-weight: 600; }
+        .pos { color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
+        .search-vocab { margin-bottom: 16px; }
+        .search-vocab input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); border-radius: var(--radius); font-family: var(--font-sans); }
+        .grammar-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+        .grammar-card-label { font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .grammar-card-label::before { content: "✦ "; color: var(--accent); margin-right: 6px; }
+        .grammar-card-exemple { font-style: italic; color: var(--text-muted); margin-bottom: 8px; padding: 8px; background: var(--bg3); border-radius: var(--radius); }
+        .grammar-card-note { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+        .tabs-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .tab-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 12px 16px; font-family: var(--font-sans); font-size: 0.95rem; border-bottom: 2px solid transparent; transition: color var(--transition); }
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .qcm-controls { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 16px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); border-radius: var(--radius); cursor: pointer; transition: all var(--transition); font-family: var(--font-sans); }
+        .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .qcm-score { background: var(--bg2); padding: 16px; border-radius: var(--radius); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .score-text { font-weight: 500; }
+        .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+        .progress-fill { height: 100%; background: var(--accent); transition: width var(--transition); }
+        .qcm-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; display: none; }
+        .qcm-item.show { display: block; }
+        .qcm-number { display: inline-block; background: var(--bg3); color: var(--accent); padding: 2px 8px; border-radius: var(--radius); font-weight: 600; margin-right: 8px; font-size: 0.85rem; }
+        .qcm-badge { display: inline-block; background: var(--accent2); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 8px; }
+        .qcm-question { font-weight: 500; margin-bottom: 12px; }
+        .qcm-options { margin-bottom: 12px; }
+        .qcm-option { display: flex; align-items: flex-start; margin-bottom: 10px; }
+        .qcm-option input { margin-right: 8px; margin-top: 3px; cursor: pointer; }
+        .qcm-option label { cursor: pointer; flex: 1; }
+        .qcm-feedback { padding: 12px; border-radius: var(--radius); margin-top: 12px; display: none; font-size: 0.95rem; }
+        .qcm-feedback.show { display: block; }
+        .qcm-correct { background: rgba(52, 211, 153, 0.1); color: var(--green); border-left: 3px solid var(--green); }
+        .qcm-incorrect { background: rgba(248, 113, 113, 0.1); color: var(--red); border-left: 3px solid var(--red); }
+        .diagram-wrap { position: relative; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin: 1.5rem 0; }
+        #narrative-svg { width: 100%; height: auto; min-height: 120px; }
+        .diag-tooltip { display: none; position: absolute; background: var(--bg2); border: 1px solid var(--accent); border-radius: var(--radius); padding: 8px 12px; font-size: 13px; max-width: 260px; color: var(--text); z-index: 100; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        button { padding: 10px 16px; background: var(--accent); color: white; border: none; border-radius: var(--radius); cursor: pointer; font-family: var(--font-sans); transition: opacity var(--transition); }
+        button:hover { opacity: 0.9; }
+        .button-group { display: flex; gap: 8px; margin-top: 16px; }
+        .about-section { background: var(--bg2); padding: 16px; border-radius: var(--radius); margin-bottom: 16px; }
+        .about-label { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+        .about-value { font-weight: 500; color: var(--text); }
+        @media (max-width: 700px) {
+            :root { --sidebar-w: 200px; }
+            #topbar { padding: 0 12px; }
+            .page { padding: 20px 16px; }
+            #sidebar { width: var(--sidebar-w); }
+            .filter-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div id="topbar">
+        <button id="toggle-sidebar-btn">☰</button>
+        <div id="topbar-title">🇫🇷 Session Français C2 — <em>Vies minuscules</em></div>
+        <button id="theme-btn">🌙</button>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-label">Navigation</div>
+        <a class="nav-link active" data-page="extrait">📖 Extrait</a>
+        <a class="nav-link" data-page="resume">📊 Résumé & Diagram</a>
+        <a class="nav-link" data-page="vocab">📚 Vocabulaire</a>
+        <a class="nav-link" data-page="grammaire">✦ Grammaire</a>
+        <a class="nav-link" data-page="qcm">❓ QCM</a>
+        <a class="nav-link" data-page="apropos">ℹ️ À propos</a>
+    </div>
+
+    <div id="main">
+        <div id="page-extrait" class="page active">
+            <h2>Texte Intégral</h2>
+            <div class="source-label">Michon, Pierre — Vies minuscules (1984) • Vie d'Achille</div>
+            <div class="passage">Il y avait alors au lycée de G. un professeur de latin considérablement chahuté, et que par antiphrase sans doute nous nommions Achille. Rien en lui de guerrier ni d'impétueux ; de l'ancien prince charmant des Myrmidons il n'avait que la stature et la maîtrise de la langue d'Homère ; c'était un vieil homme colossal et disgracié. Je ne sais quelle maladie l'avait privé de cheveux, de barbe et de sourcils ; il portait une perruque, mais nul cache-misère n'aurait su travestir la douloureuse nudité du regard dans ce visage uniformément glabre ; et cette face n'était pas de celles qu'on peut cacher, mais bien au contraire de forte complexion, patricienne, lourde, d'une sensualité effondrée, avec un nez magistral et de grandes lèvres d'un rose encore frais : le peu qui manquait à cette architecture la faisait prodigieusement comique, morbide et théâtrale comme une figure de vieux castrat à la voix rompue. Il marchait très droit, s'habillait avec goût et aimait les petits élégiaques. Virgile était son Dieu, mais ce Dieu lointain, ineffable, auteur abscons de choses écrites qu'il sondait par dedans avec une maniaquerie infinie.</div>
+            <div class="citation-source">— Pierre Michon, <em>Vies minuscules</em>, 1984</div>
+        </div>
+
+        <div id="page-resume" class="page">
+            <h2>Résumé & Progression Narrative</h2>
+            <h3>Résumé</h3>
+            <p>Le narrateur brosse le portrait d'Achille, un professeur de latin au lycée de G., malmené par ses élèves malgré le respect qu'il mérite. Bien que physiquement disgracié — alopécie totale, visage glabre et morbide — cet homme colossal conserve une maîtrise élégante et une dignité patricienne. Sa profonde connaissance du latin homérique et son vénération quasi religieuse de Virgile révèlent une âme vouée à l'étude, en contraste absolu avec son apparence grotesque. Ce portrait explore le thème du tragique quotidien : l'inadéquation entre la grandeur intérieure et l'infirmité charnelle.</p>
+            <h3>Progression Narrative</h3>
+            <div class="diagram-wrap">
+                <svg id="narrative-svg" viewBox="0 0 800 120"></svg>
+                <div id="diagram-tooltip" class="diag-tooltip"></div>
+            </div>
+        </div>
+
+        <div id="page-vocab" class="page">
+            <h2>Vocabulaire</h2>
+            <div class="search-vocab">
+                <input type="text" id="vocab-search" placeholder="Chercher un mot...">
+            </div>
+            <p id="vocab-count" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;"></p>
+            <table class="vocab-table">
+                <thead>
+                    <tr><th>Mot</th><th>Classe</th><th>Définition</th></tr>
+                </thead>
+                <tbody id="vocab-tbody"></tbody>
+            </table>
+        </div>
+
+        <div id="page-grammaire" class="page">
+            <h2>Structures Grammaticales & Stylistiques</h2>
+            <div class="tabs-container" id="grammar-tabs">
+                <button class="tab-btn active" data-tab="syntax">Structures Syntaxiques</button>
+                <button class="tab-btn" data-tab="style">Figures de Style</button>
+                <button class="tab-btn" data-tab="register">Registre & Tonalité</button>
+            </div>
+            <div id="grammar-content"></div>
+        </div>
+
+        <div id="page-qcm" class="page">
+            <h2>Questions de Compréhension</h2>
+            <div class="qcm-score">
+                <div class="score-text"><span id="qcm-score-num">0</span> / <span id="qcm-total">60</span> points</div>
+                <div><span id="qcm-percentage">0</span>%</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="qcm-controls">
+                <button class="filter-btn active" onclick="filterQCM('all')">Tous</button>
+                <button class="filter-btn" onclick="filterQCM('Compréhension')">Compréhension</button>
+                <button class="filter-btn" onclick="filterQCM('Vocabulaire')">Vocabulaire</button>
+                <button class="filter-btn" onclick="filterQCM('Grammaire')">Grammaire</button>
+                <button class="filter-btn" onclick="filterQCM('Culture')">Culture</button>
+            </div>
+            <div id="qcm-container"></div>
+            <div class="button-group">
+                <button onclick="showAllAnswers()">Voir les réponses</button>
+                <button onclick="resetQCM()" style="background: var(--red);">Réinitialiser</button>
+            </div>
+        </div>
+
+        <div id="page-apropos" class="page">
+            <h2>À Propos de cette Session</h2>
+            <div class="about-section">
+                <div class="about-label">Source</div>
+                <div class="about-value">Pierre Michon, <em>Vies minuscules</em> (1984) — Vie d'Achille</div>
+            </div>
+            <div class="about-section">
+                <div class="about-label">Niveau DELF</div>
+                <div class="about-value">C2 (Maîtrise)</div>
+            </div>
+            <div class="about-section">
+                <div class="about-label">Session #</div>
+                <div class="about-value">5</div>
+            </div>
+            <div class="about-section">
+                <div class="about-label">Date</div>
+                <div class="about-value">05 juin 2026</div>
+            </div>
+            <h3>Conseils d'utilisation</h3>
+            <p>Parcourez chaque section à votre rythme pour approfondir votre compréhension du texte, enrichir votre vocabulaire C2, et maîtriser les structures complexes.</p>
+        </div>
+    </div>
+
+    <script>
+        const narrativeSteps = [{"label": "Présentation ironique", "desc": "Introduction du personnage par son surnoma Achille donné par antiphrase, révélant immédiatement le contraste ironique."}, {"label": "Contraste guerrier/réalité", "desc": "Destruction du mythe homérique : contrairement à Achille le guerrier, ce professeur est dépourvu de puissance physique."}, {"label": "Tableau de disgrâce physique", "desc": "Énumération minutieuse de la maladie : perte de cheveux, barbe, sourcils, réduction du visage à la nudité morbide."}, {"label": "Paradoxe de dignité", "desc": "Malgré la difformité extrême, le professeur maintient une tenue et une allure nobles, créant un contraste pathétique."}, {"label": "Révélation de l'âme", "desc": "L'apparence grotesque cache une profondeur spirituelle : dévotion absolue à Virgile et étude maniaque du latin."}];
+        const vocabulaire = [["Chahuté", "adjectif/participe passé", "Malmené, harcelé, perturbé par le bruit et l'agitation"], ["Antiphrase", "nom féminin", "Figure rhétorique consistant à exprimer l'inverse de ce qu'on veut dire pour créer un effet ironique"], ["Myrmidons", "nom masculin pluriel", "Chez Homère, guerriers d'Achille ; par extension, hommes zélés et sans esprit critique"], ["Disgracié", "adjectif", "Qui manque de grâce, de distinction physique ou morale"], ["Cache-misère", "nom masculin", "Ce qui sert à cacher une situation misérable ou une apparence désagréable"], ["Travestir", "verbe", "Déguiser, transformer l'aspect ou la nature réelle de quelque chose"], ["Nudité", "nom féminin", "État de ce qui est dépourvu, exposé sans protection"], ["Glabre", "adjectif", "Qui n'a pas de poil, de cheveu ; dépourvu de végétation"], ["Complexion", "nom féminin", "Constitution physique générale du corps ; tempérament"], ["Patricienne", "adjectif", "Qui appartient à la noblesse romaine ancienne ; d'apparence noble et distinguée"], ["Sensualité", "nom féminin", "Caractère de ce qui est charnel, lié aux sens ; propension aux plaisirs des sens"], ["Effondrée", "adjectif/participe passé", "Qui a perdu sa fermeté, sa vigueur ; affaissée, épuisée"], ["Magistral", "adjectif", "Qui a du caractère, de la grandeur ; digne d'un maître"], ["Comique", "adjectif", "Qui provoque le rire, l'hilarité ; grotesque"], ["Morbide", "adjectif", "Qui relève de la maladie, qui a un caractère lugubre ou maladif"], ["Théâtrale", "adjectif", "Qui relève du théâtre ; excessivement expressif, artificiel"], ["Castrat", "nom masculin", "Homme châtré, notamment chanteur d'opéra des XVIIe-XVIIIe siècles"], ["Rompue", "adjectif", "Fatigued, usée ; cassée, discontinue"], ["Élégiaques", "adjectif", "Qui appartient à l'élégie, genre poétique mélancolique ; qui exprime la mélancolie"], ["Ineffable", "adjectif", "Qui ne peut pas être exprimé en paroles ; indicible, inexprimable"], ["Abscons", "adjectif", "Difficile à comprendre, obscur, hermétique"], ["Sondait", "verbe", "Explorais en profondeur, scrutais les mystères de"], ["Maniaquerie", "nom féminin", "Attention maniaque, obsessionnelle aux détails"], ["Infinie", "adjectif", "Sans bornes, illimitée dans l'espace ou le temps"], ["Antithèse", "nom féminin", "Opposition de deux idées, de deux réalités présentées ensemble"], ["Physionomie", "nom féminin", "Expression du visage ; aspect général caractéristique"], ["Austérité", "nom féminin", "Rigueur morale ; sobriété extrême ; sévérité"], ["Patrymoine", "nom masculin", "Ensemble des biens hérités des parents ; héritage culturel"], ["Impétueuse", "adjectif", "Qui agit avec vivacité, fougue, sans réflexion"], ["Stature", "nom féminin", "Hauteur de la taille du corps ; position, rang social"], ["Perruque", "nom féminin", "Chevelure artificielle portée sur la tête"], ["Lèvres", "nom féminin pluriel", "Partie charnue encadrant la bouche"], ["Rose", "adjectif", "Couleur entre le rouge et le blanc ; d'apparence agréable"], ["Architecture", "nom féminin", "Ici, structure, disposition harmonieuse des traits du visage"], ["Prodigieusement", "adverbe", "D'une manière extraordinaire, incroyable, excessive"]];
+        const grammaire = [{"label": "Apposition explicative", "exemple": "un professeur de latin considérablement chahuté, et que par antiphrase sans doute nous nommions Achille", "note": "L'apposition 'Achille' explicite l'identité du professeur par un détail ironique (antiphrase)."}, {"label": "Construction 'Il n'y avait de ... que'", "exemple": "Rien en lui de guerrier ni d'impétueux ; de l'ancien prince charmant ... il n'avait que la stature", "note": "Expression archaïque et élégante pour exprimer l'absence ou la restriction : une seule qualité demeure."}, {"label": "Énumération polysyndétique avec 'et'", "exemple": "et que par antiphrase ... nous nommions Achille ... et que la maîtrise ... c'était un vieil homme", "note": "Répétition de 'et' pour créer un effet d'accumulation, de fatigue morale."}, {"label": "Parataxe avec points-virgules", "exemple": "Rien en lui de guerrier ni d'impétueux ; de l'ancien prince ... ; c'était un vieil homme ;", "note": "Juxtaposition d'énoncés sans conjonction : accélère le rythme, crée tension."}, {"label": "Adjectifs antéposés pour l'expressivité", "exemple": "douloureuse nudité du regard, uniformément glabre, magistral, prodigieusement comique", "note": "Position avant le nom renforce l'effet émotionnel et psychologique."}, {"label": "Comparaison épique 'comme une figure de'", "exemple": "comique, morbide et théâtrale comme une figure de vieux castrat", "note": "Analogie historique et grotesque renforce l'effet pathétique du portrait."}, {"label": "Inversion sujet-verbe archaïque", "exemple": "Virgile était son Dieu, mais ce Dieu lointain, ineffable", "note": "Reprises anaphoriques ('ce Dieu') pour marteler l'importance de la figure."}];
+        const qcmData = [{"q": "Pourquoi les élèves appellent-ils le professeur 'Achille' par antiphrase ?", "options": ["Parce qu'il est fort et guerrier comme le héros grec", "Parce qu'il manque des qualités guerrières malgré le nom d'Achille", "Parce qu'il enseigne l'Iliade exclusivement", "Parce que c'est son vrai prénom"], "answer": 1, "explication": "L'antiphrase consiste à exprimer l'inverse : le professeur est tout sauf guerrier, d'où l'ironie du surnom.", "category": "Compréhension"}, {"q": "Quelle maladie affecte physiquement le professeur Achille ?", "options": ["Une cécité progressive", "Une alopécie totale (perte de cheveux, barbe, sourcils)", "Une paralysie motrice", "Une tuberculose"], "answer": 1, "explication": "Le texte mentionne explicitement qu'une maladie l'a privé de cheveux, de barbe et de sourcils.", "category": "Compréhension"}, {"q": "Comment le professeur dissimule-t-il sa calvitie ?", "options": ["Avec un cache-misère efficace", "Par une perruque qui n'arrive pas vraiment à dissimuler sa nudité du regard", "Par un chapeau qu'il ne quitte jamais", "Il ne la dissimule pas du tout"], "answer": 1, "explication": "Le texte : 'il portait une perruque, mais nul cache-misère n'aurait su travestir la douloureuse nudité du regard'.", "category": "Compréhension"}, {"q": "Qui est le 'Dieu' du professeur Achille ?", "options": ["Homère, auteur de l'Iliade", "Apollon, le dieu des lettres", "Virgile, auteur antique lointain et ineffable", "Jésus-Christ"], "answer": 2, "explication": "Le texte affirme : 'Virgile était son Dieu, mais ce Dieu lointain, ineffable'.", "category": "Compréhension"}, {"q": "Comment le narrateur décrit-il l'apparence générale du visage du professeur ?", "options": ["Agréable et sympathique", "De forte complexion, patricienne mais lourde, avec une sensualité effondrée", "Sec et ascétique", "Banal et ordinaire"], "answer": 1, "explication": "Description exacte du texte : 'cette face... de forte complexion, patricienne, lourde, d'une sensualité effondrée'.", "category": "Compréhension"}, {"q": "Quel genre littéraire le professeur affectionne-t-il en particulier ?", "options": ["L'épopée homérique", "Les tragédies grecques", "Les petits élégiaques", "Les comédies romaines"], "answer": 2, "explication": "Le texte : 'Il marchait très droit, s'habillait avec goût et aimait les petits élégiaques.'", "category": "Compréhension"}, {"q": "Quel contraste majeur le portrait révèle-t-il ?", "options": ["Entre la richesse et la pauvreté du professeur", "Entre la grandeur intérieure (âme cultivée) et l'infirmité physique", "Entre son intelligence et son incompétence pédagogique", "Entre son âge avancé et son énergie"], "answer": 1, "explication": "Le passage souligne la contradiction : profonde dévotion spirituelle et esthétique dans un corps morbide et grotesque.", "category": "Compréhension"}, {"q": "Pourquoi la comparaison à 'une figure de vieux castrat à la voix rompue' est-elle pertinente ?", "options": ["Parce que le professeur était autrefois chanteur d'opéra", "Parce qu'elle évoque l'humiliation, l'apparence grotesque et la voix faible", "Parce que les castrats étaient tous professeurs", "C'est une comparaison sans lien logique"], "answer": 1, "explication": "Le castrat incarne l'infirmité, la mutilation, l'apparence grotesque et l'altération de la voix — tous éléments pathétiques.", "category": "Compréhension"}, {"q": "Le professeur Achille est-il aimé ou respecté des élèves ?", "options": ["Ils le respectent et l'aiment profondément", "Il est 'considérablement chahuté' (malmené) malgré ses qualités", "Ils l'ignòrent complètement", "Il n'y a pas d'indices sur leur attitude"], "answer": 1, "explication": "Le terme 'chahuté' indique qu'il est persécuté, moqué, perturbé par ses élèves.", "category": "Compréhension"}, {"q": "Quel adjectif décrit le plus fidèlement l'approche du professeur envers l'étude de Virgile ?", "options": ["Désinvolte et superficielle", "Maniaque, obsessionnelle, minutieuse ('maniaquerie infinie')", "Distante et impersonnelle", "Pragmatique et utilitariste"], "answer": 1, "explication": "Le texte : 'il sondait par dedans avec une maniaquerie infinie', révélant une passion obsessive.", "category": "Compréhension"}, {"q": "Quel aspect du physique du professeur reste 'encore frais' et relativement beau ?", "options": ["Ses yeux", "Ses mains", "Ses lèvres roses", "Ses dents"], "answer": 2, "explication": "Le texte : 'de grandes lèvres d'un rose encore frais', contraste avec le reste du visage morbide.", "category": "Compréhension"}, {"q": "Le portrait du professeur Achille est-il entièrement négatif ?", "options": ["Oui, c'est une critique cruelle", "Non, il combine difformité physique et grandeur morale, créant une humanité complexe", "Oui, c'est un caricature ridicule", "Non, il n'y a aucun jugement dans le texte"], "answer": 1, "explication": "Le narrateur reconnaît la beauté intérieure (goût, dignité, érudition) sous l'apparence repoussante.", "category": "Compréhension"}, {"q": "Quel élément du vêtement du professeur révèle la conscience de sa disgrâce physique ?", "options": ["Ses habits coûteux et tapageurs", "La perruque qu'il porte pour masquer sa calvitie", "Ses chaussures noires", "Son col blanc amidonné"], "answer": 1, "explication": "La perruque est une tentative (vaine) de 'travestir la douloureuse nudité du regard'.", "category": "Compréhension"}, {"q": "Comment Michon qualifie-t-il indirectement l'apparence du professeur en le comparant à un castrat ?", "options": ["Majestueuse et imposante", "Tragique, grotesque, pathétique, 'théâtrale'", "Comique involontairement", "Noble et héroïque"], "answer": 1, "explication": "Les adjectifs avant 'castrat' — 'comique, morbide et théâtrale' — soulignent l'effet pathétique.", "category": "Compréhension"}, {"q": "Quel est le rôle de l'antiphrase dans la désignation du professeur ?", "options": ["C'est une marque de respect ironique", "C'est une moquerie qui révèle l'écart entre le mythe (Achille guerrier) et la réalité", "C'est simplement un jeu de mots sans signification", "C'est un hommage à la mythologie grecque"], "answer": 1, "explication": "L'antiphrase établit un contraste ironique fondamental : le nom noble rencontre la réalité humble.", "category": "Compréhension"}, {"q": "Quelle est la source principale de dignité du professeur Achille selon le narrateur ?", "options": ["Sa richesse et ses possessions", "Son statut social et son autorité", "Sa tenue, sa posture et sa dévotion intellectuelle à Virgile", "Son origine familiale aristocratique"], "answer": 2, "explication": "Bien que disgracié physiquement, 'il marchait très droit, s'habillait avec goût' et vénérait Virgile.", "category": "Compréhension"}, {"q": "Le narrateur se range-t-il du côté des élèves qui chahutent le professeur ?", "options": ["Oui, il approuve la moquerie", "Non, il adopte une perspective compatissante qui reconnaît la grandeur cachée", "Il ne prend position sur aucun côté", "Il critique sévèrement le professeur sans pitié"], "answer": 1, "explication": "Le ton du narrateur est admiratif et mélancolique, révélant l'âme du professeur malgré le maltraitement.", "category": "Compréhension"}, {"q": "Que symbolise Virgile dans ce passage ?", "options": ["L'amour romantique", "L'idéal inatteignable, la beauté éternelle vers laquelle se tourne l'âme cultivée", "L'autorité politique", "L'enfance perdue"], "answer": 1, "explication": "'Virgile était son Dieu, mais ce Dieu lointain, ineffable' — représente l'aspiration sublime.", "category": "Compréhension"}, {"q": "Que signifie 'chahuté' dans ce contexte ?", "options": ["Applaudi chaleureusement", "Malmené, harcelé, perturbé", "Promu rapidement", "Retraité honorablement"], "answer": 1, "explication": "'Chahuté' exprime l'agitation, le harcèlement d'une classe turbulente envers son professeur.", "category": "Vocabulaire"}, {"q": "L'antiphrase est une figure rhétorique qui...", "options": ["Répète les mêmes mots", "Exprime l'inverse de ce qu'on veut dire pour créer l'ironie", "Compare deux éléments", "Énumère une liste"], "answer": 1, "explication": "Appeler quelqu'un 'Achille' quand il n'est pas guerrier = antiphrase.", "category": "Vocabulaire"}, {"q": "Les Myrmidons dans l'Antiquité étaient...", "options": ["Des divinités marines", "Des guerriers d'Achille ; par extension, des partisans zélés", "Des philosophes grecs", "Des marchands d'Athènes"], "answer": 1, "explication": "Référence homérique : guerriers aux ordres d'Achille ; d'où le nom applliqué au professeur.", "category": "Vocabulaire"}, {"q": "Un 'cache-misère' est...", "options": ["Un objet très cher", "Ce qui sert à dissimuler une situation ou apparence désagréable", "Un tapis luxueux", "Un meuble ancien"], "answer": 1, "explication": "Nom composé : cache (cacher) + misère (situation misérable, aspect désagréable).", "category": "Vocabulaire"}, {"q": "Que signifie 'travestir' dans ce passage ?", "options": ["S'habiller en femme", "Exagérer légèrement", "Déguiser, transformer l'apparence ou la nature de", "Raconter une histoire"], "answer": 2, "explication": "'Nul cache-misère n'aurait su travestir' = cacher, déguiser la nudité du regard.", "category": "Vocabulaire"}, {"q": "'Glabre' signifie...", "options": ["Brillant et lisse", "Dépourvu de poil, de cheveu", "Pâle et maladif", "Coiffé élégamment"], "answer": 1, "explication": "Adjectif savant : visage uniformément glabre = sans aucun poil.", "category": "Vocabulaire"}, {"q": "La 'complexion' d'une personne est...", "options": ["Son caractère émotionnel", "Sa constitution physique générale", "Son statut social", "Son talent artistique"], "answer": 1, "explication": "'Forte complexion, patricienne' = constitution robuste, aspect noble.", "category": "Vocabulaire"}, {"q": "'Patricienne' évoque...", "options": ["L'originalité moderne", "La noblesse romaine ancienne ; apparence noble et distinguée", "La bourgeoisie française", "L'exotisme oriental"], "answer": 1, "explication": "Patricii = noble classe romaine ; d'où l'idée de dignité, de distinction.", "category": "Vocabulaire"}, {"q": "La 'sensualité effondrée' exprime...", "options": ["Une passion amoureuse active", "Une sensualité avachie, épuisée, sans vigueur", "Un rejet total du corps", "Une santé physique robuste"], "answer": 1, "explication": "'Effondrée' (tombée) = perte de fermeté, caractère morbide et fatigué.", "category": "Vocabulaire"}, {"q": "Un nez 'magistral' est...", "options": ["Petit et discret", "De grande taille et de caractère imposant", "Désagréable et répugnant", "Parfait et régulier"], "answer": 1, "explication": "'Magistral' = digne d'un maître, qui a du caractère, de la grandeur.", "category": "Vocabulaire"}, {"q": "Ce qui est 'morbide' est...", "options": ["Gaieté et légèreté", "Relié à la maladie, lugubre, maladif", "Naturel et sain", "Heureux et joyeux"], "answer": 1, "explication": "Adjectif savant : caractère lugubre, obsession avec la mort ou la souffrance.", "category": "Vocabulaire"}, {"q": "'Théâtral' signifie ici...", "options": ["Destiné aux planches", "Excessivement expressif, artificiel, drammatique", "Silencieux et discret", "Authentique et sincère"], "answer": 1, "explication": "Ton moqueur : l'apparence du professeur a la qualité d'une mise en scène exagérée.", "category": "Vocabulaire"}, {"q": "Un castrat était...", "options": ["Un guerrier romain", "Un homme châtré, notamment chanteur d'opéra baroque", "Un poète de la Renaissance", "Un philosophe grec"], "answer": 1, "explication": "Référence historique : castrats celebres des XVIIe-XVIIIe siècles pour la clarté vocale.", "category": "Vocabulaire"}, {"q": "'Ineffable' veut dire...", "options": ["Très célèbre", "Qui ne peut pas être exprimé en paroles ; indicible", "Facile à comprendre", "Historiquement documenté"], "answer": 1, "explication": "In- (non) + effable (qu'on peut dire) = indicible, au-delà de la parole.", "category": "Vocabulaire"}, {"q": "'Abscons' (ou 'absconsus') signifie...", "options": ["Ouvert et transparent", "Difficile à comprendre, obscur, hermétique", "Bien connu et populaire", "Agréable et divertissant"], "answer": 1, "explication": "Adjectif latin rare : auteur abscons = textes hermétiques, mystérieux.", "category": "Vocabulaire"}, {"q": "La 'maniaquerie' est...", "options": ["Une extravagance gentille", "Attention obsessionnelle et maniaque aux détails", "Une habitude agréable", "Une compétence musicale"], "answer": 1, "explication": "Maniaque + -rie : l'étude avec une 'maniaquerie infinie' = minutie obsessive.", "category": "Vocabulaire"}, {"q": "Les 'élégiaques' sont des poèmes ou des auteurs qui...", "options": ["Chantent la gloire guerrière", "Expriment la mélancolie, la tristesse amoureuse", "Décrivent la nature", "Racontent des histoires drôles"], "answer": 1, "explication": "Élégie = genre poétique mélancolique ; petits élégiaques = brefs poèmes de sentiment triste.", "category": "Vocabulaire"}, {"q": "'Sonder' quelque chose signifie...", "options": ["L'ignorer complètement", "L'explorer, le scruter en profondeur", "L'utiliser quotidiennement", "L'enseigner à d'autres"], "answer": 1, "explication": "'Sondait par dedans' = explorait les mystères du texte virgilien avec minutie.", "category": "Vocabulaire"}, {"q": "La structure 'Rien en lui de guerrier ni d'impétueux' est un exemple de...", "options": ["Proposition relative", "Restriction : négation partielle avec 'de'", "Coordination avec 'ni'", "Énumération"], "answer": 1, "explication": "Construction archaïque : 'rien de X' = pas X ; la double négation 'ni X ni Y' renforce.", "category": "Grammaire"}, {"q": "L'adjectif 'douloureuse' placé avant le nom 'nudité' crée...", "options": ["Une description objective", "Un effet d'intensité émotionnelle plus forte", "Une simple énumération", "Un parallélisme grammatical"], "answer": 1, "explication": "Adjectif antéposé renforce l'expressivité ; 'douloureuse nudité' est plus pathétique que 'nudité douloureuse'.", "category": "Grammaire"}, {"q": "Le participe passé 'disgracié' fonctionne ici comme...", "options": ["Verbe au passé", "Adjectif attribut du sujet", "Nom", "Adverbe"], "answer": 1, "explication": "'c'était un vieil homme... disgracié' = adjectif attribut accordé avec 'homme'.", "category": "Grammaire"}, {"q": "La phrase 'Le peu qui manquait à cette architecture la faisait prodigieusement comique' contient...", "options": ["Deux propositions principales", "Une proposition principale et une relative restrictive", "Trois propositions", "Une seule proposition"], "answer": 1, "explication": "Principale : 'Le peu... la faisait comique' + relative : 'qui manquait à cette architecture'.", "category": "Grammaire"}, {"q": "Le mot 'architecture' au sens figuré désigne ici...", "options": ["Un édifice", "La structure harmonieuse des traits du visage", "Le plan d'une ville", "Un style d'enseignement"], "answer": 1, "explication": "Métaphore : les traits du visage forment une 'architecture' = composition, structure.", "category": "Grammaire"}, {"q": "L'adverbe 'prodigieusement' modifie...", "options": ["Le sujet", "L'adjectif 'comique'", "Le verbe 'faisait'", "Le nom 'peu'"], "answer": 1, "explication": "'prodigieusement comique' = extraordinairement comique ; adverbe d'intensité + adjectif.", "category": "Grammaire"}, {"q": "La comparaison 'comme une figure de vieux castrat à la voix rompue' est introduite par...", "options": ["'Aussi bien que'", "'Comme' (comparaison simple)", "'Autant que'", "'Similement à'"], "answer": 1, "explication": "Conjonction simple 'comme' pour établir une analogie entre le visage et le castrat.", "category": "Grammaire"}, {"q": "L'énumération 'cheveux, de barbe et de sourcils' est...", "options": ["Une phrase simple", "Une accumulation de trois éléments parallèles (polysyndète)", "Une comparaison", "Une périphrase"], "answer": 1, "explication": "Trois noms de même catégorie grammaticale, reliés par 'et', créent un effet cumulatif.", "category": "Grammaire"}, {"q": "Le verbe 'sondait' est au...", "options": ["Présent", "Imparfait", "Passé composé", "Passé simple"], "answer": 1, "explication": "'il sondait par dedans' = imparfait : action répétée, habituelle dans le passé.", "category": "Grammaire"}, {"q": "Le pronom relatif 'qui' dans 'nul cache-misère n'aurait su travestir' remplace...", "options": ["Le professeur", "'la douloureuse nudité du regard'", "Le cache-misère", "La perruque"], "answer": 2, "explication": "Antécédent = 'cache-misère' (aucun cache-misère qui aurait pu travestir).", "category": "Grammaire"}, {"q": "L'apposition 'Achille' dans la première phrase joue quel rôle ?", "options": ["C'est le sujet de la phrase", "C'est l'objet direct", "C'est une explication ironique du surnom", "C'est un adverbe"], "answer": 2, "explication": "Apposition : 'un professeur... Achille' — identité donnée par surnom ironique.", "category": "Grammaire"}, {"q": "La phrase 'Virgile était son Dieu, mais ce Dieu lointain, ineffable' est une...", "options": ["Période complexe avec plusieurs subordonnées", "Coordination de deux propositions indépendantes par 'mais'", "Proposition unique sans coordination", "Phrase interrogative"], "answer": 1, "explication": "Deux propositions : 'Virgile était son Dieu' + 'mais ce Dieu lointain, ineffable' (apposition explicative).", "category": "Grammaire"}, {"q": "Pierre Michon écrit 'Vies minuscules' dans le cadre de...", "options": ["La Pléiade de la Renaissance", "Le Nouveau Roman des années 1950-60", "L'écrit intime français contemporain (années 1980-90)", "Le Romantisme du XIXe siècle"], "answer": 2, "explication": "Michon (né 1945) publie en 1984 ; redécouvre des vies ordinaires par la littérature introspective.", "category": "Culture"}, {"q": "Le personnage d'Achille renvoie à la mythologie...", "options": ["Égyptienne", "Gréco-romaine (Homère, Iliade)", "Celte", "Nordique"], "answer": 1, "explication": "Achille = guerrier de l'Iliade ; Myrmidons = armée d'Achille chez Homère.", "category": "Culture"}, {"q": "Virgile (70-19 av. J.-C.) est connu principalement pour...", "options": ["Ses tragédies dramatiques", "L'Énéide (épopée latine) et les Géorgiques", "Ses lettres philosophiques", "Ses pièces de théâtre"], "answer": 1, "explication": "Poète romain majeur ; Énéide = équivalent latin de l'Iliade homérique.", "category": "Culture"}, {"q": "Le contexte d'un lycée français dans ce passage renvoie à...", "options": ["L'institution pédagogique romaine", "L'école secondaire française (enseignement classique du français, du latin, du grec)", "Une université de haut niveau", "Une académie militaire"], "answer": 1, "explication": "Lycée français = établissement d'enseignement secondaire ; latin enseigné = tradition classique.", "category": "Culture"}, {"q": "La référence aux 'castrats' évoque l'époque historique...", "options": ["Du Moyen Âge", "De la Renaissance italienne", "De l'Âge baroque et du XVIIIe siècle (castrats d'opéra)", "Du XIXe siècle romantique"], "answer": 2, "explication": "Castrats = chanteurs opéra célèbres des XVIIe-XVIIIe siècles (Farinelli, Senesino).", "category": "Culture"}, {"q": "La phrase 'ce peu qui manquait à cette architecture la faisait prodigieusement comique' exprime...", "options": ["Que le visage était parfait", "Que l'absence de détails mineurs produit un effet grotesque maximalisé", "Que le professeur était naturellement beau", "Qu'il manquait une partie du visage"], "answer": 1, "explication": "Paradoxe : ce qui manque crée la laideur comique ; l'inachevé est plus grotesque que la laideur totale.", "category": "Grammaire"}, {"q": "Le style de Michon dans ce portrait relève de...", "options": ["L'écriture réaliste-naturaliste du XIXe", "L'introspection littéraire : reconstituer et contempler des vies ordinaires", "La critique politique directe", "La satire gaie et légère"], "answer": 1, "explication": "'Vies minuscules' = projet littéraire : donner dignité et profondeur aux anonymes.", "category": "Culture"}, {"q": "Pourquoi Michon insiste-t-il sur les détails anatomiques du visage ?", "options": ["Pour ridiculiser gratuitement", "Pour montrer comment l'apparence physique cache une beauté morale et intellectuelle", "Pour une simple description documentaire", "Pour critiquer la médecine de l'époque"], "answer": 1, "explication": "Effet de contraste = maladie visible vs. beauté cachée de l'âme ; humanité complexe.", "category": "Culture"}, {"q": "La maîtrise du latin homérique du professeur symbolise chez Michon...", "options": ["Une compétence pédagogique ordinaire", "L'accès à l'universel et à l'éternel par la culture classique", "Une forme de pédanterie ridicule", "L'échec du système éducatif français"], "answer": 1, "explication": "Virgile/Homère = idéal intemporel ; le professeur transcende son malheur physique par la culture.", "category": "Culture"}, {"q": "L'expression 'par antiphrase sans doute nous nommions Achille' contient...", "options": ["Une certitude absolue", "Une hypothèse prudente ('sans doute') : le narrateur reconnaît l'ironie du surnom", "Une question rhétorique", "Un aveu d'ignorance"], "answer": 1, "explication": "'Sans doute' = probablement, presque certainement ; le narrateur hésite légèrement mais reconnaît l'antiphrase.", "category": "Grammaire"}, {"q": "Le syntagme 'auteur abscons de choses écrites' renvoie à...", "options": ["La clarté et la transparence de Virgile", "L'hermétisme, l'obscurité volontaire du texte virgilien que le professeur explore", "La popularité de Virgile auprès des masses", "L'absence d'écrits de Virgile"], "answer": 1, "explication": "Virgile = 'auteur abscons' (hermétique) ; le professeur sonde ces mystères avec 'maniaquerie infinie'.", "category": "Vocabulaire"}, {"q": "Le portrait du professeur Achille est finalement...", "options": ["Une condamnation morale", "Une célébration cachée de la grandeur humaine face à l'infirmité", "Une description purement objective sans jugement", "Une satire cruelle"], "answer": 1, "explication": "Ton mixte : le narrateur reconnaît la disgrâce physique ET la beauté morale/intellectuelle ; humanité complexe.", "category": "Compréhension"}];
+
+        let currentTheme = 'dark';
+        let filteredCategory = 'all';
+        let qcmAnswers = {};
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            document.getElementById('theme-btn').textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+            document.getElementById('main').classList.toggle('expanded');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+            if (pageId === 'resume') setTimeout(() => drawNarrativeDiagram(), 100);
+        }
+
+        function drawNarrativeDiagram() {
+            const svg = document.getElementById('narrative-svg');
+            const n = narrativeSteps.length;
+            const W = svg.parentElement.clientWidth || 800;
+            const H = 120;
+            svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+            svg.innerHTML = '';
+            
+            const defs = `<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/></marker></defs>`;
+            const step = W / n;
+            let html = defs;
+            
+            for (let i = 0; i < n - 1; i++) {
+                const x1 = step * i + step / 2 + 18;
+                const x2 = step * (i+1) + step / 2 - 18;
+                html += `<line x1="${x1}" y1="40" x2="${x2}" y2="40" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)" opacity="0.6"/>`;
+            }
+            
+            for (let i = 0; i < n; i++) {
+                const cx = step * i + step / 2;
+                const s = narrativeSteps[i];
+                html += `<circle cx="${cx}" cy="40" r="16" fill="var(--accent)" opacity="0.85" class="diag-node" data-i="${i}" style="cursor:pointer"/>`;
+                html += `<text x="${cx}" y="45" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">${i+1}</text>`;
+                const words = s.label.split(' ');
+                const line1 = words.slice(0,2).join(' ');
+                const line2 = words.slice(2).join(' ');
+                html += `<text x="${cx}" y="68" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Arial">${line1}</text>`;
+                if (line2) html += `<text x="${cx}" y="80" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Arial">${line2}</text>`;
+            }
+            
+            svg.innerHTML = html;
+            svg.querySelectorAll('.diag-node').forEach(c => {
+                c.addEventListener('mouseenter', e => {
+                    const i = +c.getAttribute('data-i');
+                    const tt = document.getElementById('diagram-tooltip');
+                    tt.textContent = narrativeSteps[i].desc;
+                    tt.style.display = 'block';
+                    tt.style.left = (e.offsetX + 10) + 'px';
+                    tt.style.top = (e.offsetY + 20) + 'px';
+                });
+                c.addEventListener('mouseleave', () => {
+                    document.getElementById('diagram-tooltip').style.display = 'none';
+                });
+            });
+        }
+
+        function populateVocab() {
+            const tbody = document.getElementById('vocab-tbody');
+            tbody.innerHTML = '';
+            vocabulaire.forEach(([mot, classe, def]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><span class="word">${mot}</span></td><td><span class="pos">${classe}</span></td><td>${def}</td>`;
+                tbody.appendChild(tr);
+            });
+            updateVocabCount();
+        }
+
+        function updateVocabCount() {
+            const query = document.getElementById('vocab-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#vocab-tbody tr');
+            let visible = 0;
+            rows.forEach(r => {
+                const mot = r.querySelector('.word').textContent.toLowerCase();
+                if (mot.includes(query)) {
+                    r.style.display = '';
+                    visible++;
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+            document.getElementById('vocab-count').textContent = visible + ' mots · niveau C2';
+        }
+
+        function populateGrammar() {
+            const content = document.getElementById('grammar-content');
+            content.innerHTML = `<div id="syntax-content" class="tab-content active"></div><div id="style-content" class="tab-content"></div><div id="register-content" class="tab-content"></div>`;
+            grammaire.forEach((g, i) => {
+                const card = `<div class="grammar-card"><div class="grammar-card-label">${g.label}</div><div class="grammar-card-exemple">${g.exemple}</div><div class="grammar-card-note">${g.note}</div></div>`;
+                if (i < 2) document.getElementById('syntax-content').innerHTML += card;
+                else if (i < 4) document.getElementById('style-content').innerHTML += card;
+                else document.getElementById('register-content').innerHTML += card;
+            });
+            document.querySelectorAll('#grammar-tabs .tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#grammar-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(btn.getAttribute('data-tab') + '-content').classList.add('active');
+                });
+            });
+        }
+
+        function populateQCM() {
+            const container = document.getElementById('qcm-container');
+            container.innerHTML = '';
+            qcmData.forEach((q, i) => {
+                const item = document.createElement('div');
+                item.className = 'qcm-item show';
+                item.setAttribute('data-category', q.category);
+                item.innerHTML = `
+                    <div><span class="qcm-number">#${i + 1}</span><span class="qcm-badge">${q.category}</span></div>
+                    <div class="qcm-question">${q.q}</div>
+                    <div class="qcm-options" id="qcm-options-${i}">
+                        ${q.options.map((opt, oi) => `
+                            <div class="qcm-option">
+                                <input type="radio" id="q${i}o${oi}" name="q${i}" value="${oi}" onchange="checkAnswer(${i}, ${oi})">
+                                <label for="q${i}o${oi}">${opt}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="qcm-feedback" id="qcm-feedback-${i}"></div>
+                `;
+                container.appendChild(item);
+            });
+            document.getElementById('qcm-total').textContent = qcmData.length;
+        }
+
+        function checkAnswer(qi, value) {
+            const correct = qcmData[qi].answer;
+            const feedback = document.getElementById('qcm-feedback-' + qi);
+            const isCorrect = value === correct;
+            qcmAnswers[qi] = { value, correct: isCorrect };
+            
+            if (isCorrect) {
+                feedback.className = 'qcm-feedback show qcm-correct';
+                feedback.innerHTML = '✓ Correct ! ' + qcmData[qi].explication;
+            } else {
+                feedback.className = 'qcm-feedback show qcm-incorrect';
+                feedback.innerHTML = '✗ Incorrect. ' + qcmData[qi].explication + ' <br><em>Réponse : ' + qcmData[qi].options[correct] + '</em>';
+            }
+            
+            document.querySelectorAll(`[name="q${qi}"]`).forEach(r => r.disabled = true);
+            updateQCMScore();
+        }
+
+        function filterQCM(cat) {
+            filteredCategory = cat;
+            document.querySelectorAll('.qcm-item').forEach(item => {
+                if (cat === 'all' || item.getAttribute('data-category') === cat) {
+                    item.classList.add('show');
+                } else {
+                    item.classList.remove('show');
+                }
+            });
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function updateQCMScore() {
+            const correct = Object.values(qcmAnswers).filter(a => a.correct).length;
+            document.getElementById('qcm-score-num').textContent = correct;
+            const pct = Math.round((correct / qcmData.length) * 100);
+            document.getElementById('qcm-percentage').textContent = pct;
+            document.getElementById('progress-fill').style.width = pct + '%';
+        }
+
+        function showAllAnswers() {
+            qcmData.forEach((q, i) => {
+                if (!qcmAnswers[i]) {
+                    const correct = q.answer;
+                    document.getElementById('q' + i + 'o' + correct).checked = true;
+                    const feedback = document.getElementById('qcm-feedback-' + i);
+                    feedback.className = 'qcm-feedback show qcm-correct';
+                    feedback.innerHTML = '✓ Réponse : ' + q.explication;
+                    document.querySelectorAll(`[name="q${i}"]`).forEach(r => r.disabled = true);
+                }
+            });
+            updateQCMScore();
+        }
+
+        function resetQCM() {
+            qcmAnswers = {};
+            document.querySelectorAll('.qcm-item input').forEach(r => {
+                r.checked = false;
+                r.disabled = false;
+            });
+            document.querySelectorAll('.qcm-feedback').forEach(f => {
+                f.classList.remove('show');
+                f.innerHTML = '';
+            });
+            updateQCMScore();
+        }
+
+        document.getElementById('toggle-sidebar-btn').addEventListener('click', toggleSidebar);
+        document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(link.getAttribute('data-page'));
+            });
+        });
+        document.getElementById('vocab-search').addEventListener('input', updateVocabCount);
+
+        window.addEventListener('load', () => {
+            populateVocab();
+            populateGrammar();
+            populateQCM();
+            drawNarrativeDiagram();
+        });
+    </script>
+</body>
+</html>
