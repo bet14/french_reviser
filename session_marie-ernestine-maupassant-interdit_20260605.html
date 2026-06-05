@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Français C2 — La maison vide</title>
+<style>
+:root {
+  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+  --radius: 8px;
+  --sidebar-w: 240px;
+  --transition: 0.22s ease;
+}
+[data-theme="dark"] {
+  --bg: #0f1117; --bg2: #181b24; --bg3: #1e2130;
+  --border: #2a2d3e; --text: #e2e8f0; --text-muted: #8892a4;
+  --accent: #6c8ef7; --accent2: #a78bfa;
+  --green: #34d399; --amber: #fbbf24; --red: #f87171;
+}
+[data-theme="light"] {
+  --bg: #f4f6fb; --bg2: #ffffff; --bg3: #eaecf4;
+  --border: #d0d5e8; --text: #1a1f36; --text-muted: #6b7280;
+  --accent: #4361ee; --accent2: #7c3aed;
+  --green: #059669; --amber: #d97706; --red: #dc2626;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.75; }
+
+/* TOPBAR */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; padding: 0 16px; z-index: 200;
+}
+#toggle-sidebar-btn, #theme-btn {
+  background: none; border: 1px solid var(--border); color: var(--text);
+  border-radius: var(--radius); padding: 6px 10px; cursor: pointer; font-size: 16px;
+  transition: background var(--transition);
+}
+#toggle-sidebar-btn:hover, #theme-btn:hover { background: var(--bg3); }
+#topbar-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); }
+#topbar-title em { color: var(--accent2); }
+
+/* SIDEBAR */
+#sidebar {
+  position: fixed; top: 52px; left: 0; bottom: 0; width: var(--sidebar-w);
+  background: var(--bg2); border-right: 1px solid var(--border);
+  overflow-y: auto; z-index: 100; transition: transform var(--transition);
+  padding: 16px 0;
+}
+#sidebar.hidden { transform: translateX(-240px); }
+.sidebar-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); padding: 8px 16px 4px;
+}
+.nav-link {
+  display: block; padding: 8px 16px; color: var(--text-muted); text-decoration: none;
+  font-size: 13px; cursor: pointer; transition: background var(--transition), color var(--transition);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--bg3); color: var(--text); }
+.nav-link.active { background: var(--bg3); color: var(--accent); border-left-color: var(--accent); }
+
+/* MAIN */
+#main {
+  margin-left: var(--sidebar-w); margin-top: 52px;
+  padding: 36px 48px; max-width: 860px; transition: margin-left var(--transition);
+}
+#main.expanded { margin-left: 0; }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
+h3 { font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent2); margin: 1.5rem 0 0.75rem; }
+
+/* SOURCE LABEL */
+.source-label {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 1rem;
+}
+
+/* PASSAGE */
+.passage {
+  background: var(--bg3); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: 1.5rem; font-style: italic;
+  line-height: 1.85; color: var(--text); margin-bottom: 1rem;
+}
+.passage p { margin-bottom: 0.9rem; }
+.passage p:last-child { margin-bottom: 0; }
+.citation { text-align: right; font-size: 12px; color: var(--text-muted); margin-top: 0.5rem; }
+
+/* DIAGRAM */
+.diagram-wrap {
+  position: relative; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 1.5rem 0;
+}
+#narrative-svg { display: block; width: 100%; }
+.diag-tooltip {
+  display: none; position: absolute; background: var(--bg2);
+  border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 8px 12px; font-size: 13px; max-width: 260px;
+  color: var(--text); z-index: 100; pointer-events: none;
+}
+
+/* VOCAB */
+.vocab-filter { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg2); color: var(--text); font-size: 14px; margin-bottom: 1rem; }
+.vocab-counter { font-size: 13px; color: var(--text-muted); margin-bottom: 0.75rem; }
+.vocab-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.vocab-table th { text-align: left; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.vocab-table tr:nth-child(even) td { background: var(--bg3); }
+.vocab-table tr:nth-child(odd) td { background: var(--bg2); }
+.vocab-table td { padding: 8px 12px; vertical-align: top; border-bottom: 1px solid var(--border); }
+.word { color: var(--accent); font-weight: bold; }
+.pos { color: var(--text-muted); font-style: italic; font-size: 12px; }
+
+/* GRAMMAR */
+.tab-bar { display: flex; gap: 4px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab-btn { padding: 7px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg2); color: var(--text-muted); font-size: 13px; cursor: pointer; transition: all var(--transition); }
+.tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.grammar-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 0.75rem; }
+.grammar-card .gc-label { font-weight: 600; color: var(--accent2); margin-bottom: 0.3rem; }
+.grammar-card .gc-example { font-style: italic; color: var(--text); margin-bottom: 0.3rem; font-size: 13px; }
+.grammar-card .gc-note { color: var(--text-muted); font-size: 13px; }
+
+/* QCM */
+.score-bar { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 1rem; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.score-text { font-weight: 600; font-size: 14px; }
+.progress-bar { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; min-width: 100px; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.3s; }
+.cat-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.cat-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg2); color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all var(--transition); }
+.cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.qcm-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 0.75rem; }
+.qcm-item.correct-q { border-color: var(--green); }
+.qcm-item.wrong-q { border-color: var(--red); }
+.qcm-header { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 0.75rem; }
+.qcm-num { font-weight: 700; color: var(--accent); min-width: 28px; }
+.qcm-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 10px; white-space: nowrap; margin-top: 3px; }
+.badge-comp { background: #1e3a5f; color: #6fa8dc; }
+.badge-vocab { background: #3a1e5f; color: #c084fc; }
+.badge-gram { background: #1e3a2a; color: #34d399; }
+.badge-cult { background: #3a2a1e; color: #fbbf24; }
+.qcm-text { font-size: 14px; line-height: 1.6; }
+.qcm-options { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 0.5rem; }
+.qcm-opt { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; font-size: 13px; transition: background var(--transition); }
+.qcm-opt:hover:not(.disabled) { background: var(--bg3); }
+.qcm-opt.correct { background: rgba(52,211,153,0.15); border-color: var(--green); }
+.qcm-opt.wrong { background: rgba(248,113,113,0.15); border-color: var(--red); }
+.qcm-opt.disabled { cursor: default; }
+.qcm-feedback { margin-top: 0.5rem; font-size: 13px; padding: 6px 10px; border-radius: var(--radius); }
+.fb-correct { background: rgba(52,211,153,0.1); color: var(--green); }
+.fb-wrong { background: rgba(248,113,113,0.1); color: var(--red); }
+.qcm-actions { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+.btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg2); color: var(--text); font-size: 13px; cursor: pointer; transition: background var(--transition); }
+.btn:hover { background: var(--bg3); }
+.btn-accent { background: var(--accent); color: white; border-color: var(--accent); }
+.btn-accent:hover { opacity: 0.9; }
+
+/* APROPOS */
+.info-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.info-card .ic-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.4rem; }
+.info-card .ic-val { font-weight: 600; }
+
+@media (max-width: 700px) {
+  #sidebar { transform: translateX(-240px); }
+  #sidebar.hidden { transform: translateX(-240px); }
+  #sidebar.mobile-show { transform: translateX(0); }
+  #main { margin-left: 0; padding: 24px 16px; }
+  #main.expanded { margin-left: 0; }
+  .qcm-options { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <button id="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+  <div id="topbar-title">🇫🇷 Session Français C2 — <em>La maison vide</em>, Laurent Mauvignier</div>
+  <button id="theme-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<nav id="sidebar">
+  <div class="sidebar-label">Navigation</div>
+  <a class="nav-link active" onclick="showPage('extrait')">📄 Extrait</a>
+  <a class="nav-link" onclick="showPage('resume')">🗺 Résumé &amp; Diagram</a>
+  <a class="nav-link" onclick="showPage('vocab')">📚 Vocabulaire</a>
+  <a class="nav-link" onclick="showPage('grammaire')">✍️ Grammaire</a>
+  <a class="nav-link" onclick="showPage('qcm')">🎯 QCM (60 questions)</a>
+  <a class="nav-link" onclick="showPage('apropos')">ℹ️ À propos</a>
+</nav>
+
+<main id="main">
+
+<!-- PAGE 1: EXTRAIT -->
+<div class="page active" id="page-extrait">
+  <div class="source-label">La maison vide — Laurent Mauvignier · Chapitre ~12-13</div>
+  <h2>Extrait : Marie-Ernestine et la lecture interdite</h2>
+  <div class="passage">
+    <p>Déjà, en le feuilletant, Marie-Ernestine se demande si tout ça n'est pas un peu dérangeant, et lorsqu'il lui tend le volume de Maupassant, elle redoute que leurs mains s'approchent trop près l'une de l'autre ; elle touche la couverture en toile grise, elle sent qu'il ne faudrait pas, que ce livre fait peut-être partie de ceux dont, au couvent, on nous prévient qu'ils sont des objets plus pernicieux que des mauvais conseils et des mauvaises rencontres, car ces ouvrages se croient fondés à juger les turpitudes de nos contemporains alors qu'en vérité ils nous incitent à nous complaire dans les spectacles dégradants de la vie moderne. Pour autant, elle commence la lecture dès qu'elle s'installe dans le coupé qui l'attend sur le trottoir de la rue Montaigne. Elle n'entend pas les pavés sous les roues, pas le fouet qui claque ni la voix éraillée de ce bon vieil Hégésippe qui vient tous les samedis chercher la demoiselle au couvent pour l'emmener au cours de piano. Ce matin quand elle revient avec son premier livre dans la main, Hégésippe peut se raconter que la petite Boule d'Or de Firmin est décidément une élève bien studieuse, il peut s'imaginer qu'elle plonge ses yeux dans son missel et qu'elle lit les Évangiles avant de retrouver le couvent et les prie-Dieu, il peut accélérer la cadence parce qu'il pense que nous sommes en retard et que la leçon de piano a duré plus longtemps que d'habitude ; dans son dos, une jeune fille inoffensive est en train de mettre le feu au monde auquel elle a donné toute sa vie depuis bientôt huit ans.</p>
+    <p>En découvrant Maupassant, elle sent que quelque chose la terrifie et la subjugue – elle va devoir tricher et manigancer pour lire en cachette, elle n'ignore pas que les lectures interdites pourraient mener à son exclusion, mais bientôt les années du couvent seront un souvenir et c'est devant elle qu'elle veut regarder, que la vie se dessine, et peu importe si on lui inflige l'humiliation de la déconsidérer comme tout le monde entreprend de le faire parmi les professeurs, les sœurs et, bien sûr, les élèves. Elle sait bloquer sa respiration. Vivre en apnée jusqu'au bord de l'évanouissement. Elle n'entend rien. Elle prie souvent. Elle prie beaucoup et croit que Jésus la comprend personnellement et qu'il interfère pour elle auprès de Dieu. Et c'est à Jésus seulement qu'elle se confesse, dans le secret non pas du confessionnal mais de son âme, du fond de son lit, égrenant son chapelet, à Jésus seul qu'elle raconte que parfois, la nuit, elle ressent la présence du Horla, mais que celui-ci lui souffle dans les cheveux et que ses mains la caressent – c'est tendre et doux, tellement doux, elle s'abandonne au sommeil, elle rêve.</p>
+    <p>Plus tard elle lit un roman qui la trouble beaucoup, qu'elle rend presque avec dégoût à Florentin car elle n'a pas pu s'empêcher de se demander pourquoi il lui a donné cette histoire immonde, ce livre troublant jusqu'à l'écœurement : deux amants qui tuent le mari et sont poursuivis par son fantôme ; elle lui en veut parce qu'elle a rêvé, une nuit, que c'était Marie-Clarté qui tombait à l'eau et qui se noyait sous l'indifférence de Florentin et d'elle-même, eux qui la regardaient se noyer, crier, eux qui attendaient de la voir sombrer, guettant les dernières suffocations, jubilant – le combat perdu d'avance – les bras qui se débattent – la lutte – la défaite – le corps entier liquide à son tour qui s'enfonce et disparaît sous l'eau – et eux deux sur le canot qui bientôt se réjouissent d'entendre la dernière bulle d'air remontant du fond de la rivière. Elle a prié Jésus de lui pardonner ce cauchemar. Lorsqu'elle lui avait dit ne pas avoir aimé, il avait semblé déçu, oui, c'est vrai, ce n'est pas ce qu'on vous fait étudier dans le monde de Jésus, et elle avait entendu la pointe d'ironie – pointe qui s'était enfoncée en elle jusqu'au cœur.</p>
+  </div>
+  <div class="citation">— Laurent Mauvignier, <em>La maison vide</em></div>
+</div>
+
+<!-- PAGE 2: RÉSUMÉ & DIAGRAM -->
+<div class="page" id="page-resume">
+  <h2>Résumé &amp; Progression narrative</h2>
+  <p style="margin-bottom:1.5rem; color:var(--text);">Florentin tend à Marie-Ernestine, élève pieuse d'un couvent, un volume de Maupassant. Tiraillée entre la transgression et le désir, elle commence à lire en cachette dans le coupé qui la ramène au couvent, tandis que le cocher Hégésippe l'imagine absorbée dans un missel. La découverte de Maupassant la « terrifie et la subjugue » simultanément : elle apprend à vivre en double, extérieurement conforme, intérieurement embrasée. La présence du <em>Horla</em> maupassantien s'immisce jusque dans ses nuits, brouillant les frontières entre dévotion et désir. Un second roman, <em>Thérèse Raquin</em>, déclenche un cauchemar où elle assiste en complice à la noyade de Marie-Clarté. L'ironie acérée de Florentin — « ce n'est pas ce qu'on vous fait étudier dans le monde de Jésus » — s'enfonce en elle comme une lame, révélant la profondeur de la fissure ouverte dans sa foi.</p>
+  <h3>Diagram narratif</h3>
+  <div class="diagram-wrap">
+    <svg id="narrative-svg" height="110"></svg>
+    <div id="diagram-tooltip" class="diag-tooltip"></div>
+  </div>
+</div>
+
+<!-- PAGE 3: VOCABULAIRE -->
+<div class="page" id="page-vocab">
+  <h2>Vocabulaire niveau C2</h2>
+  <div class="vocab-counter" id="vocab-counter">38 mots · niveau C2</div>
+  <input class="vocab-filter" type="text" placeholder="Rechercher un mot…" oninput="filterVocab(this.value)">
+  <table class="vocab-table" id="vocab-table">
+    <thead><tr><th>Mot</th><th>Classe</th><th>Définition</th></tr></thead>
+    <tbody id="vocab-body"></tbody>
+  </table>
+</div>
+
+<!-- PAGE 4: GRAMMAIRE -->
+<div class="page" id="page-grammaire">
+  <h2>Grammaire &amp; Style</h2>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('gram','syntaxe')">Structures syntaxiques</button>
+    <button class="tab-btn" onclick="switchTab('gram','figures')">Figures de style</button>
+    <button class="tab-btn" onclick="switchTab('gram','registre')">Registre &amp; style</button>
+  </div>
+  <div id="gram-syntaxe" class="tab-panel active" id="gram-syntaxe"></div>
+  <div id="gram-figures" class="tab-panel"></div>
+  <div id="gram-registre" class="tab-panel"></div>
+</div>
+
+<!-- PAGE 5: QCM -->
+<div class="page" id="page-qcm">
+  <h2>60 Questions à choix multiples</h2>
+  <div class="score-bar">
+    <span class="score-text" id="score-text">0 / 0 réponses</span>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <span id="score-pct" style="font-size:13px;color:var(--accent);font-weight:700;">–</span>
+  </div>
+  <div class="qcm-actions">
+    <button class="btn btn-accent" onclick="showAllAnswers()">Voir toutes les réponses</button>
+    <button class="btn" onclick="resetQCM()">Réinitialiser</button>
+  </div>
+  <div class="cat-filters">
+    <button class="cat-btn active" onclick="filterQCM('Tous')">Tous</button>
+    <button class="cat-btn" onclick="filterQCM('Compréhension')">Compréhension</button>
+    <button class="cat-btn" onclick="filterQCM('Vocabulaire')">Vocabulaire</button>
+    <button class="cat-btn" onclick="filterQCM('Grammaire')">Grammaire</button>
+    <button class="cat-btn" onclick="filterQCM('Culture')">Culture</button>
+  </div>
+  <div id="qcm-container"></div>
+</div>
+
+<!-- PAGE 6: À PROPOS -->
+<div class="page" id="page-apropos">
+  <h2>À propos de cette session</h2>
+  <div class="info-card"><div class="ic-label">Source</div><div class="ic-val">La maison vide — Laurent Mauvignier (Z-Library)</div></div>
+  <div class="info-card"><div class="ic-label">Chapitre / position</div><div class="ic-val">Paragraphes 307–309 — Marie-Ernestine &amp; la lecture interdite</div></div>
+  <div class="info-card"><div class="ic-label">Numéro de session</div><div class="ic-val">Session #4 · 5 juin 2026</div></div>
+  <div class="info-card"><div class="ic-label">Niveau</div><div class="ic-val">DELF C2 — compréhension, vocabulaire littéraire, style</div></div>
+  <div class="info-card">
+    <div class="ic-label">Conseil méthodologique</div>
+    <div style="font-size:14px;color:var(--text);margin-top:0.4rem;">
+      <strong>1. Lisez l'extrait à voix haute</strong> pour vous habituer aux longues phrases enchâssées de Mauvignier.<br><br>
+      <strong>2. Vocabulaire :</strong> couvrez la colonne Définition et testez-vous. Concentrez-vous sur les mots à forte valeur stylistique (<em>pernicieux, turpitudes, subjuguer, manigancer, écœurement</em>).<br><br>
+      <strong>3. QCM :</strong> commencez par Compréhension, puis Vocabulaire. Les questions de Grammaire et Culture exigent une relecture attentive de l'extrait.<br><br>
+      <strong>4. Après le QCM</strong>, revenez à la page Grammaire et repérez chaque structure dans le texte original.
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const vocabData = [
+  ["feuilletant","v. part. prés.","Feuilleter : parcourir rapidement les pages d'un livre sans lire intégralement."],
+  ["pernicieux","adj.","Qui cause un grave préjudice de manière insidieuse ; néfaste, nuisible moralement."],
+  ["turpitudes","n.f. pl.","Actes honteux et dégradants ; conduite vile contraire à la morale."],
+  ["se complaire","v. pron.","Trouver satisfaction, plaisir à quelque chose (souvent de répréhensible)."],
+  ["dégradants","adj.","Qui abaisse la dignité, qui avilit moralement ou socialement."],
+  ["coupé","n.m.","Voiture hippomobile fermée à deux portes et deux places, utilisée au XIXe s."],
+  ["éraillée","adj.","(voix) Rauque, enrouée, comme égratignée."],
+  ["missel","n.m.","Livre liturgique contenant les textes des messes catholiques."],
+  ["prie-Dieu","n.m.","Meuble de dévotion sur lequel on s'agenouille pour prier."],
+  ["subjuguer","v. tr.","Exercer un ascendant irrésistible sur quelqu'un ; fasciner, ensorceler."],
+  ["manigancer","v. tr.","Tramer secrètement ; combiner des manœuvres trompeuses."],
+  ["inflige","v. tr. (infliger)","Faire subir quelque chose de pénible à quelqu'un."],
+  ["déconsidérer","v. tr.","Faire perdre l'estime, le respect que l'on porte à quelqu'un."],
+  ["apnée","n.f.","Suspension volontaire ou pathologique de la respiration."],
+  ["évanouissement","n.m.","Perte de connaissance passagère ; syncope."],
+  ["confessionnal","n.m.","Meuble d'église où le prêtre reçoit les confessions."],
+  ["égrenant","v. part. prés.","Égrener : faire glisser grain par grain (chapelet) ; ici, prier bead by bead."],
+  ["chapelet","n.m.","Objet de dévotion catholique composé de grains enfilés pour compter les prières."],
+  ["le Horla","n.m.","Créature fantastique imaginée par Maupassant dans sa nouvelle éponyme (1887), être invisible qui vampirise le narrateur."],
+  ["immonde","adj.","D'une saleté ou d'une bassesse morale extrêmes ; répugnant, abject."],
+  ["écœurement","n.m.","Profond dégoût, répulsion physique ou morale."],
+  ["fantôme","n.m.","Apparition d'un mort ; spectre."],
+  ["suffocations","n.f. pl.","Sensations d'étouffement ; ici, les derniers souffles d'agonie."],
+  ["jubilant","adj./v.","Qui éprouve une joie exubérante, souvent déplacée."],
+  ["sombrer","v. intr.","Couler à pic (navire, personne) ; fig. s'enfoncer dans un état négatif."],
+  ["canot","n.m.","Petite embarcation légère, à rames ou à moteur."],
+  ["cauchemar","n.m.","Rêve pénible, effrayant ; par ext. situation angoissante."],
+  ["pointe d'ironie","loc. n.f.","Légère touche d'ironie, filement imperceptible mais blessant."],
+  ["enfoncée","adj./part.","Qui a pénétré profondément ; ici au sens figuré : blessure morale."],
+  ["inoffensive","adj.","Qui ne présente aucun danger, aucune menace apparente."],
+  ["pernicieux","adj.","Très nuisible par ses effets, souvent de manière cachée ou progressive."],
+  ["redouter","v. tr.","Craindre vivement quelque chose ou quelqu'un."],
+  ["trahissant","v. part. prés.","Trahir : révéler involontairement quelque chose que l'on voulait cacher."],
+  ["stratégies","n.f. pl.","Ensemble de moyens employés pour atteindre un but ; plans d'action."],
+  ["fondés à","loc.","Ayant le droit, justifiés à (+ inf.) ; légitimes pour faire quelque chose."],
+  ["ouvrages","n.m. pl.","Livres, œuvres littéraires ou intellectuelles."],
+  ["studieuse","adj.","Qui aime étudier ; appliquée dans ses études."],
+  ["interfère","v. (interférer)","S'immiscer dans quelque chose pour en modifier le cours."]
+];
+
+const narrativeSteps = [
+  { label: "Le don du livre", desc: "Florentin tend à Marie-Ernestine un volume de Maupassant ; elle redoute le contact des mains et sent la transgression potentielle du livre." },
+  { label: "Lecture clandestine", desc: "Dans le coupé, hors de vue du couvent, elle commence à lire en cachette tandis qu'Hégésippe croit la voir prier dans son missel." },
+  { label: "Terreur & fascination", desc: "Maupassant la subjugue autant qu'il la terrifie ; elle apprend à vivre en double — conforme à l'extérieur, embrasée à l'intérieur." },
+  { label: "Le Horla nocturne", desc: "La créature fantastique de Maupassant envahit ses nuits ; elle se confesse à Jésus seul de cette présence troublante et sensuelle." },
+  { label: "Le cauchemar coupable", desc: "Un second roman (Thérèse Raquin de Zola) provoque un rêve où elle et Florentin regardent se noyer Marie-Clarté avec une jubilation inavouable." },
+  { label: "L'ironie comme blessure", desc: "Quand elle avoue ne pas avoir aimé, Florentin ironise : « ce n'est pas ce qu'on vous fait étudier dans le monde de Jésus » — la pointe s'enfonce jusqu'au cœur." }
+];
+
+const gramData = {
+  syntaxe: [
+    { label: "✦ Phrase-fleuve à propositions enchâssées", example: "Hégésippe peut se raconter que… il peut s'imaginer que… il peut accélérer la cadence parce que…", note: "Mauvignier accumule les subordonnées dépendant d'un même verbe modal pour mimer la durée et la routine du trajet, créant un effet d'hypnose syntaxique." },
+    { label: "✦ Tiret de rupture et énumération haletante", example: "le combat perdu d'avance – les bras qui se débattent – la lutte – la défaite – le corps entier liquide…", note: "La fragmentation syntaxique par tirets mime le mouvement frénétique de la noyade et l'angoisse onirique. Chaque fragment est une image arrêtée." },
+    { label: "✦ Subjonctif d'obligation implicite", example: "elle sent qu'il ne faudrait pas", note: "Le conditionnel passé à valeur modale (faudrait) dans une complétive traduit la résistance intérieure et le sentiment de transgression." },
+    { label: "✦ Discours indirect libre", example: "Hégésippe peut se raconter que la petite Boule d'Or de Firmin est décidément une élève bien studieuse", note: "Le narrateur adopte la perspective du cocher par le discours indirect libre, créant une ironie tragique : Hégésippe se raconte une fiction tandis que la réalité est tout autre." },
+    { label: "✦ Reprise anaphorique (anaphore verbale)", example: "il peut se raconter… il peut s'imaginer… il peut accélérer", note: "L'anaphore « il peut » rythme la progression et isole les trois illusions du cocher en les rendant équivalentes." },
+    { label: "✦ Infinitif substantivé à valeur programmatique", example: "Vivre en apnée jusqu'au bord de l'évanouissement.", note: "L'infinitif sans sujet exprimé crée une maxime existentielle : c'est la règle de vie que Marie-Ernestine se fixe, dépassant l'anecdote pour toucher à l'universel." }
+  ],
+  figures: [
+    { label: "✦ Métaphore filée de l'embrasement", example: "dans son dos, une jeune fille inoffensive est en train de mettre le feu au monde auquel elle a donné toute sa vie", note: "L'incendie métaphorique renverse le statut de Marie-Ernestine : ce qu'on croyait inoffensif est le foyer d'une révolution intérieure. Le « monde » ici est son propre système de valeurs." },
+    { label: "✦ Oxymore du double mouvement", example: "quelque chose la terrifie et la subjugue", note: "Terreur et fascination coexistent sans résolution : l'oxymore caractérise la découverte littéraire comme une expérience sublime au sens kantien (mêlée de crainte et d'attrait)." },
+    { label: "✦ Hypotypose de la noyade", example: "guettant les dernières suffocations, jubilant – le combat perdu d'avance – les bras qui se débattent…", note: "L'hypotypose (description si vive qu'elle donne l'illusion de voir la scène) sert ici à rendre la violence du rêve coupable avec une netteté presque cinématographique." },
+    { label: "✦ Antiphrase ironique (ironie dramatique)", example: "ce n'est pas ce qu'on vous fait étudier dans le monde de Jésus", note: "La formule de Florentin constitue une antiphrase : il énonce littéralement la vérité conventionnelle pour en souligner l'absurdité depuis la perspective laïque." },
+    { label: "✦ Métaphore de la lame (la pointe d'ironie)", example: "elle avait entendu la pointe d'ironie – pointe qui s'était enfoncée en elle jusqu'au cœur", note: "La lexicalisation de « pointe » (d'ironie) est réactivée littéralement : l'ironie devient arme blanche. La répétition du mot « pointe » assure la continuité de l'image." }
+  ],
+  registre: [
+    { label: "✦ Registre lyrique-sombre (gothique bourgeois)", example: "elle ressent la présence du Horla, mais que celui-ci lui souffle dans les cheveux et que ses mains la caressent", note: "Le roman maupassantien contamina l'imaginaire de l'héroïne : le Horla fantomatique se superpose à ses pulsions refoulées. Mauvignier crée ainsi une mise en abyme du pouvoir littéraire." },
+    { label: "✦ Alternance registre dévot / registre transgressif", example: "Elle prie beaucoup et croit que Jésus la comprend personnellement / elle va devoir tricher et manigancer", note: "La coexistence de la dévotion sincère et de la ruse narrative révèle la double vie que la lecture illicite impose à Marie-Ernestine. La langue religieuse et la langue de la ruse se juxtaposent sans heurt." },
+    { label: "✦ Ironie narrative distanciée", example: "ce bon vieil Hégésippe", note: "L'adjectif affectueux « bon vieil » relève d'une ironie douce : le narrateur adopte le registre populaire-bienveillant pour souligner l'aveuglement bienveillant du cocher." },
+    { label: "✦ Présent historique / imparfait d'immersion", example: "elle lit un roman qui la trouble beaucoup, qu'elle rend presque avec dégoût à Florentin", note: "Le présent historique crée l'immersion dans la mémoire familiale reconstituée, tandis que l'imparfait dans le rêve installe une durée trouble, celle du souvenir onirique." }
+  ]
+};
+
+const qcmData = [
+  // ── COMPRÉHENSION (20) ──────────────────────────────────────────────────────
+  { id:1, cat:"Compréhension", q:"Pourquoi Marie-Ernestine redoute-t-elle que leurs mains s'approchent lors de l'échange du livre ?",
+    opts:["Elle craint de tacher le livre","Le contact physique avec Florentin est chargé d'une tension affective","Elle a les mains froides","Le livre est trop lourd"],
+    ans:1, exp:"Le texte joue sur la proximité des mains comme signe d'une tension entre eux deux, au-delà du simple échange d'un volume." },
+  { id:2, cat:"Compréhension", q:"Selon le couvent, pourquoi les ouvrages comme ceux de Maupassant sont-ils dangereux ?",
+    opts:["Ils sont trop longs à lire","Ils contiennent des erreurs historiques","Ils incitent à se complaire dans des spectacles dégradants","Ils sont écrits en argot"],
+    ans:2, exp:"Le texte cite explicitement : « ces ouvrages nous incitent à nous complaire dans les spectacles dégradants de la vie moderne »." },
+  { id:3, cat:"Compréhension", q:"Où Marie-Ernestine commence-t-elle à lire le livre de Maupassant ?",
+    opts:["Dans sa chambre au couvent","Dans la salle de piano","Dans le coupé qui la ramène au couvent","Sur le trottoir de la rue Montaigne"],
+    ans:2, exp:"« Elle commence la lecture dès qu'elle s'installe dans le coupé qui l'attend sur le trottoir de la rue Montaigne. »" },
+  { id:4, cat:"Compréhension", q:"Qu'imagine Hégésippe que lit Marie-Ernestine pendant le trajet ?",
+    opts:["Un roman de Zola","Son cours de piano","Les Évangiles dans son missel","Une lettre de sa famille"],
+    ans:2, exp:"« il peut s'imaginer qu'elle plonge ses yeux dans son missel et qu'elle lit les Évangiles »." },
+  { id:5, cat:"Compréhension", q:"La phrase « une jeune fille inoffensive est en train de mettre le feu au monde » signifie que :",
+    opts:["Elle provoque un incendie réel","Elle déclenche une révolution intérieure qui va tout changer en elle","Elle est en train de brûler ses livres","Elle est maladroite et imprudente"],
+    ans:1, exp:"La métaphore désigne la révolution silencieuse que la lecture opère dans les valeurs et l'identité de Marie-Ernestine." },
+  { id:6, cat:"Compréhension", q:"Comment Marie-Ernestine tente-t-elle de survivre à la double vie que lui impose la lecture ?",
+    opts:["En confiant ses lectures à Marie-Clarté","En priant à voix haute","En bloquant sa respiration, en vivant en apnée","En arrêtant complètement de lire"],
+    ans:2, exp:"« Elle sait bloquer sa respiration. Vivre en apnée jusqu'au bord de l'évanouissement. »" },
+  { id:7, cat:"Compréhension", q:"À qui Marie-Ernestine se confesse-t-elle secrètement ?",
+    opts:["Au prêtre au confessionnal","À Florentin","À Marie-Clarté","À Jésus seul, dans le secret de son âme"],
+    ans:3, exp:"« Et c'est à Jésus seulement qu'elle se confesse, dans le secret non pas du confessionnal mais de son âme. »" },
+  { id:8, cat:"Compréhension", q:"Que représente le Horla dans le vécu nocturne de Marie-Ernestine ?",
+    opts:["Une figure d'autorité du couvent","Une présence effrayante mais caressante qui trouble son sommeil","Un souvenir d'enfance","Le fantôme de sa mère"],
+    ans:1, exp:"Elle ressent le Horla comme une présence qui « lui souffle dans les cheveux et dont les mains la caressent » — troublante et douce." },
+  { id:9, cat:"Compréhension", q:"Quel est le sujet du roman qui provoque un dégoût presque physique chez Marie-Ernestine ?",
+    opts:["Un prêtre qui quitte le couvent","Un marin perdu en mer","Deux amants qui tuent le mari et sont poursuivis par son fantôme","Une femme qui s'enfuit du couvent"],
+    ans:2, exp:"« deux amants qui tuent le mari et sont poursuivis par son fantôme » — il s'agit implicitement de Thérèse Raquin de Zola." },
+  { id:10, cat:"Compréhension", q:"Dans le cauchemar de Marie-Ernestine, quel est son rôle vis-à-vis de Marie-Clarté ?",
+    opts:["Elle essaie de la sauver","Elle ne la voit pas se noyer","Elle assiste passivement, voire jubile, à sa noyade","Elle alerte les secours"],
+    ans:2, exp:"« eux qui la regardaient se noyer, crier, eux qui attendaient de la voir sombrer, guettant les dernières suffocations, jubilant »." },
+  { id:11, cat:"Compréhension", q:"Pourquoi Marie-Ernestine rend-elle le second roman à Florentin « presque avec dégoût » ?",
+    opts:["Le roman était trop long","Elle l'a déjà lu","Il a provoqué en elle des rêves coupables et une violence imaginaire qui l'effraie","Elle n'a pas aimé le style"],
+    ans:2, exp:"Le roman a déclenché un cauchemar où elle participait à la mort de Marie-Clarté, ce qui la remplit de honte et de dégoût envers elle-même." },
+  { id:12, cat:"Compréhension", q:"Comment Florentin réagit-il quand Marie-Ernestine dit ne pas avoir aimé le roman ?",
+    opts:["Il est soulagé","Il lui propose un autre livre","Il semble déçu et use d'une pointe d'ironie","Il lui explique longuement l'œuvre"],
+    ans:2, exp:"« il avait semblé déçu » et sa réponse contient « la pointe d'ironie » qui blesse Marie-Ernestine." },
+  { id:13, cat:"Compréhension", q:"Quelle est la signification de la formule « la pointe qui s'était enfoncée en elle jusqu'au cœur » ?",
+    opts:["Elle a reçu un coup physique","L'ironie de Florentin l'a blessée profondément","Elle a été piquée par une épine","Elle a lu une phrase poétique"],
+    ans:1, exp:"La métaphore de la lame réactivée à partir de « pointe d'ironie » signale une blessure morale profonde causée par les mots de Florentin." },
+  { id:14, cat:"Compréhension", q:"Que fait Marie-Ernestine après avoir fait le cauchemar de la noyade ?",
+    opts:["Elle écrit à Marie-Clarté","Elle avertit Florentin","Elle prie Jésus de lui pardonner le cauchemar","Elle arrête de lire définitivement"],
+    ans:2, exp:"« Elle a prié Jésus de lui pardonner ce cauchemar. »" },
+  { id:15, cat:"Compréhension", q:"Quelle institution encadre la vie de Marie-Ernestine dans cet extrait ?",
+    opts:["Une école laïque","Un lycée public","Un couvent religieux","Une académie de musique"],
+    ans:2, exp:"Elle vit dans un couvent dont les religieuses contrôlent ses lectures et ses sorties." },
+  { id:16, cat:"Compréhension", q:"Quel est le rôle d'Hégésippe dans la vie de Marie-Ernestine ?",
+    opts:["Son professeur de piano","Son père adoptif","Le cocher qui la transporte du couvent au cours de piano chaque samedi","Le bibliothécaire du couvent"],
+    ans:2, exp:"« ce bon vieil Hégésippe qui vient tous les samedis chercher la demoiselle au couvent pour l'emmener au cours de piano »." },
+  { id:17, cat:"Compréhension", q:"Quelle est la réaction immédiate de Marie-Ernestine à la découverte de Maupassant ?",
+    opts:["Une indifférence totale","Un ennui profond","Un sentiment double : terreur et subjugation simultanées","Un rejet immédiat du livre"],
+    ans:2, exp:"« elle sent que quelque chose la terrifie et la subjugue » — les deux émotions opposées coexistent." },
+  { id:18, cat:"Compréhension", q:"Pourquoi le texte mentionne-t-il que les lectures interdites « pourraient mener à son exclusion » ?",
+    opts:["Pour montrer que lire est physiquement dangereux","Pour souligner le risque réel que prend Marie-Ernestine malgré tout","Pour indiquer qu'elle veut quitter le couvent","Pour montrer que Florentin la manipule"],
+    ans:1, exp:"Le risque d'exclusion est réel mais Marie-Ernestine le minimise, préférant regarder vers l'avenir plutôt que vers les règles." },
+  { id:19, cat:"Compréhension", q:"Le surnom « petite Boule d'Or de Firmin » désigne :",
+    opts:["Un personnage de roman","Marie-Ernestine vue par Hégésippe comme la chère élève de son maître Firmin","Une sainte du couvent","Marie-Clarté"],
+    ans:1, exp:"Hégésippe se raconte que Marie-Ernestine est « la petite Boule d'Or de Firmin », autrement dit l'élève chérie et précieuse de son professeur de piano Firmin." },
+  { id:20, cat:"Compréhension", q:"Au fil de l'extrait, la relation de Marie-Ernestine à la lecture passe de :",
+    opts:["La confiance à la méfiance","L'hésitation craintive à une transgression assumée puis à la culpabilité onirique","L'enthousiasme à la haine","L'ignorance à la maîtrise complète"],
+    ans:1, exp:"Elle passe de la crainte du livre (pernicieux), à la lecture clandestine fascinée, puis à la culpabilité nocturne — trois étapes d'une transgression progressive." },
+
+  // ── VOCABULAIRE (20) ────────────────────────────────────────────────────────
+  { id:21, cat:"Vocabulaire", q:"Dans le texte, « pernicieux » signifie :",
+    opts:["Amusant et léger","Nuisible de manière insidieuse et profonde","Rare et précieux","Bruyant et agité"],
+    ans:1, exp:"Un objet « pernicieux » cause un tort grave souvent sans qu'on s'en aperçoive immédiatement — ici les livres compromettent la vertu." },
+  { id:22, cat:"Vocabulaire", q:"« Les turpitudes de nos contemporains » désigne :",
+    opts:["Les prouesses intellectuelles","Les habitudes culinaires","Les comportements honteux et immoraux","Les œuvres d'art modernes"],
+    ans:2, exp:"Du latin turpitudo (honte) : les turpitudes désignent les actes vils, dégradants." },
+  { id:23, cat:"Vocabulaire", q:"« Se complaire dans les spectacles dégradants » signifie :",
+    opts:["Fuir les mauvais spectacles","Analyser objectivement les œuvres immorales","Trouver une satisfaction coupable dans les choses basses","S'ennuyer dans les représentations"],
+    ans:2, exp:"Se complaire : prendre plaisir à quelque chose de répréhensible, s'y attarder avec satisfaction." },
+  { id:24, cat:"Vocabulaire", q:"Une voix « éraillée » est :",
+    opts:["Très douce et mélodieuse","Rauque, enrouée, comme égratignée","Très forte et tonitruante","Chuchotante et secrète"],
+    ans:1, exp:"Éraillé vient de érailler (griffer, rayer) : une voix éraillée semble avoir été abîmée, elle est rauque." },
+  { id:25, cat:"Vocabulaire", q:"« Subjuguer » quelqu'un, c'est :",
+    opts:["Le blesser physiquement","L'ignorer complètement","Le soumettre par un ascendant irrésistible, le fasciner","Le récompenser pour ses mérites"],
+    ans:2, exp:"Subjuguer vient de sub jugum (sous le joug) : c'est dominer, fasciner au point de rendre incapable de résistance." },
+  { id:26, cat:"Vocabulaire", q:"« Manigancer » quelque chose, c'est :",
+    opts:["Le préparer ouvertement","Le confier à un ami de confiance","Le tramer secrètement avec ruse","L'oublier rapidement"],
+    ans:2, exp:"Manigancer : combiner des manœuvres secrètes et souvent trompeuses pour arriver à ses fins." },
+  { id:27, cat:"Vocabulaire", q:"Vivre « en apnée » signifie littéralement :",
+    opts:["Nager sous l'eau","Vivre en suspendant sa respiration","Marcher rapidement","Travailler sans interruption"],
+    ans:1, exp:"L'apnée est la suspension de la respiration ; métaphoriquement, Marie-Ernestine retient tout, bloque ses émotions." },
+  { id:28, cat:"Vocabulaire", q:"Un « missel » est :",
+    opts:["Un instrument de musique liturgique","Un livre de prières contenant les textes des messes","Un type de broderie monastique","Un vêtement de cérémonie"],
+    ans:1, exp:"Le missel est le livre liturgique utilisé à la messe, contenant épîtres, évangiles et prières." },
+  { id:29, cat:"Vocabulaire", q:"Que signifie « égrener son chapelet » ?",
+    opts:["Nettoyer le chapelet avec soin","Perdre les grains d'un chapelet","Faire glisser grain à grain les perles du chapelet en priant","Compter de l'argent"],
+    ans:2, exp:"Égrener : faire passer grain par grain ; égrener son chapelet = réciter les prières en faisant glisser chaque bead." },
+  { id:30, cat:"Vocabulaire", q:"Un roman « immonde » est :",
+    opts:["Universel et cosmopolite","D'une bassesse ou d'une saleté morale extrêmes","Écrit dans une langue inconnue","Interdit à cause de son prix"],
+    ans:1, exp:"Immonde (du latin immundus, impur) : d'une saleté ou d'une abjection morale repoussante." },
+  { id:31, cat:"Vocabulaire", q:"L'« écœurement » exprimé par Marie-Ernestine correspond à :",
+    opts:["Une admiration enthousiaste","Un ennui passager","Un profond dégoût, une répulsion quasi physique","Une curiosité intellectuelle"],
+    ans:2, exp:"L'écœurement est la sensation de révulsion, de nausée morale ou physique — ici mêlée de fascination coupable." },
+  { id:32, cat:"Vocabulaire", q:"« Jubilant » dans la séquence du cauchemar signifie :",
+    opts:["Pleurant de tristesse","Éprouvant une joie exubérante, souvent déplacée ou cruelle","Criant de peur","Restant silencieux"],
+    ans:1, exp:"Jubiler : exprimer une joie intense ; ici, la connotation est sinistre car la joie porte sur la mort d'une tierce personne." },
+  { id:33, cat:"Vocabulaire", q:"Une « pointe d'ironie » désigne :",
+    opts:["Un instrument tranchant","Un pic de montagne","Une légère touche d'ironie piquante, imperceptible mais blessante","Une figure de rhétorique très explicite"],
+    ans:2, exp:"La « pointe » est la partie aiguë ; une pointe d'ironie est une ironie discrète mais acérée — le texte réactive ensuite la métaphore de la lame." },
+  { id:34, cat:"Vocabulaire", q:"« Déconsidérer » quelqu'un signifie :",
+    opts:["Le féliciter publiquement","Lui faire perdre l'estime et le respect d'autrui","L'encourager dans ses études","Le nommer à un poste de responsabilité"],
+    ans:1, exp:"Déconsidérer : nuire à la considération, à la réputation dont jouit quelqu'un." },
+  { id:35, cat:"Vocabulaire", q:"Le mot « coupé » dans cet extrait désigne :",
+    opts:["Un vêtement taillé avec soin","Un voiture hippomobile fermée à deux portes, de la fin du XIXe s.","Une coupe de cheveux à la mode","Un mets culinaire"],
+    ans:1, exp:"Le coupé est une voiture fermée à cheval utilisée au XIXe siècle, équivalent du taxi privé de l'époque." },
+  { id:36, cat:"Vocabulaire", q:"Le terme « prie-Dieu » désigne :",
+    opts:["Une statue de la Vierge","Un meuble sur lequel on s'agenouille pour prier","Un cantique liturgique","Un recueil de prières imprimées"],
+    ans:1, exp:"Le prie-Dieu est un petit meuble de dévotion — pupitre bas et agenouilloir — sur lequel le fidèle se recueille." },
+  { id:37, cat:"Vocabulaire", q:"Que signifie être « fondés à juger » quelque chose ?",
+    opts:["Être incompétents pour juger","Être légitimes, autorisés à porter un jugement","Être obligés de juger malgré eux","Être indifférents au jugement"],
+    ans:1, exp:"Fondé à + inf. : avoir le droit, la légitimité pour faire quelque chose — ici les ouvrages se croient à tort autorisés à juger la morale." },
+  { id:38, cat:"Vocabulaire", q:"« Inoffensive » signifie qu'elle :",
+    opts:["Est dangereuse","N'est pas offensive, ne présente aucune menace apparente","Est blessée physiquement","A une personnalité forte"],
+    ans:1, exp:"Inoffensif : qui ne cause aucun mal — l'ironie du texte est que cette jeune fille prétendument inoffensive « met le feu au monde »." },
+  { id:39, cat:"Vocabulaire", q:"Le verbe « trahir » dans « un mouvement trahissant un allant » signifie ici :",
+    opts:["Dénoncer aux autorités","Révéler involontairement quelque chose que l'on voulait cacher","Détruire une amitié","Remplacer quelqu'un dans une tâche"],
+    ans:1, exp:"Trahir = révéler malgré soi, laisser paraître involontairement un état intérieur." },
+  { id:40, cat:"Vocabulaire", q:"« Suffocations » dans la séquence de noyade désigne :",
+    opts:["Des éclats de rire incontrôlables","Les sons de respiration normale","Les derniers souffles d'agonie, les spasmes d'étouffement","Des cris de joie"],
+    ans:2, exp:"Suffocation : sensation d'étouffement ; les « dernières suffocations » sont les ultimes convulsions du noyé cherchant de l'air." },
+
+  // ── GRAMMAIRE (15) ──────────────────────────────────────────────────────────
+  { id:41, cat:"Grammaire", q:"Dans « elle sent qu'il ne faudrait pas », le conditionnel « faudrait » exprime :",
+    opts:["Un futur hypothétique irréel","Une obligation morale ressentie intérieurement par la narratrice","Un conseil donné par quelqu'un d'autre","Un fait passé regretté"],
+    ans:1, exp:"Le conditionnel présent à valeur modale traduit ici le sentiment intérieur d'interdit — c'est la voix de la conscience qui parle, pas un conseil extérieur." },
+  { id:42, cat:"Grammaire", q:"La construction « Hégésippe peut se raconter que… il peut s'imaginer… il peut accélérer » est un exemple de :",
+    opts:["Anaphore verbale","Cataphore","Épiphore","Chiasme"],
+    ans:0, exp:"L'anaphore est la répétition d'un même terme en tête de plusieurs membres de phrase — ici « il peut » est répété trois fois." },
+  { id:43, cat:"Grammaire", q:"Le mode utilisé dans « elle aille » (subjonctif présent) est requis après :",
+    opts:["Les verbes de perception","Les verbes d'opinion à la forme affirmative","Les verbes exprimant la volonté, la crainte ou le doute","Les verbes d'état"],
+    ans:2, exp:"Le subjonctif est obligatoire après les verbes exprimant la volonté, le désir, la crainte, le doute — exemples : vouloir que, craindre que, douter que." },
+  { id:44, cat:"Grammaire", q:"Dans « une jeune fille inoffensive est en train de mettre le feu au monde », la périphrase verbale « être en train de + inf. » exprime :",
+    opts:["Une action habituelle","Une action future certaine","Une action en cours d'accomplissement au moment de l'énonciation","Une action hypothétique"],
+    ans:2, exp:"La périphrase être en train de + infinitif est l'aspect progressif en français : elle marque une action en cours de déroulement." },
+  { id:45, cat:"Grammaire", q:"« Elle n'entend pas les pavés sous les roues, pas le fouet qui claque ni la voix éraillée » — la structure de négation utilisée est :",
+    opts:["ne… pas / ne… ni","Négation elliptique avec pas et ni coordonnant deux compléments","Double négation absolue","Négation restrictive avec ne… que"],
+    ans:1, exp:"La négation porte sur le verbe (n'entend pas) puis coordonne deux compléments avec pas… ni : c'est une négation elliptique à coordination." },
+  { id:46, cat:"Grammaire", q:"La phrase « Vivre en apnée jusqu'au bord de l'évanouissement. » est :",
+    opts:["Une proposition subordonnée relative","Une phrase nominale avec infinitif substantivé","Une proposition principale avec sujet implicite","Une proposition interrogative indirecte"],
+    ans:1, exp:"L'infinitif sans sujet exprimé fonctionne comme un substantif : la phrase est une maxime existentielle, une règle de vie formulée à l'infinitif." },
+  { id:47, cat:"Grammaire", q:"Dans le segment « le combat perdu d'avance – les bras qui se débattent – la lutte – la défaite », quel procédé stylistique correspond à la structure grammaticale ?",
+    opts:["Subordination progressive","Asyndète : juxtaposition sans conjonction, créant un rythme haché","Polysyndète avec multiples et","Hypotaxe complexe"],
+    ans:1, exp:"L'asyndète est la suppression des conjonctions de coordination entre des éléments parallèles — ici les tirets remplacent et, créant un rythme saccadé." },
+  { id:48, cat:"Grammaire", q:"Dans « qu'elle rend presque avec dégoût à Florentin car elle n'a pas pu s'empêcher de se demander », la conjonction « car » introduit :",
+    opts:["Une proposition consécutive","Une proposition causale (explicative)","Une proposition concessjve","Une proposition conditionnelle"],
+    ans:1, exp:"Car est une conjonction de coordination à valeur causale-explicative : elle introduit la raison, l'explication de l'acte de rendre le livre." },
+  { id:49, cat:"Grammaire", q:"Le pronom « on » dans « on nous prévient qu'ils sont des objets pernicieux » désigne :",
+    opts:["Spécifiquement les professeurs","Un sujet indéfini représentant les autorités du couvent","Florentin","Le narrateur lui-même"],
+    ans:1, exp:"Le pronom « on » a une valeur impersonnelle-indéfinie qui désigne ici l'institution coventuelle dans sa globalité, sans nommer de responsable précis." },
+  { id:50, cat:"Grammaire", q:"La phrase « dans son dos, une jeune fille inoffensive est en train de mettre le feu au monde » utilise la structure « dans son dos » comme :",
+    opts:["Complément d'objet direct","Complément circonstanciel de lieu avec valeur ironique","Sujet logique","Attribut du sujet"],
+    ans:1, exp:"« Dans son dos » est un CC de lieu (situation spatiale derrière Hégésippe) qui prend une valeur ironique : derrière le cocher ignorant, la révolution se fait." },
+  { id:51, cat:"Grammaire", q:"Dans « elle va devoir tricher et manigancer pour lire en cachette », la structure « pour + infinitif » exprime :",
+    opts:["La cause","La concession","Le but / la finalité","La condition"],
+    ans:2, exp:"Pour + infinitif exprime le but : elle trichera dans le but (afin) de lire en cachette." },
+  { id:52, cat:"Grammaire", q:"Le verbe « se confesse » est un verbe pronominal. Sa construction dans « c'est à Jésus seulement qu'elle se confesse » est :",
+    opts:["Pronominal passif","Pronominal réfléchi (sujet fait l'action sur soi-même)","Pronominal réciproque","Pronominal lexicalisé (toujours pronominal)"],
+    ans:3, exp:"Se confesser est un verbe essentiellement pronominal (il n'existe pas sans se) : c'est une forme lexicalisée où le pronom ne peut être analysé séparément." },
+  { id:53, cat:"Grammaire", q:"Quel est le temps utilisé dans « elle avait entendu la pointe d'ironie » et quel en est l'effet ?",
+    opts:["Présent de narration : actualise le récit","Plus-que-parfait : exprime une action antérieure à un autre moment du passé","Imparfait habituel : répétition du passé","Passé composé : action récente"],
+    ans:1, exp:"Le plus-que-parfait (avait entendu) signale que l'action est antérieure à une autre action passée déjà mentionnée — ici, elle avait ressenti la blessure avant de la formuler." },
+  { id:54, cat:"Grammaire", q:"Dans « une pointe qui s'était enfoncée en elle jusqu'au cœur », le pronom relatif « qui » a pour antécédent :",
+    opts:["Marie-Ernestine","l'ironie","une pointe","Florentin"],
+    ans:2, exp:"Le pronom relatif « qui » se rapporte au nom « pointe » qui le précède immédiatement." },
+  { id:55, cat:"Grammaire", q:"La construction « peu importe si on lui inflige l'humiliation » est une proposition :",
+    opts:["Principale indépendante","Concessive introduite par peu importe si (valeur de quand bien même)","Hypothétique introduite par si","Consécutive"],
+    ans:1, exp:"« Peu importe si » exprime la concession : la réalité d'une humiliation est reconnue mais jugée sans importance — valeur concessivo-hypothétique." },
+
+  // ── CULTURE (5) ─────────────────────────────────────────────────────────────
+  { id:56, cat:"Culture", q:"Le « Horla » mentionné dans le texte est une référence à :",
+    opts:["Un personnage de Zola dans Germinal","Une nouvelle fantastique de Maupassant (1887) mettant en scène un être invisible","Un démon de la tradition catholique médiévale","Un poème de Rimbaud"],
+    ans:1, exp:"Le Horla (1887) est la nouvelle la plus célèbre de Maupassant : un narrateur est hanté par une entité invisible qui l'envahit progressivement." },
+  { id:57, cat:"Culture", q:"Le roman dont le résumé (« deux amants qui tuent le mari et sont poursuivis par son fantôme ») correspond à :",
+    opts:["Bel-Ami de Maupassant","Madame Bovary de Flaubert","Thérèse Raquin d'Émile Zola (1867)","Nana de Zola"],
+    ans:2, exp:"Thérèse Raquin (Zola, 1867) : Thérèse et Laurent noient le mari Laurent Raquin et sont ensuite hantés par son fantôme au point de se détruire mutuellement." },
+  { id:58, cat:"Culture", q:"Laurent Mauvignier est un écrivain français contemporain. Son style est notamment caractérisé par :",
+    opts:["Des phrases très courtes et épurées style Minimalisme","Des phrases longues, en spirales, qui explorent la mémoire familiale et le secret","Un réalisme documentaire journalistique","Un style surréaliste et hermétique"],
+    ans:1, exp:"Mauvignier est connu pour ses longues phrases enchâssées et son exploration de la mémoire traumatique ou familiale — visible dans cet extrait même." },
+  { id:59, cat:"Culture", q:"Le contexte historique implicite de cet extrait situe l'action :",
+    opts:["Dans la France d'après-guerre (1950s)","À la fin du XIXe ou au début du XXe siècle (couvent, coupé hippomobile, Maupassant contemporain)","Dans la France révolutionnaire de 1789","Dans la France du Second Empire (1852-1870)"],
+    ans:1, exp:"Les indices : couvent religieux, coupé hippomobile, lecture de Maupassant comme auteur contemporain, situe l'action vers 1890-1910." },
+  { id:60, cat:"Culture", q:"La tension entre lecture romanesque et foi religieuse dans cet extrait rappelle un débat central au XIXe siècle, notamment incarné par :",
+    opts:["Le débat sur le vote des femmes","La querelle entre romanesque et morale catholique — illustrée par l'Index des livres interdits et des procès comme celui de Madame Bovary (1857)","Le débat sur la laïcité scolaire de 1905","La condamnation de la presse libertine"],
+    ans:1, exp:"L'Index librorum prohibitorum (livres interdits par l'Église) et les procès de Flaubert (1857) et de Baudelaire (1857) constituent le contexte historique de cette tension entre roman moderne et morale catholique." }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let answered = {}; // id → {selected, correct}
+
+// ─── THEME / SIDEBAR ──────────────────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+}
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const main = document.getElementById('main');
+  sb.classList.toggle('hidden');
+  main.classList.toggle('expanded');
+}
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const links = document.querySelectorAll('.nav-link');
+  links.forEach(l => { if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'" + id + "'")) l.classList.add('active'); });
+}
+
+// ─── VOCAB ────────────────────────────────────────────────────────────────────
+function renderVocab() {
+  const tbody = document.getElementById('vocab-body');
+  tbody.innerHTML = vocabData.map(([w,p,d]) =>
+    `<tr><td class="word">${w}</td><td class="pos">${p}</td><td>${d}</td></tr>`
+  ).join('');
+}
+function filterVocab(q) {
+  const rows = document.querySelectorAll('#vocab-body tr');
+  const lq = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(lq) ? '' : 'none';
+  });
+}
+
+// ─── GRAMMAR ──────────────────────────────────────────────────────────────────
+function renderGrammar() {
+  ['syntaxe','figures','registre'].forEach(key => {
+    const panel = document.getElementById('gram-' + key);
+    panel.innerHTML = gramData[key].map(g =>
+      `<div class="grammar-card">
+        <div class="gc-label">${g.label}</div>
+        <div class="gc-example">${g.example}</div>
+        <div class="gc-note">${g.note}</div>
+      </div>`
+    ).join('');
+  });
+}
+function switchTab(group, panel) {
+  const allPanels = ['syntaxe','figures','registre'].map(k => document.getElementById('gram-' + k));
+  allPanels.forEach(p => { if(p) p.classList.remove('active'); });
+  const el = document.getElementById('gram-' + panel);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const panels = ['syntaxe','figures','registre'];
+    b.classList.toggle('active', panels[i] === panel);
+  });
+}
+
+// ─── QCM ──────────────────────────────────────────────────────────────────────
+const catColors = { Compréhension:'badge-comp', Vocabulaire:'badge-vocab', Grammaire:'badge-gram', Culture:'badge-cult' };
+function renderQCM() {
+  const cont = document.getElementById('qcm-container');
+  cont.innerHTML = qcmData.map(q => {
+    const badge = catColors[q.cat] || '';
+    const opts = q.opts.map((o,i) =>
+      `<label class="qcm-opt" id="opt-${q.id}-${i}" onclick="checkAnswer(${q.id},${i})">
+        <input type="radio" name="q${q.id}" style="display:none"> ${o}
+      </label>`
+    ).join('');
+    return `<div class="qcm-item" id="qcm-${q.id}" data-cat="${q.cat}">
+      <div class="qcm-header">
+        <span class="qcm-num">${q.id}.</span>
+        <span class="qcm-badge ${badge}">${q.cat}</span>
+        <span class="qcm-text">${q.q}</span>
+      </div>
+      <div class="qcm-options">${opts}</div>
+      <div class="qcm-feedback" id="fb-${q.id}" style="display:none"></div>
+    </div>`;
+  }).join('');
+}
+function checkAnswer(qid, selected) {
+  if (answered[qid]) return;
+  const q = qcmData.find(x => x.id === qid);
+  const correct = q.ans === selected;
+  answered[qid] = { selected, correct };
+  const item = document.getElementById('qcm-' + qid);
+  item.classList.add(correct ? 'correct-q' : 'wrong-q');
+  q.opts.forEach((_,i) => {
+    const opt = document.getElementById(`opt-${qid}-${i}`);
+    opt.classList.add('disabled');
+    if (i === q.ans) opt.classList.add('correct');
+    else if (i === selected && !correct) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qid);
+  fb.style.display = 'block';
+  fb.className = 'qcm-feedback ' + (correct ? 'fb-correct' : 'fb-wrong');
+  fb.textContent = (correct ? '✓ Correct. ' : '✗ Incorrect. ') + q.exp;
+  updateScore();
+}
+function updateScore() {
+  const total = Object.keys(answered).length;
+  const correct = Object.values(answered).filter(a => a.correct).length;
+  document.getElementById('score-text').textContent = `${correct} / ${total} réponses correctes`;
+  const pct = total ? Math.round(correct/total*100) : 0;
+  document.getElementById('score-pct').textContent = total ? pct + '%' : '–';
+  document.getElementById('progress-fill').style.width = (total/60*100) + '%';
+}
+function filterQCM(cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.textContent === cat));
+  document.querySelectorAll('.qcm-item').forEach(item => {
+    item.style.display = (cat === 'Tous' || item.dataset.cat === cat) ? '' : 'none';
+  });
+}
+function showAllAnswers() {
+  qcmData.forEach(q => { if (!answered[q.id]) checkAnswer(q.id, q.ans); });
+}
+function resetQCM() {
+  answered = {};
+  renderQCM();
+  updateScore();
+  filterQCM('Tous');
+}
+
+// ─── NARRATIVE DIAGRAM ────────────────────────────────────────────────────────
+function drawNarrativeDiagram() {
+  const svg = document.getElementById('narrative-svg');
+  if (!svg) return;
+  const n = narrativeSteps.length;
+  const W = svg.clientWidth || 760;
+  const H = 110;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const defs = `<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/></marker></defs>`;
+  const step = W / n;
+  let html = defs;
+  for (let i = 0; i < n-1; i++) {
+    const x1 = step*i + step/2 + 18;
+    const x2 = step*(i+1) + step/2 - 18;
+    html += `<line x1="${x1}" y1="38" x2="${x2}" y2="38" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)" opacity="0.5"/>`;
+  }
+  for (let i = 0; i < n; i++) {
+    const cx = step*i + step/2;
+    const s = narrativeSteps[i];
+    html += `<circle cx="${cx}" cy="38" r="16" fill="var(--accent)" opacity="0.85" class="diag-node" data-i="${i}" style="cursor:pointer"/>`;
+    html += `<text x="${cx}" y="43" text-anchor="middle" fill="white" font-size="12" font-family="Arial" font-weight="bold" pointer-events="none">${i+1}</text>`;
+    const words = s.label.split(' ');
+    const l1 = words.slice(0,2).join(' ');
+    const l2 = words.slice(2).join(' ');
+    html += `<text x="${cx}" y="65" text-anchor="middle" fill="var(--text)" font-size="9.5" font-family="Arial">${l1}</text>`;
+    if (l2) html += `<text x="${cx}" y="76" text-anchor="middle" fill="var(--text)" font-size="9.5" font-family="Arial">${l2}</text>`;
+  }
+  svg.innerHTML = html;
+  svg.querySelectorAll('.diag-node').forEach(c => {
+    c.addEventListener('mouseenter', e => {
+      const i = +c.dataset.i;
+      const tt = document.getElementById('diagram-tooltip');
+      tt.textContent = narrativeSteps[i].desc;
+      tt.style.display = 'block';
+      const rect = svg.getBoundingClientRect();
+      const wrap = svg.parentElement.getBoundingClientRect();
+      tt.style.left = (e.clientX - wrap.left + 10) + 'px';
+      tt.style.top = (e.clientY - wrap.top + 10) + 'px';
+    });
+    c.addEventListener('mouseleave', () => { document.getElementById('diagram-tooltip').style.display = 'none'; });
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.onload = function() {
+  renderVocab();
+  renderGrammar();
+  renderQCM();
+  showPage('extrait');
+  setTimeout(drawNarrativeDiagram, 100);
+};
+window.onresize = drawNarrativeDiagram;
+</script>
+</body>
+</html>
