@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Français C2 — La maison vide</title>
+    <style>
+        :root {
+            --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+            --radius: 8px;
+            --sidebar-w: 240px;
+            --transition: 0.22s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f1117;
+            --bg2: #181b24;
+            --bg3: #1e2130;
+            --border: #2a2d3e;
+            --text: #e2e8f0;
+            --text-muted: #8892a4;
+            --accent: #6c8ef7;
+            --accent2: #a78bfa;
+            --green: #34d399;
+            --amber: #fbbf24;
+            --red: #f87171;
+        }
+
+        [data-theme="light"] {
+            --bg: #f4f6fb;
+            --bg2: #ffffff;
+            --bg3: #eaecf4;
+            --border: #d0d5e8;
+            --text: #1a1f36;
+            --text-muted: #6b7280;
+            --accent: #4361ee;
+            --accent2: #7c3aed;
+            --green: #059669;
+            --amber: #d97706;
+            --red: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.75;
+            font-size: 15px;
+        }
+
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .topbar-left, .topbar-center, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-center {
+            flex: 1;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .topbar-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            transition: background 0.2s;
+        }
+
+        .topbar-btn:hover {
+            background: var(--bg3);
+            color: var(--text);
+        }
+
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 52px;
+            width: var(--sidebar-w);
+            height: calc(100vh - 52px);
+            background: var(--bg2);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform var(--transition);
+        }
+
+        #sidebar.hidden {
+            transform: translateX(calc(-1 * var(--sidebar-w)));
+        }
+
+        .sidebar-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding: 12px 16px 8px;
+            margin-top: 12px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: var(--bg3);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            background: var(--bg3);
+            border-left-color: var(--accent);
+        }
+
+        #main {
+            margin-left: var(--sidebar-w);
+            margin-top: 52px;
+            min-height: calc(100vh - 52px);
+            padding: 36px 48px;
+            max-width: 860px;
+            transition: margin-left var(--transition);
+        }
+
+        #main.expanded {
+            margin-left: 0;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .passage {
+            background: var(--bg3);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            italic: true;
+            font-style: italic;
+            line-height: 1.8;
+            margin: 1.5rem 0;
+            border-radius: var(--radius);
+            color: var(--text);
+        }
+
+        .source-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 1rem;
+        }
+
+        .source-citation {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .resume {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .diagram-wrap {
+            position: relative;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 1.5rem 0;
+        }
+
+        #narrative-svg {
+            width: 100%;
+            height: auto;
+            min-height: 180px;
+        }
+
+        .diag-tooltip {
+            display: none;
+            position: absolute;
+            background: var(--bg2);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            font-size: 13px;
+            max-width: 280px;
+            color: var(--text);
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .vocab-table thead {
+            border-bottom: 2px solid var(--border);
+        }
+
+        .vocab-table th {
+            text-align: left;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        .vocab-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .vocab-table tbody tr:nth-child(odd) {
+            background: var(--bg3);
+        }
+
+        .word {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .pos {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .vocab-search {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            margin-bottom: 1.5rem;
+        }
+
+        .vocab-search::placeholder {
+            color: var(--text-muted);
+        }
+
+        .vocab-counter {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .grammar-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .grammar-card-label {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .grammar-card-example {
+            font-style: italic;
+            color: var(--text-muted);
+            padding: 0.8rem;
+            background: var(--bg3);
+            border-left: 3px solid var(--accent2);
+            margin: 0.5rem 0;
+            font-size: 13px;
+        }
+
+        .grammar-card-note {
+            font-size: 13px;
+            color: var(--text);
+            margin-top: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 16px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--accent);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .qcm-container {
+            margin-top: 1.5rem;
+        }
+
+        .qcm-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .progress-section {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transition: width 0.3s ease;
+        }
+
+        .qcm-item {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            border-radius: var(--radius);
+        }
+
+        .qcm-item.hidden {
+            display: none;
+        }
+
+        .qcm-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .qcm-number {
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 30px;
+        }
+
+        .qcm-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: var(--bg3);
+            color: var(--text-muted);
+        }
+
+        .qcm-category.vocab {
+            background: rgba(106, 140, 247, 0.15);
+            color: var(--accent);
+        }
+
+        .qcm-category.grammar {
+            background: rgba(167, 139, 250, 0.15);
+            color: var(--accent2);
+        }
+
+        .qcm-category.contenu {
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--green);
+        }
+
+        .qcm-category.idiome {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--amber);
+        }
+
+        .qcm-text {
+            font-weight: 500;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .qcm-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .qcm-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .qcm-option:hover:not(:disabled) {
+            background: var(--bg);
+            border-color: var(--accent);
+        }
+
+        .qcm-option input {
+            margin-top: 2px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .qcm-option:disabled {
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        .qcm-option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .qcm-feedback {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .qcm-feedback.correct {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+        }
+
+        .qcm-feedback.incorrect {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+
+        .qcm-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .qcm-action-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .qcm-action-btn:hover {
+            opacity: 0.9;
+        }
+
+        .about-section {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .about-section h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .about-section p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        @media (max-width: 700px) {
+            #sidebar {
+                width: var(--sidebar-w);
+            }
+
+            #main {
+                padding: 24px 20px;
+            }
+
+            .topbar-center {
+                font-size: 13px;
+            }
+
+            .vocab-table {
+                font-size: 13px;
+            }
+
+            .vocab-table td, .vocab-table th {
+                padding: 8px 6px;
+            }
+
+            #narrative-svg {
+                min-height: 220px;
+            }
+
+            .qcm-option {
+                font-size: 13px;
+            }
+
+            .qcm-filters {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div id="topbar">
+        <div class="topbar-left">
+            <button id="toggle-sidebar-btn" class="topbar-btn">≡ Menu</button>
+        </div>
+        <div class="topbar-center">
+            Session Français C2 — <em>La maison vide</em>
+        </div>
+        <div class="topbar-right">
+            <button id="theme-btn" class="topbar-btn">Thème</button>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-label">Navigation</div>
+        <a href="#" class="nav-link active" data-page="extrait">📄 Extrait</a>
+        <a href="#" class="nav-link" data-page="resume">📊 Résumé & Diagram</a>
+        <a href="#" class="nav-link" data-page="vocab">📚 Vocabulaire</a>
+        <a href="#" class="nav-link" data-page="grammaire">✏️ Grammaire</a>
+        <a href="#" class="nav-link" data-page="qcm">❓ QCM</a>
+        <a href="#" class="nav-link" data-page="apropos">ℹ️ À propos</a>
+    </div>
+
+    <div id="main">
+        <!-- PAGE 1: EXTRAIT -->
+        <div class="page active" id="page-extrait">
+            <div class="source-label">La maison vide — Laurent Mauvignier</div>
+            <h2>Photographie familiale (1913)</h2>
+            <div class="passage">
+                Mais pas seulement : entre eux, dans les bras de Marie-Ernestine, le dos serré contre sa poitrine, un bébé, sa fille unique : sans doute la seule photographie de Marguerite, ma grand-mère. La photo doit dater de 1913, année de sa naissance. Sur ce bébé joufflu, il faut s'arrêter : avec ma grand-mère Marguerite, quelque chose se joue de la violence muette de la famille. Ce bébé qui semble froncer les sourcils, bébé rondouillard au visage ingrat qui semble mécontent d'être là, engoncé dans des vêtements trop épais, les cheveux noirs et denses, les yeux écarquillés sur le vide, c'est elle, c'est mon ancêtre, la femme qui allait porter en elle ce secret de famille que nous portons tous, cette lourdeur qu'on ne dit jamais, cette violence qui habite les murs, les voix, les silences, tout ce qui nous relie sans jamais nous unir vraiment.
+            </div>
+            <div class="source-citation">— Laurent Mauvignier, <em>La maison vide</em></div>
+        </div>
+
+        <!-- PAGE 2: RÉSUMÉ & DIAGRAM -->
+        <div class="page" id="page-resume">
+            <h2>Résumé & Analyse narrative</h2>
+            <div class="resume">
+                <h3>Résumé du passage</h3>
+                <p>
+                    Marie-Ernestine tient dans ses bras sa fille unique Marguerite, capturée sur une photographie datant de 1913. Ce bébé joufflu, au visage ingrat et aux sourcils froncés, incarne bien plus qu'un simple sujet photographique : il devient symbole de la violence muette qui traverse la lignée familiale. L'enfant engoncée dans ses vêtements trop épais, mécontent d'être là, représente le poids des secrets non dits qui habitent les murs, les voix et les silences de la famille. Marguerite devient l'ancêtre qui porte en elle cette lourdeur transgénérationnelle qui relie sans jamais unir.
+                </p>
+            </div>
+
+            <h3>Biện pháp tu từ (Figures de style)</h3>
+            <div class="grammar-card">
+                <div class="grammar-card-label">Ẩn dụ / Métaphore</div>
+                <div class="grammar-card-example">"violence muette de la famille"</div>
+                <div class="grammar-card-note">La violence est présentée comme un agent silencieux, invisible mais omnipotent, qui structure les relations familiales.</div>
+            </div>
+            <div class="grammar-card">
+                <div class="grammar-card-label">Nhân hóa / Personification</div>
+                <div class="grammar-card-example">"Ce bébé qui semble froncer les sourcils"</div>
+                <div class="grammar-card-note">Attribuer des sentiments et intentions adultes (irritation, mécontentement) à un nourrisson ; l'enfant devient acteur conscient de son propre malheur.</div>
+            </div>
+            <div class="grammar-card">
+                <div class="grammar-card-label">Anaphore</div>
+                <div class="grammar-card-example">"un bébé...bébé rondouillard...c'est elle, c'est mon ancêtre"</div>
+                <div class="grammar-card-note">Répétition du mot "bébé" et de la structure "c'est" qui insiste sur l'identification entre l'enfant et la grand-mère.</div>
+            </div>
+            <div class="grammar-card">
+                <div class="grammar-card-label">Énumération et gradation</div>
+                <div class="grammar-card-example">"ce secret de famille...cette lourdeur...cette violence...tout ce qui nous relie"</div>
+                <div class="grammar-card-note">Progression du secret personnel vers l'universel familial ; montée d'abstraction et d'intensité émotionnelle.</div>
+            </div>
+            <div class="grammar-card">
+                <div class="grammar-card-label">Oxymore</div>
+                <div class="grammar-card-example">"tout ce qui nous relie sans jamais nous unir vraiment"</div>
+                <div class="grammar-card-note">Contradiction volontaire : ce qui unit paradoxalement désunit ; union et séparation simultanées.</div>
+            </div>
+
+            <h3>Diagram narratif</h3>
+            <div class="diagram-wrap">
+                <svg id="narrative-svg"></svg>
+                <div id="diagram-tooltip" class="diag-tooltip"></div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: VOCABULAIRE -->
+        <div class="page" id="page-vocab">
+            <h2>Vocabulaire C2</h2>
+            <div class="vocab-counter">35 mots · niveau DELF C2</div>
+            <input type="text" class="vocab-search" id="vocab-search" placeholder="Rechercher un mot...">
+            <table class="vocab-table">
+                <thead>
+                    <tr>
+                        <th>Mot</th>
+                        <th>Classe</th>
+                        <th>Définition</th>
+                    </tr>
+                </thead>
+                <tbody id="vocab-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGE 4: GRAMMAIRE -->
+        <div class="page" id="page-grammaire">
+            <h2>Structures grammaticales</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab-syntaxe">Syntaxe</button>
+                <button class="tab-btn" data-tab="tab-style">Registre & Style</button>
+            </div>
+
+            <div id="tab-syntaxe" class="tab-content active">
+                <div id="grammar-syntaxe"></div>
+            </div>
+
+            <div id="tab-style" class="tab-content">
+                <div class="grammar-card">
+                    <div class="grammar-card-label">Registre littéraire et introspectif</div>
+                    <div class="grammar-card-example">Ton personnel, confessionnel et réflexif</div>
+                    <div class="grammar-card-note">Le narrateur adopte un ton intime, oscillant entre l'observation objective et l'analyse émotionnelle. L'usage de "je" (mon ancêtre, nous) ancre le récit dans une perspective personnelle.</div>
+                </div>
+                <div class="grammar-card">
+                    <div class="grammar-card-label">Parataxe (juxtaposition sans conjonction)</div>
+                    <div class="grammar-card-example">"c'est elle, c'est mon ancêtre, la femme qui allait porter"</div>
+                    <div class="grammar-card-note">Succession de propositions indépendantes crée un rythme haletant, une accumulation d'identités et de révélations.</div>
+                </div>
+                <div class="grammar-card">
+                    <div class="grammar-card-label">Hyperbate (inversion syntaxique)</div>
+                    <div class="grammar-card-example">"Sur ce bébé joufflu, il faut s'arrêter"</div>
+                    <div class="grammar-card-note">L'ordre habituel est rompu pour créer un suspense et mettre l'accent sur l'importance du moment.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 5: QCM -->
+        <div class="page" id="page-qcm">
+            <h2>Questions à choix multiple (QCM)</h2>
+            <div class="progress-section">
+                <div>Score: <strong id="qcm-score">0</strong> / <strong id="qcm-total">60</strong> (<strong id="qcm-percent">0</strong>%)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="qcm-filters">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="vocab">Vocabulaire</button>
+                <button class="filter-btn" data-filter="grammar">Grammaire</button>
+                <button class="filter-btn" data-filter="contenu">Contenu</button>
+                <button class="filter-btn" data-filter="idiome">Idiomes & Figures</button>
+            </div>
+
+            <div class="qcm-container" id="qcm-container"></div>
+
+            <div class="qcm-actions">
+                <button class="qcm-action-btn" id="show-answers-btn">Voir les réponses</button>
+                <button class="qcm-action-btn" id="reset-qcm-btn">Réinitialiser</button>
+            </div>
+        </div>
+
+        <!-- PAGE 6: À PROPOS -->
+        <div class="page" id="page-apropos">
+            <h2>À propos de cette session</h2>
+            <div class="about-section">
+                <h4>Source</h4>
+                <p><strong>La maison vide</strong> — Laurent Mauvignier (2004)</p>
+                <p>Roman d'introspection et de secrets familiaux ; exploration des non-dits et de la violence silencieuse qui traverse les générations.</p>
+            </div>
+            <div class="about-section">
+                <h4>Passage étudié</h4>
+                <p><strong>Chapitre / Section :</strong> Photographie familiale et révélation ancestrale</p>
+                <p><strong>Thème :</strong> La transmission transgénérationnelle de la violence muette et des secrets ; importance de la photographie comme preuve du passé.</p>
+            </div>
+            <div class="about-section">
+                <h4>Numéro de session</h4>
+                <p>Session #6 (2026-06-05)</p>
+            </div>
+            <div class="about-section">
+                <h4>Comment utiliser cette session</h4>
+                <p>
+                    <strong>1. Lecture :</strong> Commencez par lire l'extrait intégral. Relisez-le une deuxième fois en prenant note des structures remarquables.<br>
+                    <strong>2. Vocabulaire :</strong> Apprenez les 35 mots C2. Utilisez la barre de recherche pour cibler des mots spécifiques.<br>
+                    <strong>3. Analyse :</strong> Consultez le résumé et le diagram narratif pour comprendre la progression du texte.<br>
+                    <strong>4. Grammaire :</strong> Étudiez les structures syntaxiques et les figures de style identifiées.<br>
+                    <strong>5. QCM :</strong> Testez votre compréhension avec les 60 questions. Visez au moins 80% de réussite pour maîtriser le niveau C2.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration des données
+        const vocabularyData = [
+            ["joufflu", "adj.", "Aux joues rondes et pleines ; potelé"],
+            ["ingrat", "adj.", "Peu agréable à regarder ; disgracieux"],
+            ["engoncé", "adj.", "Serré, entravé ; qui manque d'aisance"],
+            ["rondouillard", "adj.", "Petit et rond, grassouillet"],
+            ["muette", "adj.", "Qui ne s'exprime pas par la parole ; silencieuse"],
+            ["froncer", "v.", "Contracter, rider ; exprimer par des froncements"],
+            ["photographie", "n.f.", "Image fixe captant un moment du temps"],
+            ["éphémère", "adj.", "De courte durée ; fugace, passager"],
+            ["poids", "n.m.", "Force de gravité ; charge morale ou émotionnelle"],
+            ["secret", "n.m.", "Ce qui est caché, non révélé ; mystère"],
+            ["génération", "n.f.", "Ensemble des personnes du même âge ; lignée"],
+            ["violence", "n.f.", "Intensité brutale ; force agressive ou oppressive"],
+            ["insigne", "adj.", "Remarquable, notable ; de haut rang"],
+            ["austère", "adj.", "Rigoureux, sévère ; dénué d'ornement"],
+            ["linéament", "n.m.", "Trait caractéristique du visage ; contour"],
+            ["sépia", "n.m.", "Teinte brune de photographies anciennes"],
+            ["vestige", "n.m.", "Trace, reste du passé ; ce qui subsiste"],
+            ["immémorial", "adj.", "Depuis la plus haute antiquité ; très ancien"],
+            ["dévolu", "adj.", "Assigné, destiné à quelqu'un"],
+            ["patrimoine", "n.m.", "Biens hérités ; héritage culturel"],
+            ["intemporel", "adj.", "Qui dépasse le temps ; éternel"],
+            ["témoignage", "n.m.", "Preuve, indication de quelque chose"],
+            ["éclipse", "n.f.", "Disparition temporaire ; occultation"],
+            ["intimité", "n.f.", "Caractère de ce qui est intime ; vie privée"],
+            ["mutisme", "n.m.", "Silence ; refus ou incapacité de parler"],
+            ["hérédité", "n.f.", "Transmission des caractères d'ancêtres à descendants"],
+            ["fard", "n.m.", "Cosmétique ; artifice, apparence trompeuse"],
+            ["allégorie", "n.f.", "Représentation symbolique d'une idée abstraite"],
+            ["métaphore", "n.f.", "Comparaison sans 'comme' ; langage figuré"],
+            ["atavisme", "n.m.", "Réapparition de caractères ancestraux"],
+            ["lourdeur", "n.f.", "Poids ; lenteur ; manque d'agilité"],
+            ["mur", "n.m.", "Paroi ; obstacle ; silence collectif implicite"],
+            ["voix", "n.f.", "Son ; parole ; perspective narrative"],
+            ["silence", "n.m.", "Absence de bruit ; ce qui n'est pas dit"],
+            ["relien", "v.", "Attacher ensemble ; créer un lien"]
+        ];
+
+        const grammarStructures = [
+            {
+                label: "Anaphore (répétition de 'bébé')",
+                example: "un bébé joufflu...bébé rondouillard au visage ingrat",
+                note: "Répétition pour insister sur la présence de l'enfant ; fixation du regard sur le sujet"
+            },
+            {
+                label: "Parenthèse explicative",
+                example: "(sans doute la seule photographie de Marguerite, ma grand-mère)",
+                note: "Insertion narrative qui ancre le temps personnel dans le passé ; révélation généalogique"
+            },
+            {
+                label: "Énumération descriptive",
+                example: "bébé rondouillard au visage ingrat qui semble mécontent d'être là, engoncé",
+                note: "Succession d'adjectifs et de propositions relatives pour construire un portrait nuancé"
+            },
+            {
+                label: "Oxymore (contradiction intentionnelle)",
+                example: "violence muette de la famille",
+                note: "Association de termes opposés pour exprimer une tension : la violence est présente mais silencieuse"
+            },
+            {
+                label: "Ironie / Ton ludique",
+                example: "Ce bébé qui semble froncer les sourcils, bébé rondouillard",
+                note: "Ton tendre et moqueur ; anthropomorphisme : attribuer des sentiments adultes au bébé"
+            },
+            {
+                label: "Gradation (progression d'intensité)",
+                example: "Vêtements trop épais → engoncé → violence muette",
+                note: "Du détail concret (vêtements) à l'abstrait (violence) ; montée en abstraction"
+            },
+            {
+                label: "Enjambement narratif",
+                example: "il faut s'arrêter : avec ma grand-mère Marguerite, quelque chose se joue",
+                note: "Le narrateur impose une pause réflexive ; passage du descriptif au métaphorique"
+            },
+            {
+                label: "Métonymie (partie pour le tout)",
+                example: "entre eux, dans les bras de Marie-Ernestine",
+                note: "Les bras représentent la maternité, l'amour, la protection ; la partie pour le tout"
+            }
+        ];
+
+        const narrativeSteps = [
+            { label: "Trio familial", desc: "Marie-Ernestine tient Marguerite contre sa poitrine. Cette proximité physique structure toute la scène familiale et crée une intimité photographique." },
+            { label: "Date de 1913", desc: "La photographie donne une date précise (1913, année de naissance). Elle devient archive, preuve incontestable du passé ; ancrage temporel du récit." },
+            { label: "Portrait du bébé", desc: "Marguerite est décrite par traits multiples : joufflu, ingrat, fronçant les sourcils, engoncée. L'enfant devient allégorie du malaise familial." },
+            { label: "Pause métaphorique", desc: "Le narrateur impose un arrêt : 'il faut s'arrêter'. Basculade du descriptif à l'analytique ; le bébé devient véhicule de réflexion existentielle." },
+            { label: "Violence muette", desc: "Avec Marguerite 'quelque chose se joue de la violence muette de la famille'. L'enfant incarne un tournant transgénérationnel ; révélation du secret." },
+            { label: "Héritage transmis", desc: "Cette violence silencieuse se transmet de génération en génération. La photographie devient preuve du poids hérité ; union paradoxale sans véritable unité." }
+        ];
+
+        const qcmQuestions = [
+            // Vocabulaire (20)
+            { cat: "vocab", q: "Que signifie 'joufflu' ?", opts: ["Aux joues rondes", "Maigre et sec", "Très pâle", "Coiffé de boucles"], ans: 0, exp: "'Joufflu' signifie aux joues rondes et pleines, potelé." },
+            { cat: "vocab", q: "Le mot 'engoncé' veut dire :", opts: ["Bien habillé", "Serré, entravé", "Courageux", "Heureux"], ans: 1, exp: "'Engoncé' signifie serré, entravé ; qui manque d'aisance." },
+            { cat: "vocab", q: "Quel est le synonyme de 'muette' dans ce contexte ?", opts: ["Sourd", "Silencieuse", "Joyeuse", "Douce"], ans: 1, exp: "'Muette' signifie qui ne s'exprime pas par la parole ; silencieuse, implicite." },
+            { cat: "vocab", q: "'Ingrat' signifie :", opts: ["Méchant", "Peu agréable à regarder", "Riche", "Éducateur"], ans: 1, exp: "'Ingrat' signifie peu agréable à regarder ; disgracieux." },
+            { cat: "vocab", q: "Le 'poids' ici représente :", opts: ["Seulement la masse physique", "La charge morale ou émotionnelle", "Un objet lourd", "La largeur"], ans: 1, exp: "Le 'poids' représente à la fois la masse physique et la charge morale/émotionnelle de l'héritage familial." },
+            { cat: "vocab", q: "'Vestige' signifie :", opts: ["Vêtement", "Trace, reste du passé", "Fleur", "Maladie"], ans: 1, exp: "'Vestige' signifie trace, reste du passé ; ce qui subsiste." },
+            { cat: "vocab", q: "Quel est le sens de 'atavisme' ?", opts: ["Richesse", "Réapparition de caractères ancestraux", "Pauvreté", "Curiosité"], ans: 1, exp: "'Atavisme' signifie réapparition de caractères ancestraux ; héritage lointain." },
+            { cat: "vocab", q: "'Immémorial' veut dire :", opts: ["Oublié", "Depuis la plus haute antiquité", "Récent", "Inventé"], ans: 1, exp: "'Immémorial' signifie depuis la plus haute antiquité ; très ancien." },
+            { cat: "vocab", q: "Le 'mutisme' est :", opts: ["La musique", "Le silence, refus de parler", "La rapidité", "La danse"], ans: 1, exp: "'Mutisme' signifie silence ; refus ou incapacité de parler." },
+            { cat: "vocab", q: "'Intimité' dans ce passage signifie :", opts: ["Ennui", "Caractère de ce qui est intime ; vie privée", "Dédain", "Rapidité"], ans: 1, exp: "'Intimité' signifie le caractère de ce qui est intime ; la vie privée." },
+            { cat: "vocab", q: "Quel est le synonyme d'éphémère ?", opts: ["Éternel", "Fugace, de courte durée", "Solide", "Brillant"], ans: 1, exp: "'Éphémère' signifie de courte durée ; fugace, passager." },
+            { cat: "vocab", q: "'Hérédité' signifie :", opts: ["Héritage matériel", "Transmission génétique d'ancêtres à descendants", "Pauvreté", "Richesse"], ans: 1, exp: "'Hérédité' signifie transmission des caractères d'ancêtres à descendants." },
+            { cat: "vocab", q: "'Allégorie' est :", opts: ["Un mensonge", "Représentation symbolique d'une idée abstraite", "Un compliment", "Une maladie"], ans: 1, exp: "'Allégorie' est représentation symbolique d'une idée abstraite." },
+            { cat: "vocab", q: "Que signifie 'rondouillard' ?", opts: ["Carré", "Petit et rond, grassouillet", "Grand et maigre", "Bizarre"], ans: 1, exp: "'Rondouillard' signifie petit et rond, grassouillet." },
+            { cat: "vocab", q: "'Métonymie' est une figure de style où :", opts: ["On compare sans 'comme'", "On utilise la partie pour le tout", "On répète un mot", "On exagère"], ans: 1, exp: "'Métonymie' signifie l'utilisation de la partie pour le tout ou l'effet pour la cause." },
+            { cat: "vocab", q: "'Linéament' désigne :", opts: ["Une ligne droite", "Un trait caractéristique du visage", "Un écrit", "Une invention"], ans: 1, exp: "'Linéament' signifie trait caractéristique du visage ; contour." },
+            { cat: "vocab", q: "'Austère' veut dire :", opts: ["Doux", "Rigoureux, sévère", "Coloré", "Bruyant"], ans: 1, exp: "'Austère' signifie rigoureux, sévère ; dénué d'ornement." },
+            { cat: "vocab", q: "'Patrimoine' signifie :", opts: ["Paternité", "Biens hérités, héritage culturel", "Mort", "Richesse nouvelle"], ans: 1, exp: "'Patrimoine' signifie biens hérités ; héritage culturel." },
+            { cat: "vocab", q: "'Intemporel' veut dire :", opts: ["Rapide", "Qui dépasse le temps ; éternel", "Ancien", "Moderne"], ans: 1, exp: "'Intemporel' signifie qui dépasse le temps ; éternel." },
+            { cat: "vocab", q: "'Dévolu' signifie :", opts: ["Inventé", "Assigné, destiné à quelqu'un", "Oublié", "Changé"], ans: 1, exp: "'Dévolu' signifie assigné, destiné à quelqu'un (être dévolu à)." },
+
+            // Grammaire (10)
+            { cat: "grammar", q: "Identifiez la figure de style : 'violence muette de la famille'", opts: ["Allitération", "Oxymore", "Anaphore", "Assonance"], ans: 1, exp: "Oxymore : association de termes opposés (violence vs muette) pour exprimer une tension." },
+            { cat: "grammar", q: "La parenthèse '(sans doute la seule photographie)' remplit quelle fonction ?", opts: ["Affaiblir le récit", "Apporter une précision généalogique", "Créer une confusion", "Alléger le texte"], ans: 1, exp: "Elle insère une information narrative importante qui ancre le temps personnel du narrateur." },
+            { cat: "grammar", q: "Quel est le type de proposition dans 'il faut s'arrêter' ?", opts: ["Relative", "Impérative", "Interrogative", "Exclamative"], ans: 1, exp: "C'est une proposition impérative qui impose une pause et invite le lecteur à la contemplation." },
+            { cat: "grammar", q: "L'anaphore 'bébé...bébé' crée :", opts: ["Une confusion", "Une insistance et une fixation du regard", "Une suppression", "Une accélération"], ans: 1, exp: "La répétition du mot 'bébé' crée une insistance et ancre l'enfant au centre de l'attention." },
+            { cat: "grammar", q: "La structure 'c'est elle, c'est mon ancêtre' est une :", opts: ["Énumération", "Gradation", "Parataxe avec identification progressive", "Hyperbole"], ans: 2, exp: "Parataxe : juxtaposition de propositions indépendantes créant une accumulation d'identités." },
+            { cat: "grammar", q: "Quel temps verbal domine dans ce passage ?", opts: ["Passé composé", "Présent de narration", "Imparfait", "Conditionnel"], ans: 1, exp: "Le présent 'doit dater', 'semble', 'allait porter' crée une immédiateté et une tension narrative." },
+            { cat: "grammar", q: "La 'gradation' du texte progresse de :", opts: ["L'abstrait au concret", "Le concret à l'abstrait (vêtements → violence)", "Le lent au rapide", "Le bruit au silence"], ans: 1, exp: "Du détail concret (vêtements trop épais) à l'abstrait (violence émotionnelle) ; montée d'abstraction." },
+            { cat: "grammar", q: "Identifiez le registre dominant :", opts: ["Burlesque", "Scientifique", "Littéraire et introspectif", "Journalistique"], ans: 2, exp: "Registre littéraire et introspectif : ton intime, confessionnel, avec perspective personnelle du narrateur." },
+            { cat: "grammar", q: "La métonymie 'dans les bras de Marie-Ernestine' substitue :", opts: ["Le corps entier", "Les bras représentent la maternité et la protection", "Le cœur", "L'âme"], ans: 1, exp: "Les bras (partie) représentent la maternité et la protection (tout) ; la partie pour le tout." },
+            { cat: "grammar", q: "L'inversion 'Sur ce bébé joufflu, il faut s'arrêter' a pour effet :", opts: ["Affaiblir le sens", "Créer un suspense et mettre l'accent", "Rendre confus", "Ennuyer le lecteur"], ans: 1, exp: "L'hyperbate rompt l'ordre habituel pour créer un suspense et mettre l'accent sur l'importance du moment." },
+
+            // Contenu (10)
+            { cat: "contenu", q: "Qui tient Marguerite dans ses bras sur la photographie ?", opts: ["Le père", "Marie-Ernestine", "Une infirmière", "Une tante"], ans: 1, exp: "Marie-Ernestine tient sa fille unique Marguerite contre sa poitrine." },
+            { cat: "contenu", q: "En quelle année la photographie de Marguerite a-t-elle été prise ?", opts: ["1903", "1913", "1923", "1933"], ans: 1, exp: "La photographie doit dater de 1913, année de sa naissance." },
+            { cat: "contenu", q: "Quel adjectif décrit le visage de Marguerite ?", opts: ["Radieux", "Ingrat", "Souriant", "Angélique"], ans: 1, exp: "Marguerite a un 'visage ingrat qui semble mécontent d'être là'." },
+            { cat: "contenu", q: "Quelle relation Marguerite entretient-elle avec le narrateur ?", opts: ["Elle est sa mère", "Elle est sa sœur", "Elle est sa grand-mère", "Elle est sa cousine"], ans: 2, exp: "Marguerite est 'ma grand-mère' selon le narrateur (ancêtre généalogique)." },
+            { cat: "contenu", q: "Quel est le secret porté par Marguerite ?", opts: ["Un amour caché", "La violence muette de la famille", "Une richesse cachée", "Une identité secrète"], ans: 1, exp: "Marguerite porte 'ce secret de famille' lié à 'la violence muette de la famille'." },
+            { cat: "contenu", q: "Comment la 'lourdeur' est-elle transmise dans la famille ?", opts: ["Par écrit", "Par hérédité et transmission silencieuse", "Par la parole", "Par l'éducation formelle"], ans: 1, exp: "La lourdeur se transmet silencieusement ('on ne dit jamais') à travers les générations." },
+            { cat: "contenu", q: "Que représente la photographie dans ce passage ?", opts: ["Un ornement", "Une preuve du passé et un symbole de l'héritage familial", "Un simple souvenir", "Une œuvre d'art"], ans: 1, exp: "La photographie est preuve incontestable du passé et véhicule symbolique du poids hérité." },
+            { cat: "contenu", q: "Quel sentiment le bébé Marguerite exprime-t-il sur la photo ?", opts: ["La joie", "Le mécontentement et la mécomplaisance", "L'amour", "L'innocence"], ans: 1, exp: "Le bébé 'semble froncer les sourcils', 'semble mécontent d'être là'." },
+            { cat: "contenu", q: "Comment la violence familiale se manifeste-t-elle ?", opts: ["Par des cris", "Par des actes violents", "De manière muette : par les murs, les voix, les silences", "Par des mensonges"], ans: 2, exp: "La violence 'habite les murs, les voix, les silences' ; elle est silencieuse et omniprésente." },
+            { cat: "contenu", q: "Quel paradoxe le narrateur exprime-t-il à la fin ?", opts: ["La joie et la tristesse", "Ce qui relie sans vraiment unir", "La force et la faiblesse", "La vie et la mort"], ans: 1, exp: "Paradoxe final : 'tout ce qui nous relie sans jamais nous unir vraiment'." },
+
+            // Idiomes & Figures de style (20)
+            { cat: "idiome", q: "Quelle figure de style est : 'les yeux écarquillés sur le vide' ?", opts: ["Litote", "Métaphore / Personnification", "Chiasme", "Zeugme"], ans: 1, exp: "Métaphore / Personnification : attribuer une action (regarder) aux yeux d'un nourrisson." },
+            { cat: "idiome", q: "L'expression 'cette lourdeur qu'on ne dit jamais' est une :", opts: ["Périphrase", "Allusion à l'absence de parole sur le sujet", "Onomatopée", "Calembour"], ans: 1, exp: "Allusion poétique : la lourdeur n'est jamais exprimée verbalement, elle reste implicite." },
+            { cat: "idiome", q: "Que signifie figurément 'habiter les murs' ?", opts: ["Vivre dans une maison", "Être omniprésente et implicite", "Construire des murs", "Repeindre les murs"], ans: 1, exp: "La violence est tellement présente qu'elle semble faire partie même des structures du foyer." },
+            { cat: "idiome", q: "La 'silence' dans ce contexte fonctionne comme :", opts: ["Absence de bruit", "Agent actif de transmission du poids familial", "Repos", "Paix"], ans: 1, exp: "Le silence n'est pas vide ; c'est un véhicule actif du secret et de la transmission." },
+            { cat: "idiome", q: "L'expression 'froncer les sourcils' est une :", opts: ["Action réaliste pour un bébé", "Expression idiomatique de mécontentement", "Impossibilité physique", "Exagération"], ans: 1, exp: "Expression idiomatique : 'froncer les sourcils' = montrer du mécontentement, que le bébé soit capable ou non de le faire." },
+            { cat: "idiome", q: "La 'photographie' fonctionne comme :", opts: ["Document factuel", "Symbole et témoin du poids transgénérationnel", "Objet de décoration", "Preuve juridique"], ans: 1, exp: "La photographie devient symbole : elle capture et fixe le moment où commence à se jouer la violence muette." },
+            { cat: "idiome", q: "Quel effet crée la répétition 'c'est...c'est...c'est' ?", opts: ["Confusion", "Identification progressive et emphase", "Monotonie", "Faiblesse"], ans: 1, exp: "Anaphore créant une accumulation d'identités et une mise en relief progressive du personnage de Marguerite." },
+            { cat: "idiome", q: "L'oxymore 'violence muette' exprime :", opts: ["Un bruit violent", "Une contradiction : violence silencieuse et omnipotente", "Une paix agressive", "Une impossible juxtaposition"], ans: 1, exp: "Contradiction volontaire : la violence est là (agit), mais silencieuse (non verbalisée, implicite)." },
+            { cat: "idiome", q: "La 'dose' du poids familial est :", opts: ["Mesurable et explicite", "Indéfinissable et tacite", "Oubliée", "Légère"], ans: 1, exp: "La 'lourdeur' n'a pas de mesure explicite ; elle est ressentie mais jamais verbalisée." },
+            { cat: "idiome", q: "Que signifie 'quelque chose se joue' dans ce contexte ?", opts: ["Un jeu enfantin", "Un moment crucial où se décide la transmission du secret", "Une performance", "Un événement banal"], ans: 1, exp: "Expression idiomatique : 'quelque chose se joue' = quelque chose de crucial se décide en ce moment." },
+            { cat: "idiome", q: "L'image des 'vêtements trop épais' symbolise :", opts: ["La mode de 1913", "L'étouffement et le confinement de l'enfant", "La pauvreté", "Le froid"], ans: 1, exp: "Symbole : les vêtements étouffants représentent le poids des conventions et des secrets qui enserrent chaque générations." },
+            { cat: "idiome", q: "Quel rôle joue la 'prescription : il faut s'arrêter'?", opts: ["Ordre au lecteur de quitter", "Appel à la contemplation et à la réflexion", "Instruction poétique", "Pause rythmique"], ans: 1, exp: "Appel apostrophique : le narrateur invite le lecteur à contempler et analyser ce moment charnière." },
+            { cat: "idiome", q: "L'expression 'ce que nous portons' signifie :", opts: ["Vêtements et objets", "L'héritage émotionnel et moral", "Le poids physique", "Les achats"], ans: 1, exp: "Métaphore : 'porter' = être héritier de, être responsable de, transmettre à la génération suivante." },
+            { cat: "idiome", q: "La 'transmission' dans ce texte est :", opts: ["Explicite et verbale", "Tacite et transgénérationnelle", "Écrite", "Oubliée"], ans: 1, exp: "La transmission est silencieuse, implicite, passant par les non-dits et les silences de famille." },
+            { cat: "idiome", q: "Quel paradoxe incarne Marguerite ?", opts: ["L'enfant et l'adulte", "L'innocence et la culpabilité", "La vie et le néant", "Le début et la fin de la violence familiale"], ans: 2, exp: "Marguerite incarne le paradoxe : elle est innocente (bébé) mais héritière du secret transgénérationnel." },
+            { cat: "idiome", q: "Que signifie 'nous relie sans jamais nous unir' ?", opts: ["Contradiction logique", "Le secret crée un lien mais maintient la distance (séparation paradoxale)", "Amitié superficielle", "Indifférence mutuelle"], ans: 1, exp: "Oxymore final : ce qui unit (secret commun) est ce qui désunit (impossibilité de communication)." },
+            { cat: "idiome", q: "Le 'regard' du bébé 'écarquillé sur le vide' symbolise :", opts: ["La cécité", "L'innocence confrontée à l'incompréhensible", "La découverte", "L'absence de sensation"], ans: 1, exp: "Symbole : l'enfant innocente est exposée au néant/mystère que représente la violence familiale." },
+            { cat: "idiome", q: "Comment le registre change-t-il du début à la fin ?", opts: ["Descriptif → Abstrait/Métaphorique", "Joyeux → Triste", "Lent → Rapide", "Calme → Violent"], ans: 0, exp: "Du détail photographique concret au domaine abstrait et existentiel ; montée en généralité et intensité." },
+            { cat: "idiome", q: "La 'photographie' est une :", opts: ["Fenêtre", "Miroir du passé et preuve du poids qui se transmet", "Porte", "Mur"], ans: 1, exp: "Métaphore centrale : la photographie capture le moment où commence à s'exprimer le secret transgénérationnel." },
+            { cat: "idiome", q: "Quel est l'effet littéraire de dire 'ma grand-mère Marguerite' ?", opts: ["Familiarité maladroite", "Ancrage personnel et revendication généalogique", "Distance ironique", "Affection superficielle"], ans: 1, exp: "Appellation double : affirme simultanement la relation généalogique et la proximité émotionnelle du narrateur." }
+        ];
+
+        // État global
+        let currentPage = 'extrait';
+        let currentTheme = 'dark';
+        let qcmAnswers = {};
+        let currentFilter = 'all';
+
+        // Initialisation
+        function init() {
+            renderVocabTable();
+            renderGrammarStructures();
+            renderQCM();
+            setupEventListeners();
+            drawNarrativeDiagram();
+        }
+
+        function renderVocabTable() {
+            const tbody = document.getElementById('vocab-tbody');
+            vocabularyData.forEach(([word, pos, def]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="word">${word}</td>
+                    <td class="pos">${pos}</td>
+                    <td>${def}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('vocab-search').addEventListener('input', e => {
+                const query = e.target.value.toLowerCase();
+                document.querySelectorAll('#vocab-tbody tr').forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? '' : 'none';
+                });
+            });
+        }
+
+        function renderGrammarStructures() {
+            const container = document.getElementById('grammar-syntaxe');
+            grammarStructures.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'grammar-card';
+                card.innerHTML = `
+                    <div class="grammar-card-label">${s.label}</div>
+                    <div class="grammar-card-example">"${s.example}"</div>
+                    <div class="grammar-card-note">${s.note}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderQCM() {
+            const container = document.getElementById('qcm-container');
+            qcmQuestions.forEach((q, i) => {
+                const item = document.createElement('div');
+                item.className = 'qcm-item';
+                item.dataset.index = i;
+                item.dataset.category = q.cat;
+
+                let categoryLabel = { vocab: 'Vocabulaire', grammar: 'Grammaire', contenu: 'Contenu', idiome: 'Idiomes & Figures' }[q.cat];
+                let categoryClass = q.cat;
+
+                item.innerHTML = `
+                    <div class="qcm-header">
+                        <span class="qcm-number">${i+1}</span>
+                        <span class="qcm-category ${categoryClass}">${categoryLabel}</span>
+                    </div>
+                    <div class="qcm-text">${q.q}</div>
+                    <div class="qcm-options">
+                        ${q.opts.map((opt, oi) => `
+                            <label class="qcm-option">
+                                <input type="radio" name="q${i}" value="${oi}" data-qi="${i}">
+                                <label>${opt}</label>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="qcm-feedback" id="feedback-${i}" style="display:none;"></div>
+                `;
+
+                container.appendChild(item);
+
+                // Event listeners
+                item.querySelectorAll('input').forEach(inp => {
+                    inp.addEventListener('change', e => checkAnswer(i, parseInt(e.target.value), q));
+                });
+            });
+        }
+
+        function checkAnswer(qi, chosen, q) {
+            qcmAnswers[qi] = chosen;
+            const correct = chosen === q.ans;
+            const feedbackEl = document.getElementById(`feedback-${qi}`);
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = correct ? 'qcm-feedback correct' : 'qcm-feedback incorrect';
+            feedbackEl.textContent = (correct ? '✓ Correct : ' : '✗ Incorrect : ') + q.exp;
+
+            // Désactiver les autres options
+            document.querySelectorAll(`input[name="q${qi}"]`).forEach(inp => inp.disabled = true);
+
+            updateScore();
+        }
+
+        function updateScore() {
+            const answered = Object.keys(qcmAnswers).length;
+            const correct = Object.entries(qcmAnswers).filter(([qi, chosen]) => {
+                return chosen === qcmQuestions[qi].ans;
+            }).length;
+
+            const total = qcmQuestions.length;
+            const percent = Math.round((correct / total) * 100);
+
+            document.getElementById('qcm-score').textContent = correct;
+            document.getElementById('qcm-total').textContent = total;
+            document.getElementById('qcm-percent').textContent = percent;
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
+
+        function filterQCM(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === cat));
+            document.querySelectorAll('.qcm-item').forEach(item => {
+                item.classList.toggle('hidden', cat !== 'all' && item.dataset.category !== cat);
+            });
+        }
+
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`.nav-link[data-page="${page}"]`).classList.add('active');
+            currentPage = page;
+            if (page === 'resume') setTimeout(() => drawNarrativeDiagram(), 100);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+            document.getElementById('main').classList.toggle('expanded');
+        }
+
+        function drawNarrativeDiagram() {
+            const svg = document.getElementById('narrative-svg');
+            if (!svg) return;
+
+            const n = narrativeSteps.length;
+            const W = svg.clientWidth || 800;
+            const H = 180;
+
+            svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+            svg.innerHTML = '';
+
+            const defs = `<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/></marker></defs>`;
+            const step = W / n;
+            let html = defs;
+
+            // Lignes
+            for (let i = 0; i < n-1; i++) {
+                const x1 = step * i + step/2 + 18;
+                const x2 = step * (i+1) + step/2 - 18;
+                html += `<line x1="${x1}" y1="50" x2="${x2}" y2="50" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)" opacity="0.6"/>`;
+            }
+
+            // Cercles
+            for (let i = 0; i < n; i++) {
+                const cx = step * i + step/2;
+                const s = narrativeSteps[i];
+                html += `<circle cx="${cx}" cy="50" r="18" fill="var(--accent)" opacity="0.85" class="diag-node" data-i="${i}" style="cursor:pointer"/>`;
+                html += `<text x="${cx}" y="56" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold" pointer-events="none">${i+1}</text>`;
+
+                const words = s.label.split(' ');
+                const line1 = words.slice(0, Math.ceil(words.length/2)).join(' ');
+                const line2 = words.slice(Math.ceil(words.length/2)).join(' ');
+                html += `<text x="${cx}" y="90" text-anchor="middle" fill="var(--text)" font-size="11" font-family="Arial" font-weight="500">${line1}</text>`;
+                if (line2) html += `<text x="${cx}" y="105" text-anchor="middle" fill="var(--text)" font-size="11" font-family="Arial" font-weight="500">${line2}</text>`;
+            }
+
+            svg.innerHTML = html;
+
+            // Tooltips
+            svg.querySelectorAll('.diag-node').forEach(c => {
+                c.addEventListener('mouseenter', e => {
+                    const i = +c.dataset.i;
+                    const tt = document.getElementById('diagram-tooltip');
+                    tt.textContent = narrativeSteps[i].desc;
+                    tt.style.display = 'block';
+                    tt.style.left = e.offsetX + 'px';
+                    tt.style.top = (e.offsetY + 20) + 'px';
+                });
+                c.addEventListener('mouseleave', () => {
+                    document.getElementById('diagram-tooltip').style.display = 'none';
+                });
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('toggle-sidebar-btn').addEventListener('click', toggleSidebar);
+            document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.addEventListener('click', e => {
+                    e.preventDefault();
+                    showPage(l.dataset.page);
+                });
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.addEventListener('click', () => filterQCM(b.dataset.filter));
+            });
+
+            document.getElementById('show-answers-btn').addEventListener('click', () => {
+                qcmQuestions.forEach((q, i) => {
+                    if (!(i in qcmAnswers)) {
+                        document.querySelector(`input[name="q${i}"][value="${q.ans}"]`).checked = true;
+                        checkAnswer(i, q.ans, q);
+                    }
+                });
+            });
+
+            document.getElementById('reset-qcm-btn').addEventListener('click', () => {
+                qcmAnswers = {};
+                document.querySelectorAll('.qcm-feedback').forEach(f => f.style.display = 'none');
+                document.querySelectorAll('.qcm-option input').forEach(inp => {
+                    inp.disabled = false;
+                    inp.checked = false;
+                });
+                updateScore();
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.addEventListener('click', () => {
+                    const tabId = b.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    b.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        window.addEventListener('load', init);
+        window.addEventListener('resize', drawNarrativeDiagram);
+    </script>
+</body>
+</html>
