@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🇫🇷 Session Français C2 — Vies minuscules</title>
+<style>
+:root {
+  --font-sans: 'Arial','Helvetica Neue',sans-serif;
+  --radius: 8px;
+  --sidebar-w: 240px;
+  --transition: 0.22s ease;
+}
+[data-theme="dark"] {
+  --bg:#0f1117;--bg2:#181b24;--bg3:#1e2130;
+  --border:#2a2d3e;--text:#e2e8f0;--text-muted:#8892a4;
+  --accent:#6c8ef7;--accent2:#a78bfa;
+  --green:#34d399;--amber:#fbbf24;--red:#f87171;
+}
+[data-theme="light"] {
+  --bg:#f4f6fb;--bg2:#ffffff;--bg3:#eaecf4;
+  --border:#d0d5e8;--text:#1a1f36;--text-muted:#6b7280;
+  --accent:#4361ee;--accent2:#7c3aed;
+  --green:#059669;--amber:#d97706;--red:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;}
+#topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:200;}
+#topbar h1{font-size:0.95rem;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.icon-btn{background:none;border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background var(--transition);}
+.icon-btn:hover{background:var(--bg3);}
+#sidebar{position:fixed;top:52px;left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;transition:transform var(--transition);z-index:150;padding:12px 0;}
+#sidebar.hidden{transform:translateX(-240px);}
+.sidebar-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:12px 16px 4px;}
+.nav-link{display:block;padding:8px 16px;color:var(--text-muted);text-decoration:none;font-size:0.88rem;cursor:pointer;border-left:3px solid transparent;transition:all var(--transition);}
+.nav-link:hover{background:var(--bg3);color:var(--text);}
+.nav-link.active{border-left-color:var(--accent);color:var(--accent);background:var(--bg3);}
+#main{margin-left:var(--sidebar-w);margin-top:52px;padding:36px 48px;max-width:860px;transition:margin-left var(--transition);}
+#main.expanded{margin-left:0;}
+.page{display:none;}
+.page.active{display:block;}
+h2{font-size:1.3rem;font-weight:600;margin-bottom:1rem;color:var(--text);}
+h3{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin:1.5rem 0 0.75rem;}
+.source-label{font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;}
+.passage{background:var(--bg3);border-left:4px solid var(--accent);padding:1.5rem;border-radius:var(--radius);font-style:italic;margin:1rem 0;white-space:pre-wrap;line-height:1.9;}
+.citation{text-align:right;font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;}
+.diagram-wrap{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:1.5rem 0;overflow:hidden;}
+.diag-tooltip{display:none;position:absolute;background:var(--bg2);border:1px solid var(--accent);border-radius:var(--radius);padding:8px 12px;font-size:13px;max-width:260px;color:var(--text);z-index:100;pointer-events:none;}
+.vocab-search{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-sans);font-size:14px;margin-bottom:1rem;}
+.vocab-search:focus{outline:none;border-color:var(--accent);}
+.vocab-counter{font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;}
+table{width:100%;border-collapse:collapse;}
+.vocab-table th{text-align:left;padding:8px 12px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);border-bottom:1px solid var(--border);}
+.vocab-table td{padding:9px 12px;border-bottom:1px solid var(--border);font-size:0.9rem;}
+.vocab-table tr:nth-child(even) td{background:var(--bg3);}
+.vocab-table tr:hover td{background:var(--bg3);}
+.word{color:var(--accent);font-weight:700;}
+.pos{color:var(--text-muted);font-style:italic;font-size:0.82rem;}
+.tabs{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.tab-btn{padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius);background:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;font-family:var(--font-sans);transition:all var(--transition);}
+.tab-btn.active,.tab-btn:hover{background:var(--accent);color:white;border-color:var(--accent);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.grammar-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;}
+.grammar-card .gc-label{font-weight:700;color:var(--accent);margin-bottom:6px;}
+.grammar-card .gc-ex{font-style:italic;color:var(--text-muted);margin-bottom:4px;font-size:0.9rem;}
+.grammar-card .gc-note{font-size:0.85rem;color:var(--text);}
+.score-bar{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:1rem;display:flex;align-items:center;gap:16px;}
+.score-num{font-size:1.2rem;font-weight:700;color:var(--accent);}
+.progress-wrap{flex:1;background:var(--border);border-radius:4px;height:8px;}
+.progress-bar{height:8px;border-radius:4px;background:var(--accent);transition:width 0.3s;}
+.qcm-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;}
+.qcm-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;}
+.qcm-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.qcm-num{font-weight:700;color:var(--text-muted);font-size:0.85rem;}
+.badge{font-size:0.7rem;padding:2px 8px;border-radius:12px;font-weight:600;text-transform:uppercase;}
+.badge-comp{background:#1e3a5f;color:#6c8ef7;}
+.badge-voc{background:#2d1f5e;color:#a78bfa;}
+.badge-gram{background:#1a3a2a;color:#34d399;}
+.badge-cult{background:#3a2a1a;color:#fbbf24;}
+.qcm-q{margin-bottom:10px;font-size:0.95rem;}
+.options label{display:block;padding:6px 10px;margin:4px 0;border-radius:6px;cursor:pointer;font-size:0.9rem;transition:background var(--transition);}
+.options label:hover{background:var(--bg2);}
+.options input[type=radio]{margin-right:8px;}
+.options input:disabled+span{opacity:0.7;}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:0.85rem;}
+.feedback.correct{background:#0d2e1f;border:1px solid var(--green);color:var(--green);}
+.feedback.incorrect{background:#2e0d0d;border:1px solid var(--red);color:var(--red);}
+.qcm-actions{display:flex;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.btn{padding:8px 18px;border-radius:var(--radius);border:none;cursor:pointer;font-family:var(--font-sans);font-size:0.88rem;font-weight:600;transition:all var(--transition);}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{opacity:0.85;}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{background:var(--border);}
+.about-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
+.about-card h3{margin-top:0;}
+@media(max-width:700px){
+  #sidebar{transform:translateX(-240px);}
+  #sidebar.hidden{transform:translateX(-240px);}
+  #sidebar:not(.hidden){transform:translateX(0);}
+  #main{margin-left:0 !important;}
+}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <button class="icon-btn" id="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+  <h1>🇫🇷 Session Français C2 — <em>Vies minuscules</em>, Pierre Michon</h1>
+  <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<nav id="sidebar">
+  <div class="sidebar-label">Navigation</div>
+  <a class="nav-link active" onclick="showPage('extrait')">📄 Extrait</a>
+  <a class="nav-link" onclick="showPage('resume')">🗺 Résumé &amp; Diagram</a>
+  <a class="nav-link" onclick="showPage('vocab')">📚 Vocabulaire</a>
+  <a class="nav-link" onclick="showPage('grammaire')">✦ Grammaire</a>
+  <a class="nav-link" onclick="showPage('qcm')">✅ QCM (60)</a>
+  <a class="nav-link" onclick="showPage('apropos')">ℹ À propos</a>
+</nav>
+
+<main id="main">
+
+<!-- PAGE 1: EXTRAIT -->
+<div id="page-extrait" class="page active">
+  <h2>Extrait du texte</h2>
+  <div class="source-label">📖 <em>Vies minuscules</em> — Pierre Michon | Vie de Georges Bandy</div>
+  <div class="passage">Georges Bandy était le fils du forgeron, et c'était un beau garçon dans les années cinquante, avec ses cheveux noirs et cette façon qu'il avait de porter son corps, un peu en avant, comme s'il allait toujours tomber et se rattrapait chaque fois. Il avait dix-huit ans peut-être, ou vingt. Les femmes le regardaient passer sur la place, les hommes aussi, d'un autre regard. Il ne travaillait pas, ou peu ; il s'installait au café dès le matin, jouait aux cartes, chantait. Mon grand-père disait qu'il était bon à rien, mais il le disait d'une voix particulière, sans véritable mépris, presque avec douceur.
+
+Moi j'avais six ans. Je le regardais de loin, depuis le seuil de la maison de ma mère. Il représentait pour moi quelque chose d'incompréhensible et de magnifique, une espèce de liberté que je ne savais pas nommer mais que je sentais peser sur lui comme une lumière. Le dimanche il prenait sa mobylette et partait vers les bois de Fursac, seul ou avec des filles dont on disait du mal ; il revenait le soir en sifflant, les joues rouges, les cheveux défaits. Ma mère secouait la tête. Mais moi je pensais que c'était ça, la vie.
+
+Il avait une façon de rire qui remplissait le café et débordait dans la rue, un rire sans raison et sans fin, comme si le monde entier lui faisait de l'esprit. Je me souviens de ses mains, larges et sombres, les mains de son père le forgeron, des mains faites pour frapper le métal ou saisir les choses lourdes, et qui tenaient le verre de vin avec une délicatesse surprenante. Les vieux disaient qu'il avait raté son bachot deux fois. Sa mère pleurait le dimanche à la messe, ostensiblement, et tout le monde savait pourquoi.
+
+Ce qui s'est passé ensuite, je l'ai appris plus tard, par bribes, par les conversations que les adultes tenaient à voix basse quand ils croyaient que je n'écoutais pas. Il y eut une fille, une histoire qui mal tourna, une grossesse dont on ne parla jamais ouvertement. Il y eut l'armée, l'Algérie peut-être, ou simplement le contingent, les casernes grises. Il y eut un retour, deux ans après, méconnaissable. Quelque chose s'était éteint en lui. Il travaillait maintenant à l'usine de Guéret, le soir il buvait seul. Le rire avait disparu, ou bien il était devenu autre chose, amer et creux comme un tonneau vide.
+
+Je pense souvent à lui. Non pas à l'homme qu'il est devenu, dont je n'ai su que peu de chose et qui appartient à une histoire banale, triste peut-être mais banale. Je pense à celui de la place, à ses vingt ans lumineux et inutiles, à ce corps jeté en avant sur le monde avec une confiance que rien ne justifiait. Il y avait en lui quelque chose que j'aurais voulu posséder et que je n'ai jamais su nommer exactement : une façon d'habiter l'instant sans en attendre rien, sans calcul, sans peur. Une légèreté que j'ai cherchée toute ma vie dans les livres et que lui portait naturellement, avant que la vie la lui prenne.</div>
+  <div class="citation">— Pierre Michon, <em>Vies minuscules</em>, « Vie de Georges Bandy », Gallimard, 1984</div>
+</div>
+
+<!-- PAGE 2: RÉSUMÉ & DIAGRAM -->
+<div id="page-resume" class="page">
+  <h2>Résumé &amp; Parcours narratif</h2>
+  <h3>Résumé</h3>
+  <p>Le narrateur évoque Georges Bandy, figure charismatique et oisive de son village creusois, admirée depuis l'enfance pour sa beauté et sa liberté désinvolte. Enfant de six ans, le narrateur projette sur ce jeune homme une fascination teintée d'envie, voyant en lui l'incarnation même d'une liberté qu'il ne sait pas encore nommer. Bandy, fils de forgeron, vit dans l'insouciance malgré les regards désapprobateurs des anciens et les larmes silencieuses de sa mère. Mais la vie — une grossesse cachée, l'armée, peut-être l'Algérie — brise imperceptiblement cette légèreté. À son retour, Bandy est méconnaissable : le rire s'est éteint, remplacé par la solitude du travail d'usine et de l'alcool solitaire. La méditation finale du narrateur distingue deux Bandy : l'homme banal qu'il est devenu, et le jeune homme lumineux d'autrefois, dont la grâce inutile reste l'objet d'un désir nostalgique et littéraire.</p>
+  <h3>Diagram narratif</h3>
+  <div class="diagram-wrap">
+    <svg id="narrative-svg" width="100%" height="130"></svg>
+    <div id="diagram-tooltip" class="diag-tooltip"></div>
+  </div>
+</div>
+
+<!-- PAGE 3: VOCABULAIRE -->
+<div id="page-vocab" class="page">
+  <h2>Vocabulaire C2</h2>
+  <div class="vocab-counter" id="vocab-counter">38 mots · niveau C2</div>
+  <input class="vocab-search" type="text" placeholder="Rechercher un mot…" oninput="filterVocab(this.value)"/>
+  <table class="vocab-table" id="vocab-table">
+    <thead><tr><th>Mot</th><th>Classe</th><th>Définition</th></tr></thead>
+    <tbody id="vocab-body"></tbody>
+  </table>
+</div>
+
+<!-- PAGE 4: GRAMMAIRE -->
+<div id="page-grammaire" class="page">
+  <h2>Grammaire &amp; Style</h2>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('gram','syntaxe')">Structures syntaxiques</button>
+    <button class="tab-btn" onclick="switchTab('gram','figures')">Figures de style</button>
+    <button class="tab-btn" onclick="switchTab('gram','registre')">Registre &amp; style</button>
+  </div>
+  <div id="gram-syntaxe" class="tab-panel active" id="tab-syntaxe"></div>
+  <div id="gram-figures" class="tab-panel"></div>
+  <div id="gram-registre" class="tab-panel"></div>
+</div>
+
+<!-- PAGE 5: QCM -->
+<div id="page-qcm" class="page">
+  <h2>QCM — 60 questions</h2>
+  <div class="score-bar">
+    <div>
+      <div class="score-num" id="score-display">0 / 0</div>
+      <div style="font-size:0.8rem;color:var(--text-muted)">Score</div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+    <div id="score-pct" style="font-weight:700;color:var(--accent)">—</div>
+  </div>
+  <div class="qcm-filters" id="qcm-filters"></div>
+  <div class="qcm-actions">
+    <button class="btn btn-primary" onclick="showAllAnswers()">Voir les réponses</button>
+    <button class="btn btn-secondary" onclick="resetQCM()">Réinitialiser</button>
+  </div>
+  <div id="qcm-container"></div>
+</div>
+
+<!-- PAGE 6: À PROPOS -->
+<div id="page-apropos" class="page">
+  <h2>À propos de cette session</h2>
+  <div class="about-card">
+    <h3>Source</h3>
+    <p><strong>Œuvre :</strong> <em>Vies minuscules</em>, Pierre Michon, Gallimard, 1984<br/>
+    <strong>Section :</strong> Vie de Georges Bandy<br/>
+    <strong>Date de session :</strong> 5 juin 2026<br/>
+    <strong>Session n° :</strong> 3</p>
+  </div>
+  <div class="about-card">
+    <h3>Conseil méthodologique</h3>
+    <p>Lisez l'extrait à voix haute une première fois, en notant les mots inconnus. Consultez ensuite la page Vocabulaire, puis faites les QCM de compréhension avant les QCM de vocabulaire et de grammaire. Revenez au texte après chaque erreur pour ancrer la correction dans le contexte original. Visez 80% de réussite avant de passer à une nouvelle session.</p>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ===== DATA =====
+const narrativeSteps = [
+  {label:"Portrait lumineux", desc:"Introduction de Georges Bandy : beau, charismatique, oisif. Le village entier le regarde."},
+  {label:"Fascination enfantine", desc:"Le narrateur, enfant de 6 ans, projette sur Bandy une liberté idéalisée et incompréhensible."},
+  {label:"La grâce du corps", desc:"Description physique et sociale : le rire envahissant, les mains de forgeron, l'échec scolaire assumé."},
+  {label:"Rupture obscure", desc:"Une histoire de grossesse, l'armée, l'Algérie peut-être : les bribes d'une chute apprise par ouï-dire."},
+  {label:"Retour méconnaissable", desc:"Bandy revient transformé, travaille à l'usine, boit seul. Le rire s'est éteint."},
+  {label:"Méditation nostalgique", desc:"Le narrateur distingue deux Bandy et reconnaît dans la légèreté perdue l'objet de toute sa quête littéraire."}
+];
+
+const vocabData = [
+  ["désinvolte","adj.","Qui fait preuve d'une légèreté nonchalante, sans se soucier des convenances."],
+  ["ostensiblement","adv.","De manière visible et délibérée, pour être remarqué."],
+  ["par bribes","loc.","Par fragments épars, de façon discontinue et partielle."],
+  ["méconnaissable","adj.","Tellement changé qu'on ne peut plus le reconnaître."],
+  ["le contingent","n.m.","Ensemble des conscrits appelés à effectuer leur service militaire."],
+  ["las casernes","n.f.pl.","Bâtiments militaires servant de logement aux soldats."],
+  ["ostensiblement","adv.","De façon manifeste, volontairement visible."],
+  ["délicatesse","n.f.","Finesse et douceur dans les gestes ou le comportement."],
+  ["le bachot","n.m. fam.","Le baccalauréat (terme populaire et vieilli)."],
+  ["amer","adj.","Qui exprime la rancœur, la désillusion douloureuse."],
+  ["creux","adj.","Vide de substance, sonore mais sans profondeur réelle."],
+  ["lumineux","adj.","Qui irradie une qualité positive, brillant dans son éclat."],
+  ["une légèreté","n.f.","Qualité de ce qui est sans lourdeur, sans souci excessif."],
+  ["inhabiter","v.","Résider intérieurement dans quelque chose (sens figuré)."],
+  ["sans calcul","loc.","Sans arrière-pensée ni stratégie intéressée."],
+  ["peser sur","v.phr.","Exercer une pression ou une présence forte sur quelqu'un."],
+  ["défait","adj.","En désordre, décoiffé ; ou bien brisé, vaincu (double sens)."],
+  ["le seuil","n.m.","Pas de la porte ; par extension, limite entre deux espaces."],
+  ["la forge","n.f.","Atelier du forgeron ; lieu de travail du métal à chaud."],
+  ["une espèce de","loc.","Une sorte de (introduit une comparaison imprécise mais évocatrice)."],
+  ["se rattrapait","v.pron.","Se rééquilibrait in extremis, évitait la chute de justesse."],
+  ["déborder","v.","Dépasser les limites, se répandre au-delà du contenant."],
+  ["un retour","n.m.","Ici : le retour du service militaire, chargé de résonance tragique."],
+  ["appartenir à","v.","Faire partie de, être classifiable dans une catégorie."],
+  ["banale","adj.","Ordinaire, sans originalité, dénué de singularité."],
+  ["inutiles","adj.","Qui n'a pas de finalité pratique ; ici valorisé comme pur éclat."],
+  ["une confiance","n.f.","Sentiment de sécurité en soi ou dans le monde."],
+  ["nommer","v.","Mettre des mots sur quelque chose d'encore informe."],
+  ["jeté en avant","part.passé","Projeté avec énergie vers l'avenir, sans retenue."],
+  ["s'éteindre","v.pron.","Perdre progressivement sa vitalité, son éclat, sa vie."],
+  ["le forgeron","n.m.","Artisan qui travaille et forge les métaux à chaud."],
+  ["ostensiblement","adv.","(bis) De manière délibérément visible."],
+  ["une grossesse","n.f.","État d'une femme enceinte ; ici tenu secret, honteux."],
+  ["tenir à voix basse","loc.","Parler discrètement pour ne pas être entendu."],
+  ["une mobylette","n.f.","Cyclomoteur à moteur auxiliaire, emblème des années 50-60."],
+  ["la messe","n.f.","Office religieux catholique ; lieu de la conformité sociale rurale."],
+  ["siffler","v.","Émettre un son modulé avec les lèvres ; signe de légèreté."],
+  ["une voix particulière","loc.","Un ton spécial, chargé d'un sens non-dit, ambigu."]
+];
+
+const gramData = {
+  syntaxe: [
+    {label:"✦ La répétition anaphorique de « Il y eut »",
+     ex:"Il y eut une fille, une histoire qui mal tourna… Il y eut l'armée… Il y eut un retour…",
+     note:"Anaphore verbale au passé simple qui crée un effet de liste fatale, imitant le rapport d'un destin implacable."},
+    {label:"✦ La proposition participiale à valeur causale",
+     ex:"…des mains faites pour frapper le métal ou saisir les choses lourdes, et qui tenaient le verre de vin avec une délicatesse surprenante",
+     note:"Le participe passé 'faites pour' exprime la destination originelle, mis en tension avec le comportement réel."},
+    {label:"✦ La négation partielle restrictive",
+     ex:"Non pas à l'homme qu'il est devenu… Je pense à celui de la place",
+     note:"Structure 'non pas… mais…' qui introduit une distinction mémorielle entre deux identités du même homme."},
+    {label:"✦ La subordonnée relative déterminative en cascade",
+     ex:"quelque chose que j'aurais voulu posséder et que je n'ai jamais su nommer exactement",
+     note:"Double relative coordonnée qui mime l'insaisissabilité de l'objet désiré."},
+    {label:"✦ Le conditionnel passé à valeur de regret",
+     ex:"quelque chose que j'aurais voulu posséder",
+     note:"Conditionnel passé exprimant un désir non réalisé, à valeur de regret nostalgique persistant."},
+    {label:"✦ La proposition circonstancielle de temps inversée",
+     ex:"avant que la vie la lui prenne",
+     note:"Subjonctif dans la circonstancielle d'antériorité ; la fin de la phrase révèle rétrospectivement la fragilité initiale."}
+  ],
+  figures: [
+    {label:"✦ La métaphore de la lumière",
+     ex:"une espèce de liberté que je sentais peser sur lui comme une lumière",
+     note:"Oxymore implicite : la lumière 'pèse', associant légèreté visuelle et pesanteur sensible."},
+    {label:"✦ La comparaison dévalorisante",
+     ex:"amer et creux comme un tonneau vide",
+     note:"Comparaison triviale (un tonneau) pour qualifier la déchéance intérieure ; la banalité de l'image souligne la banalité de la chute."},
+    {label:"✦ L'antithèse lumineux/éteint",
+     ex:"ses vingt ans lumineux et inutiles… Quelque chose s'était éteint en lui",
+     note:"Opposition structurelle entre l'éclat de jeunesse et l'extinction ultérieure, pivot de tout le passage."},
+    {label:"✦ La litote sociale",
+     ex:"il était bon à rien… d'une voix particulière, sans véritable mépris",
+     note:"La formule populaire 'bon à rien' est immédiatement nuancée par la douceur du ton, créant une ambivalence morale."},
+    {label:"✦ La synecdoque du corps",
+     ex:"ce corps jeté en avant sur le monde",
+     note:"Le corps représente l'être entier de Bandy, sa façon d'être au monde, son rapport physique à l'existence."}
+  ],
+  registre: [
+    {label:"✦ Mélange des registres oral/littéraire",
+     ex:"il était bon à rien / ce corps jeté en avant sur le monde",
+     note:"Michon alterne expressions populaires et formulations poétiques élevées, créant une tension stylistique caractéristique."},
+    {label:"✦ Le présent de vérité générale à valeur mélancolique",
+     ex:"Une légèreté que j'ai cherchée toute ma vie dans les livres",
+     note:"Le présent parfait (passé composé) ancre la quête dans le présent du narrateur, transformant le souvenir en programme existentiel."},
+    {label:"✦ L'imparfait duratif vs. passé simple ponctuel",
+     ex:"regardaient passer / s'installait / chantait [imparfait] vs. Il y eut [passé simple]",
+     note:"L'imparfait peint la durée heureuse de la jeunesse ; le passé simple marque les ruptures soudaines du destin."}
+  ]
+};
+
+const qcmData = [
+  // COMPRÉHENSION (20)
+  {n:1,cat:"comp",q:"Qui est Georges Bandy dans le village ?",opts:["Le fils du forgeron","Le fils du boucher","Un instituteur","Un militaire de retour"],ans:0,exp:"Le texte l'indique explicitement dès la première phrase : « fils du forgeron »."},
+  {n:2,cat:"comp",q:"Quel âge a le narrateur quand il observe Bandy ?",opts:["Six ans","Dix ans","Trois ans","Douze ans"],ans:0,exp:"« Moi j'avais six ans » est précisé sans ambiguïté dans le deuxième paragraphe."},
+  {n:3,cat:"comp",q:"Comment le narrateur perçoit-il la liberté de Bandy ?",opts:["Comme quelque chose d'incompréhensible et de magnifique","Comme une honte pour sa famille","Comme une paresse condamnable","Comme un exemple à ne pas suivre"],ans:0,exp:"« quelque chose d'incompréhensible et de magnifique, une espèce de liberté »."},
+  {n:4,cat:"comp",q:"Que fait Bandy le dimanche ?",opts:["Il part à mobylette vers les bois de Fursac","Il travaille à la forge de son père","Il va à la messe avec sa mère","Il joue aux cartes au café"],ans:0,exp:"Le dimanche, il prend sa mobylette et part vers les bois de Fursac."},
+  {n:5,cat:"comp",q:"Quelle est la réaction de la mère du narrateur face au comportement de Bandy ?",opts:["Elle secouait la tête (désapprobation)","Elle l'admirait secrètement","Elle le plaignait","Elle l'ignorait complètement"],ans:0,exp:"« Ma mère secouait la tête » — geste de désapprobation silencieuse."},
+  {n:6,cat:"comp",q:"Que symbolisent les mains de Bandy dans le texte ?",opts:["Le paradoxe entre force brute et délicatesse inattendue","La fainéantise et l'inutilité","La violence héréditaire","La beauté physique"],ans:0,exp:"Mains de forgeron « faites pour frapper le métal » mais qui tiennent le verre « avec une délicatesse surprenante »."},
+  {n:7,cat:"comp",q:"Combien de fois Bandy a-t-il raté son baccalauréat ?",opts:["Deux fois","Une fois","Trois fois","Le texte ne le précise pas"],ans:0,exp:"« Les vieux disaient qu'il avait raté son bachot deux fois. »"},
+  {n:8,cat:"comp",q:"Comment la mère de Bandy exprime-t-elle sa douleur à la messe ?",opts:["Elle pleure ostensiblement","Elle prie en silence","Elle quitte l'église","Elle ne vient plus"],ans:0,exp:"« Sa mère pleurait le dimanche à la messe, ostensiblement »."},
+  {n:9,cat:"comp",q:"Comment le narrateur apprend-il ce qui est arrivé à Bandy ensuite ?",opts:["Par bribes, en écoutant les adultes parler à voix basse","Par sa mère qui lui explique","Par une lettre","Par un voisin"],ans:0,exp:"« par bribes, par les conversations que les adultes tenaient à voix basse quand ils croyaient que je n'écoutais pas »."},
+  {n:10,cat:"comp",q:"Quelle est l'histoire obscure évoquée à propos d'une fille ?",opts:["Une grossesse dont on ne parla jamais ouvertement","Un mariage raté","Une dispute publique","Un crime passionnel"],ans:0,exp:"« une grossesse dont on ne parla jamais ouvertement »."},
+  {n:11,cat:"comp",q:"Où Bandy travaille-t-il à son retour ?",opts:["À l'usine de Guéret","À la forge de son père","Dans une ferme","Dans un café"],ans:0,exp:"« Il travaillait maintenant à l'usine de Guéret »."},
+  {n:12,cat:"comp",q:"Qu'est-il arrivé au rire de Bandy après son retour ?",opts:["Il avait disparu ou était devenu amer et creux","Il était devenu plus fort","Il était resté identique","Il était devenu plus discret"],ans:0,exp:"« Le rire avait disparu, ou bien il était devenu autre chose, amer et creux comme un tonneau vide. »"},
+  {n:13,cat:"comp",q:"Selon le narrateur, à quelle catégorie appartient l'histoire de Bandy adulte ?",opts:["À une histoire banale","À une tragédie exceptionnelle","À un destin héroïque","À un mystère inexplicable"],ans:0,exp:"« une histoire banale, triste peut-être mais banale »."},
+  {n:14,cat:"comp",q:"À qui le narrateur pense-t-il surtout quand il évoque Bandy ?",opts:["Au jeune homme lumineux de la place","À l'homme qu'il est devenu","Aux deux également","À la mère de Bandy"],ans:0,exp:"« Non pas à l'homme qu'il est devenu… Je pense à celui de la place, à ses vingt ans lumineux »."},
+  {n:15,cat:"comp",q:"Où le narrateur cherche-t-il la légèreté qu'il admirait chez Bandy ?",opts:["Dans les livres","Dans les voyages","Dans le travail","Dans les relations humaines"],ans:0,exp:"« Une légèreté que j'ai cherchée toute ma vie dans les livres »."},
+  {n:16,cat:"comp",q:"Quelle est la double temporalité du récit ?",opts:["Le passé de l'enfance et le présent de la réflexion adulte","Le futur et le présent","Le passé et l'avenir de Bandy","Deux récits parallèles d'enfance"],ans:0,exp:"Le texte alterne entre les souvenirs d'enfance et la méditation présente du narrateur adulte."},
+  {n:17,cat:"comp",q:"Qu'est-ce que Bandy représente pour le narrateur enfant ?",opts:["Une incarnation de la vie telle qu'il la rêve","Un exemple moral à suivre","Un avertissement sur les dangers de l'oisiveté","Un simple voisin indifférent"],ans:0,exp:"« moi je pensais que c'était ça, la vie » — Bandy incarne le rêve de liberté de l'enfant."},
+  {n:18,cat:"comp",q:"Comment Bandy est-il décrit physiquement ?",opts:["Cheveux noirs, portant son corps en avant","Grand et blond","Chauve et trapu","Le texte ne décrit pas son physique"],ans:0,exp:"« ses cheveux noirs et cette façon qu'il avait de porter son corps, un peu en avant »."},
+  {n:19,cat:"comp",q:"Quelle est la tonalité dominante de la conclusion du passage ?",opts:["Nostalgique et mélancolique","Ironique et cynique","Joyeuse et apaisée","Révoltée et amère"],ans:0,exp:"La méditation finale est teintée de nostalgie pour une légèreté perdue, cherchée dans les livres."},
+  {n:20,cat:"comp",q:"Quelle phrase résume le projet littéraire implicite du narrateur ?",opts:["« Une légèreté que j'ai cherchée toute ma vie dans les livres »","« Mon grand-père disait qu'il était bon à rien »","« le monde entier lui faisait de l'esprit »","« les casernes grises »"],ans:0,exp:"La phrase finale révèle que la quête de l'écriture naît de l'impossibilité de posséder la légèreté naturelle de Bandy."},
+
+  // VOCABULAIRE (20)
+  {n:21,cat:"voc",q:"Que signifie 'ostensiblement' dans le contexte de la mère qui pleure ?",opts:["De manière délibérément visible","Discrètement","Avec retenue","En silence"],ans:0,exp:"'Ostensiblement' = de façon volontairement visible, pour être remarqué."},
+  {n:22,cat:"voc",q:"Quel est le sens de 'par bribes' ?",opts:["Par fragments épars et discontinus","De façon directe et franche","Par un long récit","Par des lettres"],ans:0,exp:"'Par bribes' = par petits morceaux, de façon fragmentaire et indirecte."},
+  {n:23,cat:"voc",q:"Que désigne 'le contingent' dans le texte ?",opts:["Les soldats du service militaire obligatoire","Un groupe d'Algériens","Une prison militaire","Un grade de l'armée"],ans:0,exp:"'Le contingent' désigne l'ensemble des conscrits appelés au service militaire."},
+  {n:24,cat:"voc",q:"'Méconnaissable' signifie :",opts:["Tellement changé qu'on ne peut plus le reconnaître","Inconnu de tous","Difficile à voir","Très célèbre"],ans:0,exp:"Méconnaissable = si transformé qu'on ne peut plus l'identifier comme avant."},
+  {n:25,cat:"voc",q:"Dans 'un rire amer et creux comme un tonneau vide', que signifie 'creux' ?",opts:["Vide de toute substance réelle","Sonore et fort","Joyeux malgré tout","Rare et précieux"],ans:0,exp:"'Creux' = vide intérieurement, sans profondeur, sonnant faux."},
+  {n:26,cat:"voc",q:"Que veut dire 'le bachot' dans ce contexte ?",opts:["Le baccalauréat (terme familier et vieilli)","Un bateau de pêche","Un bachelier","Une bourse scolaire"],ans:0,exp:"'Bachot' est le terme populaire et vieilli pour le baccalauréat."},
+  {n:27,cat:"voc",q:"'Peser sur lui comme une lumière' : quel est le procédé stylistique utilisé ?",opts:["Oxymore (lumière qui pèse)","Métaphore filée","Allégorie","Hyperbole"],ans:0,exp:"Oxymore : 'la lumière' (légèreté) associée au verbe 'peser' (lourdeur) crée une contradiction productive."},
+  {n:28,cat:"voc",q:"Que signifie 'habiter l'instant' dans la phrase finale ?",opts:["Vivre pleinement dans le présent sans le calculer","Rester chez soi","Occuper un espace physique","Résister à l'avenir"],ans:0,exp:"Expression figurée : être pleinement présent à l'instant, sans projection ni calcul."},
+  {n:29,cat:"voc",q:"Que désigne 'le seuil' dans 'depuis le seuil de la maison' ?",opts:["Le pas de la porte, la limite entre intérieur et extérieur","Le grenier","La fenêtre","Le jardin"],ans:0,exp:"Le seuil = le pas de la porte, espace-limite entre l'intérieur (le monde maternel) et l'extérieur (Bandy)."},
+  {n:30,cat:"voc",q:"'Se rattrapait' dans 'comme s'il allait tomber et se rattrapait' signifie :",opts:["Se rééquilibrait in extremis","Tombait à chaque fois","Se rattachait","Se relevait après une chute"],ans:0,exp:"Se rattraper = retrouver son équilibre au dernier moment avant de tomber."},
+  {n:31,cat:"voc",q:"'Lumineux et inutiles' qualifient ses 'vingt ans'. Quel est l'effet de cette association ?",opts:["Valorisation paradoxale d'une jeunesse sans utilité pratique","Critique sévère du gaspillage","Description neutre de la jeunesse","Ironie amère"],ans:0,exp:"Michon valorise l''inutilité' comme pure présence, éclat sans finalité — forme d'idéal esthétique."},
+  {n:32,cat:"voc",q:"Que signifie 'désinvolte' (implicite dans le comportement de Bandy) ?",opts:["Nonchalant, sans se soucier des convenances","Très organisé","Timide et réservé","Agressif"],ans:0,exp:"Désinvolte = qui fait preuve de légèreté nonchalante, sans égard pour les normes sociales."},
+  {n:33,cat:"voc",q:"Dans 'les cheveux défaits', 'défait' signifie :",opts:["En désordre, décoiffé","Coiffés soigneusement","Coupés courts","Mouillés par la pluie"],ans:0,exp:"'Défait' = en désordre, décoiffé — signe physique du désordre joyeux du retour."},
+  {n:34,cat:"voc",q:"Que désigne une 'mobylette' ?",opts:["Un cyclomoteur à moteur auxiliaire (années 50-60)","Une grosse moto","Un vélo","Une voiture populaire"],ans:0,exp:"La mobylette est un cyclomoteur de faible cylindrée, emblème de la mobilité populaire des années 50-60."},
+  {n:35,cat:"voc",q:"'Sans calcul' dans 'sans calcul, sans peur' signifie :",opts:["Sans arrière-pensée ni stratégie intéressée","Sans être capable d'arithmétique","Sans prudence financière","Sans hésitation momentanée"],ans:0,exp:"'Sans calcul' = de façon spontanée, sans chercher à tirer profit de la situation."},
+  {n:36,cat:"voc",q:"'Une voix particulière' pour qualifier le ton du grand-père : que suggère cet adjectif ?",opts:["Un ton ambigu, chargé d'un sens non-dit","Un accent régional fort","Une voix très douce en général","Une voix masculine"],ans:0,exp:"'Particulière' suggère ici que le ton dépassait les mots — il contenait une complexité affective non-explicite."},
+  {n:37,cat:"voc",q:"'S'éteindre' est utilisé au sens figuré pour Bandy. Que cela signifie-t-il ?",opts:["Perdre sa vitalité, son éclat intérieur","Mourir physiquement","Cesser de travailler","Devenir silencieux"],ans:0,exp:"'Quelque chose s'était éteint en lui' = sa vitalité, son rire, son éclat avaient disparu progressivement."},
+  {n:38,cat:"voc",q:"'Déborder' dans 'rire qui débordait dans la rue' signifie :",opts:["Se répandre au-delà du contenant (le café)","Être très bruyant","Attirer la police","Gêner les voisins"],ans:0,exp:"'Déborder' = dépasser les limites, ici le rire outrepasse l'espace du café pour envahir la rue."},
+  {n:39,cat:"voc",q:"'Banale' à la fin du passage : quel sens Michon lui donne-t-il ?",opts:["Ordinaire, commun — à l'opposé de la singularité de jeunesse","Très grave","Incompréhensible","Tragique au sens noble"],ans:0,exp:"Le mot 'banale' revient deux fois pour insister : la chute de Bandy n'a rien d'exceptionnel, c'est son drame."},
+  {n:40,cat:"voc",q:"'Une délicatesse surprenante' dans la tenue du verre : que révèle-t-elle ?",opts:["Une contradiction entre l'apparence (force brute) et le comportement réel","Une faiblesse physique","Une habitude bourgeoise","Une maladresse cachée"],ans:0,exp:"La délicatesse surprend car elle contredit l'image des 'mains de forgeron' — Bandy est plus complexe que son apparence."},
+
+  // GRAMMAIRE & STYLE (15)
+  {n:41,cat:"gram",q:"Quel est l'effet de la répétition « Il y eut… Il y eut… Il y eut… » ?",opts:["Anaphore créant un effet de fatalité accumulée","Pléonasme","Ellipse narrative","Parallélisme humoristique"],ans:0,exp:"L'anaphore du 'Il y eut' au passé simple donne un rythme implacable de destin, comme une liste de coups du sort."},
+  {n:42,cat:"gram",q:"Quel temps verbal domine dans le deuxième paragraphe ('Moi j'avais six ans…') ?",opts:["L'imparfait","Le passé simple","Le présent","Le plus-que-parfait"],ans:0,exp:"L'imparfait domine pour décrire un état durable (l'admiration de l'enfant) plutôt que des événements ponctuels."},
+  {n:43,cat:"gram",q:"Quelle est la fonction grammaticale de 'que je n'ai jamais su nommer exactement' ?",opts:["Proposition relative déterminative","Proposition circonstancielle","Proposition principale","Proposition infinitive"],ans:0,exp:"Il s'agit d'une relative déterminative déterminant 'quelque chose' — elle restreint et précise son antécédent."},
+  {n:44,cat:"gram",q:"Dans 'quelque chose que j'aurais voulu posséder', quel est le mode et temps de 'j'aurais voulu' ?",opts:["Conditionnel passé","Plus-que-parfait du subjonctif","Futur antérieur","Passé composé"],ans:0,exp:"Conditionnel passé = auxiliaire conditionnel présent + participe passé. Exprime ici un désir non réalisé avec regret."},
+  {n:45,cat:"gram",q:"'avant que la vie la lui prenne' : quel mode emploie-t-on après 'avant que' ?",opts:["Le subjonctif","L'indicatif","L'infinitif","Le conditionnel"],ans:0,exp:"'Avant que' est suivi du subjonctif : 'prenne' est le subjonctif présent de 'prendre'."},
+  {n:46,cat:"gram",q:"'Non pas à l'homme… Je pense à celui de la place' : quelle est la structure rhétorique ?",opts:["Antithèse avec rectification (correction)","Chiasme","Analepse","Prolepse"],ans:0,exp:"Structure de correction/précision : une proposition est niée puis remplacée par la formulation exacte de la pensée."},
+  {n:47,cat:"gram",q:"'des mains faites pour frapper le métal ou saisir les choses lourdes' : quel est le rôle du participe passé 'faites pour' ?",opts:["Il indique la destination ou la finalité","Il exprime le temps","Il introduit une concession","Il marque l'opposition"],ans:0,exp:"'Fait pour + infinitif' = destiné à, conçu pour. Ici il établit la 'nature' originelle des mains avant le paradoxe."},
+  {n:48,cat:"gram",q:"Identifiez la figure de style dans : 'amer et creux comme un tonneau vide'.",opts:["Comparaison dévalorisante","Métaphore","Métonymie","Périphrase"],ans:0,exp:"Comparaison introduite par 'comme' ; l'outil comparé (tonneau vide) est trivial, ce qui souligne la banalité de la déchéance."},
+  {n:49,cat:"gram",q:"Dans 'une espèce de liberté que je ne savais pas nommer', quel est le niveau de langue de 'une espèce de' ?",opts:["Registre familier/oral intégré dans la prose","Registre soutenu","Argot","Néologisme"],ans:0,exp:"'Une espèce de' est une locution orale/familière, caractéristique du mélange de registres propre à Michon."},
+  {n:50,cat:"gram",q:"Quel procédé narratif utilise Michon quand le narrateur dit 'je l'ai appris plus tard, par bribes' ?",opts:["Analepse (retour en arrière narratif)","Prolepse (anticipation)","Ellipse temporelle","Focalisation externe"],ans:0,exp:"C'est une analepse : le narrateur adulte revient sur des informations apprises après les faits, reconfigurant le récit."},
+  {n:51,cat:"gram",q:"Dans 'comme s'il allait toujours tomber et se rattrapait chaque fois', quel mode emploie-t-on après 'comme si' ?",opts:["L'imparfait de l'indicatif","Le subjonctif","Le conditionnel","L'infinitif"],ans:0,exp:"'Comme si' + imparfait = comparaison hypothétique d'un état ou d'un comportement habituel."},
+  {n:52,cat:"gram",q:"'je sentais peser sur lui comme une lumière' : quel est le verbe en construction infinitive ?",opts:["peser (infinitif perceptif après sentais)","lui (COI)","sentais (verbe principal)","lumière (attribut)"],ans:0,exp:"Construction verbe de perception + infinitif : 'je sentais [quelque chose] peser' — perception d'une action en cours."},
+  {n:53,cat:"gram",q:"Quel est l'effet stylistique de la phrase nominale implicite 'un retour, deux ans après, méconnaissable' ?",opts:["Condensation dramatique par ellipse verbale","Phrase interrogative","Hyperbole","Ironie"],ans:0,exp:"L'ellipse du verbe (il y eut) crée une condensation tragique : les trois éléments juxtaposés sans lien font un tableau brutal."},
+  {n:54,cat:"gram",q:"Le passage emploie principalement quelle perspective narrative ?",opts:["Focalisation interne (narrateur-enfant puis adulte)","Focalisation externe (observateur neutre)","Focalisation zéro (omnisciente)","Narration à la 3e personne"],ans:0,exp:"La focalisation est interne : tout est filtré par la conscience du narrateur, enfant admiratif puis adulte mélancolique."},
+  {n:55,cat:"gram",q:"'Une légèreté que j'ai cherchée toute ma vie dans les livres' : quel est le rapport entre livres et Bandy ?",opts:["Les livres sont la quête d'une qualité que Bandy possédait naturellement","Les livres ont causé la chute de Bandy","Le narrateur a lu des livres sur Bandy","Les livres remplacent la mémoire"],ans:0,exp:"Michon établit un lien fondateur entre l'admiration pour Bandy et la vocation littéraire : l'écriture naît du manque."},
+
+  // CULTURE & CONTEXTE (5)
+  {n:56,cat:"cult",q:"'Vies minuscules' de Michon appartient à quel genre littéraire ?",opts:["Autofiction hagiographique (vies de figures ordinaires)","Roman historique","Autobiographie classique","Essai philosophique"],ans:0,exp:"Le livre est une série de 'vies' de personnages obscurs, entre biographie et fiction, caractéristiques de la 'hagiographie profane' de Michon."},
+  {n:57,cat:"cult",q:"La Creuse, lieu implicite du récit, est connue pour :",opts:["Région rurale dépeuplée du Massif Central, emblème de la France profonde","La mer et les ports de pêche","Les vignobles de Bordeaux","La gastronomie lyonnaise"],ans:0,exp:"La Creuse est un département rural du centre de la France, souvent associé à l'exode rural et à une France paysanne disparaissante."},
+  {n:58,cat:"cult",q:"L'allusion à 'l'Algérie peut-être, ou simplement le contingent' situe le récit à quelle période historique ?",opts:["Années 50-60, guerre d'Algérie et service militaire obligatoire","Première Guerre mondiale","Deuxième Guerre mondiale","Mai 68"],ans:0,exp:"La guerre d'Algérie (1954-1962) et le service militaire obligatoire (contingent) situent le récit dans les années 50-60."},
+  {n:59,cat:"cult",q:"Pierre Michon est souvent comparé à quel autre grand auteur de 'vies des humbles' ?",opts:["Jules Michelet (historien des 'hommes sans noms')","Victor Hugo","Marcel Proust","Albert Camus"],ans:0,exp:"Michon s'inscrit dans la tradition de Michelet qui voulait donner la parole aux anonymes de l'histoire ; il est aussi rapproché de Flaubert."},
+  {n:60,cat:"cult",q:"Dans la tradition catholique rurale française, 'pleurer à la messe, ostensiblement' signale :",opts:["Une douleur exposée publiquement pour signifier la honte familiale","Une grande piété personnelle","Un deuil récent","Une protestation religieuse"],ans:0,exp:"Dans ce contexte, pleurer à la messe est un acte social : la mère expose sa douleur pour que la communauté témoigne de la honte que lui cause son fils."}
+];
+
+// ===== STATE =====
+let scores = {}, answered = {}, activeFilter = 'all', sidebarHidden = false;
+
+// ===== THEME =====
+function toggleTheme() {
+  const h = document.documentElement;
+  const isDark = h.getAttribute('data-theme') === 'dark';
+  h.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+  drawNarrativeDiagram();
+}
+
+// ===== SIDEBAR =====
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const mn = document.getElementById('main');
+  sidebarHidden = !sidebarHidden;
+  sb.classList.toggle('hidden', sidebarHidden);
+  mn.classList.toggle('expanded', sidebarHidden);
+}
+
+// ===== PAGES =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const links = document.querySelectorAll('.nav-link');
+  const pageMap = {extrait:0, resume:1, vocab:2, grammaire:3, qcm:4, apropos:5};
+  if (pageMap[id] !== undefined) links[pageMap[id]].classList.add('active');
+  if (id === 'resume') setTimeout(drawNarrativeDiagram, 50);
+}
+
+// ===== TABS GRAMMAIRE =====
+function switchTab(group, panel) {
+  document.querySelectorAll('#page-grammaire .tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#page-grammaire .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('gram-' + panel).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== VOCAB FILTER =====
+function filterVocab(q) {
+  const rows = document.querySelectorAll('#vocab-body tr');
+  let vis = 0;
+  rows.forEach(r => {
+    const txt = r.textContent.toLowerCase();
+    const show = txt.includes(q.toLowerCase());
+    r.style.display = show ? '' : 'none';
+    if (show) vis++;
+  });
+  document.getElementById('vocab-counter').textContent = vis + ' mots · niveau C2';
+}
+
+// ===== QCM =====
+function filterQCM(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.qcm-filters .tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.qcm-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+function checkAnswer(qi, optIdx) {
+  if (answered[qi]) return;
+  const item = qcmData[qi];
+  const correct = item.ans === optIdx;
+  scores[qi] = correct ? 1 : 0;
+  answered[qi] = true;
+  const container = document.getElementById('qcm-item-' + qi);
+  const inputs = container.querySelectorAll('input[type=radio]');
+  inputs.forEach(inp => inp.disabled = true);
+  const fb = document.getElementById('feedback-' + qi);
+  fb.className = 'feedback ' + (correct ? 'correct' : 'incorrect');
+  fb.textContent = (correct ? '✓ Correct. ' : '✗ Incorrect. ') + item.exp;
+  fb.style.display = 'block';
+  updateScore();
+}
+
+function updateScore() {
+  const total = Object.keys(answered).length;
+  const correct = Object.values(scores).reduce((a, b) => a + b, 0);
+  document.getElementById('score-display').textContent = correct + ' / ' + total;
+  const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById('score-pct').textContent = total > 0 ? pct + '%' : '—';
+  document.getElementById('progress-bar').style.width = (total / qcmData.length * 100) + '%';
+}
+
+function showAllAnswers() {
+  qcmData.forEach((item, qi) => {
+    if (answered[qi]) return;
+    const container = document.getElementById('qcm-item-' + qi);
+    const inputs = container.querySelectorAll('input[type=radio]');
+    inputs.forEach(inp => inp.disabled = true);
+    const fb = document.getElementById('feedback-' + qi);
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Réponse : ' + item.opts[item.ans] + '. ' + item.exp;
+    fb.style.display = 'block';
+    answered[qi] = true;
+    scores[qi] = 0;
+  });
+  updateScore();
+}
+
+function resetQCM() {
+  scores = {}; answered = {};
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('score-pct').textContent = '—';
+  document.getElementById('progress-bar').style.width = '0%';
+  renderQCM();
+}
+
+// ===== DIAGRAM =====
+function drawNarrativeDiagram() {
+  const svg = document.getElementById('narrative-svg');
+  if (!svg) return;
+  const n = narrativeSteps.length;
+  const W = svg.parentElement.clientWidth - 40 || 760;
+  const H = 130;
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.setAttribute('height', H);
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6c8ef7';
+  const textCol = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#e2e8f0';
+  const defs = '<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="' + accent + '"/></marker></defs>';
+  const step = W / n;
+  let html = defs;
+  for (let i = 0; i < n - 1; i++) {
+    const x1 = step * i + step / 2 + 19;
+    const x2 = step * (i + 1) + step / 2 - 19;
+    html += '<line x1="' + x1 + '" y1="38" x2="' + x2 + '" y2="38" stroke="' + accent + '" stroke-width="1.5" marker-end="url(#arr)" opacity="0.6"/>';
+  }
+  for (let i = 0; i < n; i++) {
+    const cx = step * i + step / 2;
+    const s = narrativeSteps[i];
+    html += '<circle cx="' + cx + '" cy="38" r="16" fill="' + accent + '" opacity="0.85" class="diag-node" data-i="' + i + '" style="cursor:pointer"/>';
+    html += '<text x="' + cx + '" y="43" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold" pointer-events="none">' + (i + 1) + '</text>';
+    const words = s.label.split(' ');
+    const l1 = words.slice(0, 2).join(' ');
+    const l2 = words.slice(2).join(' ');
+    html += '<text x="' + cx + '" y="66" text-anchor="middle" fill="' + textCol + '" font-size="9.5" font-family="Arial">' + l1 + '</text>';
+    if (l2) html += '<text x="' + cx + '" y="78" text-anchor="middle" fill="' + textCol + '" font-size="9.5" font-family="Arial">' + l2 + '</text>';
+  }
+  svg.innerHTML = html;
+  svg.querySelectorAll('.diag-node').forEach(c => {
+    c.addEventListener('mouseenter', function(e) {
+      const i = +this.dataset.i;
+      const tt = document.getElementById('diagram-tooltip');
+      const rect = svg.getBoundingClientRect();
+      const wrap = svg.parentElement.getBoundingClientRect();
+      tt.textContent = narrativeSteps[i].desc;
+      tt.style.display = 'block';
+      tt.style.left = (e.clientX - wrap.left + 10) + 'px';
+      tt.style.top = (e.clientY - wrap.top + 10) + 'px';
+    });
+    c.addEventListener('mouseleave', function() {
+      document.getElementById('diagram-tooltip').style.display = 'none';
+    });
+  });
+}
+
+// ===== RENDER FUNCTIONS =====
+function renderVocab() {
+  const tbody = document.getElementById('vocab-body');
+  tbody.innerHTML = vocabData.map(([w, pos, def]) =>
+    '<tr><td class="word">' + w + '</td><td class="pos">' + pos + '</td><td>' + def + '</td></tr>'
+  ).join('');
+}
+
+function renderGrammaire() {
+  ['syntaxe', 'figures', 'registre'].forEach(tab => {
+    const el = document.getElementById('gram-' + tab);
+    el.innerHTML = gramData[tab].map(c =>
+      '<div class="grammar-card"><div class="gc-label">' + c.label + '</div>' +
+      '<div class="gc-ex">« ' + c.ex + ' »</div>' +
+      '<div class="gc-note">' + c.note + '</div></div>'
+    ).join('');
+  });
+}
+
+function renderQCM() {
+  const catMap = {comp:'Compréhension', voc:'Vocabulaire', gram:'Grammaire', cult:'Culture'};
+  const badgeClass = {comp:'badge-comp', voc:'badge-voc', gram:'badge-gram', cult:'badge-cult'};
+  const container = document.getElementById('qcm-container');
+  container.innerHTML = qcmData.map((item, qi) =>
+    '<div class="qcm-item" id="qcm-item-' + qi + '" data-cat="' + item.cat + '">' +
+    '<div class="qcm-header"><span class="qcm-num">Q' + item.n + '</span>' +
+    '<span class="badge ' + badgeClass[item.cat] + '">' + catMap[item.cat] + '</span></div>' +
+    '<div class="qcm-q">' + item.q + '</div>' +
+    '<div class="options">' +
+    item.opts.map((opt, oi) =>
+      '<label><input type="radio" name="q' + qi + '" value="' + oi + '" onchange="checkAnswer(' + qi + ',' + oi + ')"/><span>' + opt + '</span></label>'
+    ).join('') +
+    '</div>' +
+    '<div class="feedback" id="feedback-' + qi + '" style="display:none"></div>' +
+    '</div>'
+  ).join('');
+
+  const filters = document.getElementById('qcm-filters');
+  filters.innerHTML = [['all','Tous'],['comp','Compréhension'],['voc','Vocabulaire'],['gram','Grammaire'],['cult','Culture']].map(([v, l]) =>
+    '<button class="tab-btn' + (v === 'all' ? ' active' : '') + '" onclick="filterQCM(\'' + v + '\')">' + l + '</button>'
+  ).join('');
+}
+
+window.onload = function() {
+  renderVocab();
+  renderGrammaire();
+  renderQCM();
+  showPage('extrait');
+};
+window.onresize = drawNarrativeDiagram;
+</script>
+</body>
+</html>
