@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Français C2 — Vies minuscules : La pension</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+  --radius: 8px;
+  --sidebar-w: 240px;
+  --topbar-h: 52px;
+  --transition: 0.22s ease;
+}
+[data-theme="dark"] {
+  --bg: #0f1117; --bg2: #181b24; --bg3: #1e2130;
+  --border: #2a2d3e; --text: #e2e8f0; --text-muted: #8892a4;
+  --accent: #6c8ef7; --accent2: #a78bfa;
+  --green: #34d399; --amber: #fbbf24; --red: #f87171;
+}
+[data-theme="light"] {
+  --bg: #f4f6fb; --bg2: #ffffff; --bg3: #eaecf4;
+  --border: #d0d5e8; --text: #1a1f36; --text-muted: #6b7280;
+  --accent: #4361ee; --accent2: #7c3aed;
+  --green: #059669; --amber: #d97706; --red: #dc2626;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* TOP BAR */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--topbar-h); background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 18px;
+  gap: 14px; z-index: 200;
+}
+#toggle-sidebar-btn {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 1.2rem; cursor: pointer; padding: 6px 8px;
+  border-radius: 6px; transition: background var(--transition);
+  flex-shrink: 0;
+}
+#toggle-sidebar-btn:hover { background: var(--bg3); }
+#topbar-title {
+  font-size: 0.9rem; font-weight: 600; color: var(--text);
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#topbar-title em { color: var(--accent); font-style: italic; }
+#theme-btn {
+  background: none; border: 1px solid var(--border);
+  color: var(--text-muted); font-size: 0.9rem; cursor: pointer;
+  padding: 5px 12px; border-radius: 20px;
+  transition: all var(--transition); flex-shrink: 0;
+}
+#theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* SIDEBAR */
+#sidebar {
+  position: fixed; top: var(--topbar-h); left: 0; bottom: 0;
+  width: var(--sidebar-w); background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto; z-index: 150;
+  transition: transform var(--transition);
+  padding: 16px 0 40px;
+}
+#sidebar.hidden { transform: translateX(calc(-1 * var(--sidebar-w))); }
+.sidebar-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-muted);
+  padding: 16px 18px 6px; display: block;
+}
+.nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 18px; font-size: 0.88rem; color: var(--text-muted);
+  cursor: pointer; border-left: 3px solid transparent;
+  transition: all var(--transition);
+}
+.nav-link:hover { color: var(--text); background: var(--bg3); }
+.nav-link.active {
+  color: var(--accent); font-weight: 600;
+  border-left-color: var(--accent); background: var(--bg3);
+}
+.nav-link .nav-icon { font-size: 1rem; flex-shrink: 0; }
+.nav-progress {
+  font-size: 0.75rem; color: var(--text-muted); margin-left: auto;
+}
+
+/* MAIN */
+#main {
+  margin-left: var(--sidebar-w); margin-top: var(--topbar-h);
+  padding: 36px 48px 80px; max-width: calc(var(--sidebar-w) + 860px);
+  min-height: 100vh; transition: margin-left var(--transition);
+}
+#main.expanded { margin-left: 0; }
+.page { display: none; animation: fadeIn 0.25s ease; }
+.page.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADINGS */
+h2 {
+  font-size: 1.3rem; font-weight: 600; color: var(--text);
+  margin-bottom: 1.2rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+h3 {
+  font-size: 0.9rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.8rem;
+}
+
+/* CARDS */
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 1.2rem;
+}
+.card-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.card-row .card { flex: 1; min-width: 160px; margin-bottom: 0; }
+.stat-val { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+/* CALLOUT */
+.callout {
+  border-left: 3px solid var(--accent); background: var(--bg3);
+  border-radius: var(--radius); padding: 14px 18px; margin: 1rem 0;
+  font-size: 0.92rem;
+}
+.callout.green { border-left-color: var(--green); }
+.callout.amber { border-left-color: var(--amber); }
+
+/* PASSAGE */
+.passage {
+  background: var(--bg3); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: 1.5rem 1.8rem;
+  font-style: italic; line-height: 1.9; margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+.source-tag {
+  font-size: 0.8rem; color: var(--text-muted); text-align: right;
+  font-style: normal; margin-top: 0.5rem;
+}
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-accent { background: var(--accent); color: #fff; }
+.badge-green { background: var(--green); color: #fff; }
+.badge-amber { background: var(--amber); color: #000; }
+.badge-red { background: var(--red); color: #fff; }
+.badge-muted { background: var(--bg3); color: var(--text-muted); border: 1px solid var(--border); }
+
+/* DIAGRAM */
+.diagram-wrap {
+  position: relative; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px 20px 16px; margin: 1.5rem 0;
+  overflow: visible;
+}
+.diagram-wrap h3 { margin-bottom: 14px; }
+#narrative-svg { width: 100%; display: block; }
+.diag-tooltip {
+  display: none; position: absolute; background: var(--bg2);
+  border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 8px 12px; font-size: 0.82rem; max-width: 240px;
+  color: var(--text); z-index: 100; pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); line-height: 1.4;
+}
+
+/* VOCAB TABLE */
+.vocab-search {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); padding: 9px 14px; border-radius: var(--radius);
+  font-family: var(--font-sans); font-size: 0.9rem; margin-bottom: 1rem;
+  outline: none; transition: border-color var(--transition);
+}
+.vocab-search:focus { border-color: var(--accent); }
+.vocab-counter { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+.vocab-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.vocab-table th {
+  background: var(--bg3); color: var(--text-muted);
+  padding: 9px 12px; text-align: left; font-weight: 700;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+.vocab-table td {
+  padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top;
+}
+.vocab-table tr:nth-child(even) td { background: var(--bg3); }
+.vocab-table tr:hover td { background: var(--bg3); }
+.word { font-weight: 700; color: var(--accent); }
+.pos { color: var(--text-muted); font-size: 0.78rem; font-style: italic; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.tab-btn {
+  padding: 7px 16px; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text-muted);
+  border-radius: 20px; cursor: pointer; font-size: 0.82rem;
+  font-family: var(--font-sans); transition: all var(--transition);
+}
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* GRAMMAR CARDS */
+.grammar-card {
+  background: var(--bg3); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 0.9rem;
+  border-left: 3px solid var(--accent2);
+}
+.grammar-card .label { font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; }
+.grammar-card .example {
+  font-style: italic; color: var(--text-muted);
+  font-size: 0.88rem; margin-bottom: 5px;
+  padding: 6px 10px; background: var(--bg2); border-radius: 4px;
+  border-left: 2px solid var(--border);
+}
+.grammar-card .note { color: var(--text-muted); font-size: 0.84rem; }
+
+/* QCM */
+.score-bar {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.score-num { font-size: 2rem; font-weight: 700; color: var(--green); }
+.score-info { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+.progress-bar {
+  height: 6px; background: var(--bg3); border-radius: 10px;
+  margin-bottom: 1.5rem; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 10px; width: 0%; transition: width 0.4s ease;
+}
+.qcm-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.filter-btn {
+  padding: 5px 14px; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text-muted);
+  border-radius: 20px; cursor: pointer; font-size: 0.8rem;
+  font-family: var(--font-sans); transition: all var(--transition);
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--text); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.qcm-item { margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--border); }
+.qcm-item:last-child { border-bottom: none; }
+.q-text { font-weight: 600; margin-bottom: 0.7rem; font-size: 0.92rem; display: flex; gap: 8px; }
+.q-num { color: var(--accent); flex-shrink: 0; }
+.options label {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 12px; border-radius: var(--radius);
+  cursor: pointer; font-size: 0.88rem;
+  border: 1px solid transparent; margin-bottom: 4px;
+  transition: all var(--transition);
+}
+.options label:hover { background: var(--bg3); border-color: var(--border); }
+.options input[type=radio] { margin-top: 3px; flex-shrink: 0; accent-color: var(--accent); }
+.feedback {
+  display: none; font-size: 0.83rem; padding: 8px 12px;
+  border-radius: var(--radius); margin-top: 6px; line-height: 1.5;
+}
+.feedback.correct { background: rgba(52,211,153,0.12); color: var(--green); display: block; border-left: 3px solid var(--green); }
+.feedback.wrong { background: rgba(248,113,113,0.12); color: var(--red); display: block; border-left: 3px solid var(--red); }
+.btn {
+  background: var(--accent); color: #fff; border: none;
+  padding: 9px 22px; border-radius: var(--radius);
+  cursor: pointer; font-size: 0.88rem; font-family: var(--font-sans);
+  font-weight: 600; transition: opacity var(--transition); margin-right: 8px;
+}
+.btn:hover { opacity: 0.85; }
+.btn.secondary { background: var(--bg3); color: var(--text-muted); border: 1px solid var(--border); }
+.btn.secondary:hover { color: var(--text); border-color: var(--accent); opacity: 1; }
+
+@media (max-width: 700px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.visible { transform: translateX(0); }
+  #main { margin-left: 0; padding: 24px 18px 60px; }
+  .card-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <button id="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+  <div id="topbar-title">🇫🇷 Session Français C2 — <em>Vies minuscules</em> · La pension &amp; les Bakroot</div>
+  <button id="theme-btn" onclick="toggleTheme()">☀️ Clair</button>
+</div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <span class="sidebar-label">Navigation</span>
+  <div class="nav-link active" onclick="showPage('extrait')">
+    <span class="nav-icon">📖</span> Extrait
+  </div>
+  <div class="nav-link" onclick="showPage('resume')">
+    <span class="nav-icon">🗺️</span> Résumé &amp; Diagram
+  </div>
+  <div class="nav-link" onclick="showPage('vocab')">
+    <span class="nav-icon">📚</span> Vocabulaire
+    <span class="nav-progress">38 mots</span>
+  </div>
+  <div class="nav-link" onclick="showPage('grammaire')">
+    <span class="nav-icon">🔧</span> Grammaire &amp; Style
+  </div>
+  <div class="nav-link" onclick="showPage('qcm')">
+    <span class="nav-icon">❓</span> QCM
+    <span class="nav-progress" id="nav-score">0/60</span>
+  </div>
+  <span class="sidebar-label" style="margin-top:16px">Informations</span>
+  <div class="nav-link" onclick="showPage('apropos')">
+    <span class="nav-icon">ℹ️</span> À propos
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+
+  <!-- PAGE EXTRAIT -->
+  <div class="page active" id="page-extrait">
+    <h2>📖 Extrait</h2>
+    <div class="card-row">
+      <div class="card"><div class="stat-val">~310</div><div class="stat-label">mots</div></div>
+      <div class="card"><div class="stat-val">C2</div><div class="stat-label">niveau DELF</div></div>
+      <div class="card"><div class="stat-val">Session 2</div><div class="stat-label">Vies minuscules</div></div>
+    </div>
+    <div class="callout amber">
+      <strong>Contexte :</strong> Extrait de <em>Vies minuscules</em> de Pierre Michon (1984). Le narrateur se remémore son entrée en pension au lycée, l'angoisse de la séparation avec sa mère, et sa première rencontre avec les frères Bakroot — figures sombres et fraternelles de l'enfance recluse.
+    </div>
+    <div class="passage">
+      Ma mère donc, un jour d'octobre, me conduisit dans cette maison magique d'où je pensais sortir papillon. La butte que couronne le lycée porte des marronniers qui se défeuillaient ; le haut bâtiment où des briques éteintes alternent avec des granits perdait superbement le noir de ses ardoises dans le ciel noir. Il me parut multiple, orthogone et fatal, caverneux comme un temple, une caserne de lanciers ou de centaures.
+      <br><br>
+      L'après-midi s'écoula en formalités d'installation ; ma mère s'activait à la lingerie, au dortoir, à l'étude ; mon nom apparaissait sur des placards, un lit. Je ne m'y reconnaissais pas ; mon identité était dans ces jupes que je suivais, craintif et honteux de ma crainte, la présence de ces garçons malhabiles mais indiscrets m'interdisant de me jeter vers elles, d'y redevenir petit. Le soir vint, nous nous séparâmes ; mon cœur s'élançait avec celle qui partait. La récréation nocturne me jeta dehors : le grand vent soulevait dans la cour toute noire d'étranges papiers froissés, lunaires mais obscurs, des journaux ouverts qui soudain s'enlevaient et trouaient la nuit, tout blancs et spectraux comme des hiboux, à la merci d'un rien ; tournoyant, ils sombraient.
+      <br><br>
+      Parfois, un galop de centaures venait de loin dans le noir, un groupe de plus grands surgissait. Ils faisaient cercle autour d'un petit dont le désarroi croissait sous des questions grossièrement mielleuses et des rires, selon un procès pervers et d'emblée prévisible au terme duquel il ne pouvait que se révolter ou éclater en sanglots ; dans l'un et l'autre cas il était rossé. Mon tour vint, j'essayai de l'une et l'autre défense, révolte et larmes, et sus à quoi m'en tenir.
+      <br><br>
+      Une pluie froide doucement s'était mise à tomber ; les journaux alourdis ne volaient plus, sur place se détrempaient, devenaient terre ; un nouveau était là, dans la lumière jaune et le vent, les bras croisés. Les cheveux, jaillis tout droit du front en boucles épaisses et dures, d'un blond-rouge éteint, étaient ras sur les tempes et la nuque. Il portait sur sa blouse une veste de suédine aux manches trop courtes. Je n'eus pas le loisir de l'observer longtemps : les grands étaient sur nous. Mais très vite je tendis l'oreille : quelque chose n'allait pas. Une des voix, non plus sarcastique ni feinte, mais grossièrement coléreuse, grondante et exaspérée, détonnait. Ce que disait ce cœur, c'était une fureur impotente et passionnée. Le petit n'était pas impavide pourtant : je voyais trembler son gros menton ; mais face à lui et le surplombant un peu, un autre gros menton tremblait. Ils se ressemblaient comme des frères.
+    </div>
+    <div class="source-tag">— Pierre Michon, <em>Vies minuscules</em> (1984), « Vie de Georges Bandy » / Scène de la pension</div>
+  </div>
+
+  <!-- PAGE RÉSUMÉ & DIAGRAM -->
+  <div class="page" id="page-resume">
+    <h2>🗺️ Résumé &amp; Progression narrative</h2>
+    <div class="card">
+      <h3>Résumé</h3>
+      <p>Le narrateur arrive en pension au lycée par un jour d'octobre, accompagné de sa mère. Le bâtiment lui apparaît comme un temple fatal et multiforme. L'après-midi d'installation le prive progressivement de son identité : son nom s'inscrit sur des placards, mais c'est dans « les jupes » de sa mère que réside encore son moi. Le soir de la séparation, jeté dans la cour nocturne, il contemple des journaux qui s'envolent comme des hiboux — image de la dispersion et de la perte. Bientôt surviennent « les grands », qui ritualisent la violence initiatique sur les nouveaux ; le narrateur en fait lui aussi les frais. C'est dans ce contexte de pluie et d'humiliation qu'il aperçoit pour la première fois l'un des frères Bakroot : un enfant nu-tête, étrange, dont la fureur face aux aînés n'est pas de la rébellion ordinaire mais quelque chose de plus sombre — une souffrance fraternelle qui se dédouble, car son adversaire lui ressemble comme un frère.</p>
+    </div>
+
+    <div class="diagram-wrap">
+      <h3>⟶ Progression narrative</h3>
+      <svg id="narrative-svg" height="130"></svg>
+      <div id="diagram-tooltip" class="diag-tooltip"></div>
+    </div>
+
+    <div class="card">
+      <h3>Thèmes clés du passage</h3>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px">
+        <span class="badge badge-accent">Séparation maternelle</span>
+        <span class="badge badge-muted">Violence initiatique</span>
+        <span class="badge badge-amber">Perte d'identité</span>
+        <span class="badge badge-green">Fraternité douloureuse</span>
+        <span class="badge badge-muted">Le savoir comme sacrifice</span>
+        <span class="badge badge-red">Enfance &amp; exil intérieur</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE VOCABULAIRE -->
+  <div class="page" id="page-vocab">
+    <h2>📚 Vocabulaire <span class="badge badge-accent" style="font-size:0.75rem">C2 · 38 mots</span></h2>
+    <input type="text" class="vocab-search" id="vocab-search" placeholder="🔍 Filtrer les mots..." oninput="filterVocab(this.value)">
+    <div class="vocab-counter" id="vocab-counter">38 mots affichés</div>
+    <table class="vocab-table" id="vocab-table">
+      <thead><tr><th>Mot</th><th>Classe</th><th>Définition &amp; remarque</th></tr></thead>
+      <tbody id="vocab-tbody">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE GRAMMAIRE -->
+  <div class="page" id="page-grammaire">
+    <h2>🔧 Grammaire &amp; Style</h2>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('gram','syntaxe')">Structures syntaxiques</button>
+      <button class="tab-btn" onclick="switchTab('gram','figures')">Figures de style</button>
+      <button class="tab-btn" onclick="switchTab('gram','registre')">Registre &amp; voix</button>
+    </div>
+
+    <div class="tab-panel active" id="gram-syntaxe">
+      <div class="grammar-card">
+        <div class="label">✦ Comparaison enchâssée à accumulation ternaire</div>
+        <div class="example">« caverneux comme un temple, une caserne de lanciers ou de centaures »</div>
+        <div class="note">Trois termes en gradation symbolique : du sacré (temple) au militaire (caserne de lanciers) au mythique (centaures). La comparaison déborde la réalité — c'est la perception d'un enfant terrorisé qui mythifie l'institution scolaire.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ La relative déterminative à valeur de caractérisation morale</div>
+        <div class="example">« la présence de ces garçons malhabiles mais indiscrets m'interdisant de me jeter vers elles »</div>
+        <div class="note">Le participe présent « m'interdisant » — forme participiale à valeur causale — exprime la paralysie sociale : l'enfant ne peut plus être enfant devant témoins. « Malhabiles mais indiscrets » : antithèse qui cerne exactement l'humiliation des pairs.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ L'infinitif de but répété (structure « pour + infinitif »)</div>
+        <div class="example">« m'interdisant de me jeter vers elles, d'y redevenir petit, d'y renoncer à mes prérogatives absurdes »</div>
+        <div class="note">Accumulation de propositions infinitives complétant « m'interdisant de » — chaque infinitif est une régression souhaitée, une enfance à laquelle on renonce malgré soi.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ Le procès narratif avec « au terme duquel » (relative à antécédent nominal)</div>
+        <div class="example">« selon un procès pervers et d'emblée prévisible au terme duquel il ne pouvait que se révolter ou éclater en sanglots »</div>
+        <div class="note">Relative introduite par « duquel » (relative prépositionnelle) — forme soutenue. Exprime l'inéluctabilité du rituel de violence : le résultat est connu d'avance, ce qui amplifie l'horreur.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ La coordination disjonctive binaire à valeur d'équivalence tragique</div>
+        <div class="example">« il ne pouvait que se révolter ou éclater en sanglots ; dans l'un et l'autre cas il était rossé »</div>
+        <div class="note">Les deux termes de l'alternative mènent au même résultat — le « ou » est illusoire. Michon souligne l'absence de sortie honorable par la clause « dans l'un et l'autre cas ».</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="gram-figures">
+      <div class="grammar-card">
+        <div class="label">✦ La métaphore animale filée : centaures</div>
+        <div class="example">« caverneux comme […] une caserne de centaures » / « un galop de centaures venait de loin dans le noir »</div>
+        <div class="note">Le lycée est d'abord une « caserne de centaures », puis les grands surgissent réellement comme un « galop de centaures ». La métaphore se réalise — ils sont à la fois animaux (brutalité) et mythiques (puissance inaccessible pour le petit).</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ La personnification / comparaison spectrale des journaux</div>
+        <div class="example">« des journaux ouverts qui soudain s'enlevaient et trouaient la nuit, tout blancs et spectraux comme des hiboux »</div>
+        <div class="note">Les journaux deviennent des êtres : ils « trouent » la nuit, volent « comme des hiboux ». Image d'une angoisse projetée sur le monde — le monde extérieur mime le désarroi intérieur de l'enfant.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ L'antithèse fondatrice : papillon vs temple fatal</div>
+        <div class="example">« cette maison magique d'où je pensais sortir papillon » vs « multiple, orthogone et fatal »</div>
+        <div class="note">L'illusion (papillon = métamorphose légère, sortie glorieuse) est immédiatement démentie par la réalité lourde du bâtiment. L'antithèse structure tout le passage : l'espoir préalable contre la pesanteur du réel.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ La synecdoque identitaire : « ces jupes »</div>
+        <div class="example">« mon identité était dans ces jupes que je suivais »</div>
+        <div class="note">La partie (les jupes) pour le tout (la mère). Synecdoque qui dit l'attachement régressif : l'enfant se cache dans les jupes. Mais ici c'est son identité entière qui y réside — formulation d'une nudité ontologique.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ Le dédoublement dans le miroir : les frères Bakroot</div>
+        <div class="example">« un autre gros menton tremblait […] Ils se ressemblaient comme des frères »</div>
+        <div class="note">Clôture sur un jeu de miroirs : le bourreau tremble comme la victime, ils partagent le même visage. La violence se révèle fraternelle — non domination mais souffrance commune. Figure de l'oxymore visuel.</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="gram-registre">
+      <div class="grammar-card">
+        <div class="label">✦ Le présent de vérité générale intercalé dans le récit passé</div>
+        <div class="example">« selon un procès pervers et d'emblée prévisible » — l'adjectif dit une loi universelle</div>
+        <div class="note">Michon alterne entre récit au passé et formulations qui généralisent (« on n'y pensait plus », « ainsi était toute chose »). Ce balancement donne au souvenir d'enfance une valeur d'allégorie universelle.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ L'hypallage : épithètes déplacées</div>
+        <div class="example">« le haut bâtiment […] perdait superbement le noir de ses ardoises dans le ciel noir »</div>
+        <div class="note">L'adverbe « superbement » s'applique logiquement à la façon dont le narrateur perçoit le bâtiment — mais il est attribué au bâtiment lui-même. Déplacement stylistique qui confère une intention, une fierté au monument.</div>
+      </div>
+      <div class="grammar-card">
+        <div class="label">✦ La voix narrative : focalisation interne + omniscience limitée</div>
+        <div class="example">« Ce que disait ce cœur, c'était une fureur impotente » — le narrateur adulte lit dans le cœur de l'enfant-Bakroot</div>
+        <div class="note">La narration rétrospective permet au narrateur adulte d'interpréter ce qu'il ne pouvait pas comprendre enfant. Tension entre l'ignorance du moment et le savoir de la mémoire — procédé biographique central chez Michon.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE QCM -->
+  <div class="page" id="page-qcm">
+    <h2>❓ QCM — 60 questions</h2>
+    <div class="score-bar">
+      <div class="score-num" id="score-num">0</div>
+      <div class="score-info">
+        correct sur <strong id="score-total">0</strong> répondues<br>
+        <span id="score-pct" style="color:var(--accent)">—</span>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="qcm-filters">
+      <button class="filter-btn active" onclick="filterQCM('tous')">Tous (60)</button>
+      <button class="filter-btn" onclick="filterQCM('Compréhension')">Compréhension (20)</button>
+      <button class="filter-btn" onclick="filterQCM('Vocabulaire')">Vocabulaire (20)</button>
+      <button class="filter-btn" onclick="filterQCM('Grammaire')">Grammaire (15)</button>
+      <button class="filter-btn" onclick="filterQCM('Culture')">Culture (5)</button>
+    </div>
+    <div id="qcm-container"></div>
+    <div style="margin-top:1rem; padding-top:1rem; border-top: 1px solid var(--border)">
+      <button class="btn" onclick="showAllAnswers()">Voir les réponses</button>
+      <button class="btn secondary" onclick="resetQCM()">Réinitialiser</button>
+    </div>
+  </div>
+
+  <!-- PAGE À PROPOS -->
+  <div class="page" id="page-apropos">
+    <h2>ℹ️ À propos de cette session</h2>
+    <div class="card">
+      <h3>Source</h3>
+      <p><strong>Livre :</strong> <em>Vies minuscules</em> — Pierre Michon (Gallimard, 1984)<br>
+      <strong>Section :</strong> Scènes de la pension &amp; rencontre des frères Bakroot<br>
+      <strong>Session :</strong> n°2 · <strong>Date :</strong> 05 juin 2026</p>
+    </div>
+    <div class="card">
+      <h3>Comment utiliser cette session</h3>
+      <ol style="padding-left:1.2rem; line-height:2">
+        <li>Lire l'extrait à voix haute (page <em>Extrait</em>)</li>
+        <li>Étudier le diagram narratif pour fixer la structure du texte</li>
+        <li>Parcourir le vocabulaire — mémoriser 5-10 mots prioritaires</li>
+        <li>Lire les structures grammaticales en cherchant des exemples similaires</li>
+        <li>Faire le QCM sans aide — viser 75% minimum (45/60)</li>
+      </ol>
+    </div>
+    <div class="callout green">
+      <strong>Tip C2 :</strong> Pour le niveau C2, l'objectif n'est pas seulement de comprendre le texte, mais de pouvoir <em>reproduire</em> ces structures dans votre propre production écrite.
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────
+
+const vocabData = [
+  ["se défeuiller","v.pron.","Perdre ses feuilles (arbres en automne) — image d'un monde qui se dénude, en écho au narrateur qui perd sa mère"],
+  ["orthogone","adj.","À angles droits, géométrique ; terme mathématique appliqué au bâtiment pour lui conférer une rigueur froide et implacable"],
+  ["fatal,-e","adj.","Inéluctable, marqué par le destin (du lat. fatum) ; ici : le lycée est écrit dans le destin de l'enfant, irréversible"],
+  ["caverneux,-se","adj.","Qui évoque une caverne, profond et obscur ; au figuré : qui résonne creux, impénétrable"],
+  ["lancier","n.m.","Cavalier armé d'une lance (régiment militaire du XIXe) ; ici renforce la métaphore militaire et guerrière du lycée"],
+  ["s'activer","v.pron.","S'affairer, s'employer avec énergie à une tâche — la mère s'active = se dépense pour l'installation"],
+  ["le placard","n.m.","Ici : panneau d'affichage, tableau où apparaissent les noms — signe que l'identité devient administrative"],
+  ["craintif,-ve","adj.","Qui éprouve une crainte ; timide et apeuré. Renforcé par « honteux de ma crainte » — honte de la peur elle-même"],
+  ["malhabile","adj.","Maladroit, qui manque d'habileté sociale ou physique — les autres garçons sont gauches mais dangereux"],
+  ["indiscret,-ète","adj.","Qui ne respecte pas la discrétion ; curieux, intrusif — ici : ils regardent sans pudeur la détresse du nouveau"],
+  ["spectral,-e","adj.","Qui évoque un spectre, un fantôme ; blancheur éthérée et menaçante (journaux spectraux comme des hiboux)"],
+  ["à la merci de","loc.","Entièrement soumis à, sans défense contre — « à la merci d'un rien » = emporté par la moindre chose"],
+  ["sombrer","v.intr.","Couler au fond (bateau) ; au figuré : disparaître, s'effondrer dans l'obscurité"],
+  ["grossièrement","adv.","De façon grossière, sans finesse ni délicatesse ; ici modifie « mielleuses » et « coléreuse » — violence sous vernis de douceur"],
+  ["mielleux,-se","adj.","D'une douceur affectée et hypocrite (comme le miel) ; faux, onctueusement perfide"],
+  ["le procès","n.m.","Au sens archaïque/littéraire : processus, déroulement d'un événement (≠ procès judiciaire seul). « Un procès pervers » = un mécanisme pervers"],
+  ["d'emblée","loc.adv.","Dès le début, immédiatement et sans hésitation — « d'emblée prévisible » = prévisible dès le premier instant"],
+  ["rosser","v.tr.","Battre violemment, frapper à coups répétés (registre familier/argotique)"],
+  ["impavide","adj.","Qui ne montre aucune peur, impassible (du lat. impavidus) — terme rare et soutenu, presque héroïque par ironie"],
+  ["détoner","v.intr.","Faire contraste, détrancher ; ici au sens figuré : « une voix qui détonnait » = qui jurait, qui ne cadrait pas (orthographe : détonner ≠ détonner/exploser)"],
+  ["la fureur","n.f.","Colère violente et incontrôlée ; rage. « Fureur impotente » = rage qui ne peut rien accomplir"],
+  ["impotent,-e","adj.","Qui ne peut pas agir, incapable d'effectuer ce qu'il voudrait (du lat. impotens) — ici : une fureur qui se retourne contre elle-même"],
+  ["passionné,-e","adj.","Animé d'une passion intense ; ici la fureur est à la fois impuissante et passionnée — oxymore"],
+  ["surplomber","v.tr.","Dominer en étant en saillie au-dessus ; s'élever au-dessus de — signe de la hiérarchie physique entre les enfants"],
+  ["la suédine","n.f.","Tissu imitation daim (suède), bon marché — signe social de pauvreté dans le vêtement du petit Bakroot"],
+  ["jaillir","v.intr.","Sortir brusquement et avec force (eau, lumière) ; ici les cheveux jaillissent = sortent en boucles dures"],
+  ["ras,-e","adj./adv.","Tondu très court, presque à ras du crâne — cheveux ras aux tempes : signe d'austérité rurale"],
+  ["saillant,-e","adj.","Qui fait saillie, proéminence, avancé vers l'extérieur — un menton saillant = proéminent, fort"],
+  ["la blouse","n.f.","Vêtement de travail/scolaire (tablier scolaire en France autrefois obligatoire) — signe de l'uniforme social"],
+  ["bosselé,-e","adj.","Couvert de bosses, déformé par des renforts — les poches bosselées = pleines de mystérieux objets"],
+  ["le bric-à-brac","n.m.","Collection hétéroclite d'objets sans valeur apparente ; fouillis précieux (ici : collections enfantines)"],
+  ["le gris-gris","n.m.","Amulette, talisman (d'origine africaine) ; ici au sens figuré : objets magiques et fétichistes d'un enfant"],
+  ["martyriser","v.tr.","Torturer, faire souffrir cruellement ; au figuré : tourmenter, persécuter durablement"],
+  ["livrer (qqn à)","v.tr.","Remettre quelqu'un à une puissance hostile, l'abandonner à — « cette pluie qui me les livra » = qui me les fit découvrir, dans toute leur vérité"],
+  ["ténébreux,-se","adj.","Plongé dans les ténèbres ; sombre, mystérieux, impénétrable (le « petit ténébreux » = Bakroot cadet)"],
+  ["captieux,-se","adj.","Qui cherche à tromper par un raisonnement spécieux ; insidieux, fallacieux (questions captieuses = pièges rhétoriques)"],
+  ["saugrenu,-e","adj.","Absurde et bizarre, d'une incohérence comique — questions saugrenues = incongrues, n'ayant pas de sens"],
+  ["la mise en demeure","n.f.","Injonction formelle à agir sous peine de conséquences ; ici : question-piège sans issue possible"],
+];
+
+const narrativeSteps = [
+  { label: "Arrivée au lycée", desc: "Le narrateur arrive en octobre avec sa mère. Le bâtiment lui apparaît fatal, comme un temple ou une caserne de centaures — lieu de savoir mais aussi de sacrifice." },
+  { label: "Installation & identité perdue", desc: "L'après-midi d'installation efface progressivement le moi de l'enfant : son nom sur un placard, mais son identité reste dans 'ces jupes' maternelles." },
+  { label: "Séparation & solitude nocturne", desc: "La mère part. Dans la cour nocturne, le narrateur contemple des journaux qui s'envolent comme des hiboux — projection de son désarroi intérieur." },
+  { label: "Violence initiatique des grands", desc: "Les 'grands' (centaures) ritualisent une violence prévisible sur les nouveaux. Révolte ou larmes : dans les deux cas, on est rossé." },
+  { label: "Rencontre : le petit ténébreux", desc: "Sous la pluie, le narrateur aperçoit Bakroot cadet : cheveux roux, veste de suédine, bras croisés. Une présence étrange et résistante." },
+  { label: "Miroir fraternel", desc: "Lors de l'épreuve, les deux Bakroot se font face : même menton tremblant, même pluie sur les visages. La violence révèle une douleur fraternelle partagée." },
+];
+
+const questions = [
+  // COMPRÉHENSION (1-20)
+  {cat:"Compréhension",q:"En quelle saison le narrateur arrive-t-il en pension ?",opts:["En hiver","En automne","Au printemps","En été"],ans:1,exp:"« un jour d'octobre » et les marronniers « se défeuillaient » indiquent clairement l'automne."},
+  {cat:"Compréhension",q:"Que signifie l'expression « d'où je pensais sortir papillon » ?",opts:["Je pensais m'évader en volant par une fenêtre","J'espérais en ressortir transformé et glorieux","J'aimais les papillons et espérais en trouver","Je voulais devenir entomologiste"],ans:1,exp:"La métamorphose du papillon = transformation heureuse. L'enfant croit que la pension le transformera brillamment — illusion vite démentie par le bâtiment « fatal »."},
+  {cat:"Compréhension",q:"Comment le narrateur perçoit-il le bâtiment du lycée ?",opts:["Accueillant et lumineux","Multiple, orthogone et fatal, comme un temple ou une caserne","Moderne et fonctionnel","Délabré et triste"],ans:1,exp:"« Il me parut multiple, orthogone et fatal, caverneux comme un temple, une caserne de lanciers ou de centaures. »"},
+  {cat:"Compréhension",q:"Où réside l'identité du narrateur pendant l'après-midi d'installation ?",opts:["Dans son nom sur le placard","Dans son lit attribué","Dans les jupes de sa mère","Dans son carnet scolaire"],ans:2,exp:"« mon identité était dans ces jupes que je suivais » — formulation centrale du passage sur la perte du moi."},
+  {cat:"Compréhension",q:"Pourquoi le narrateur n'ose-t-il pas « se jeter vers » sa mère devant les autres garçons ?",opts:["Il ne l'aime pas vraiment","Il a honte de sa crainte devant les autres garçons","Il est occupé à ranger ses affaires","Sa mère lui a demandé de rester discret"],ans:1,exp:"« craintif et honteux de ma crainte, la présence de ces garçons malhabiles mais indiscrets m'interdisant de me jeter vers elles »."},
+  {cat:"Compréhension",q:"À quoi les journaux volants dans la cour sont-ils comparés ?",opts:["À des feuilles d'automne","À des hiboux blancs et spectraux","À des fantômes de soldats","À des pages d'un livre déchiré"],ans:1,exp:"« tout blancs et spectraux comme des hiboux » — comparaison évoquant l'étrangeté spectrale de la nuit."},
+  {cat:"Compréhension",q:"Que se passe-t-il quand un nouveau se révolte ou pleure face aux grands ?",opts:["Il est respecté pour son courage","Il est protégé par les pions","Il est rosé dans les deux cas","Il est renvoyé chez ses parents"],ans:2,exp:"« dans l'un et l'autre cas il était rossé » — l'issue est identique quelle que soit la réaction."},
+  {cat:"Compréhension",q:"Comment est décrit physiquement le jeune Bakroot lors de la première rencontre ?",opts:["Cheveux noirs, grands, avec un uniforme soigné","Cheveux blond-rouge, tête nue, veste de suédine aux manches trop courtes","Chauve, petit, portant un béret","Brun, élancé, avec des lunettes"],ans:1,exp:"« cheveux jaillis du front en boucles épaisses et dures, d'un blond-rouge éteint, ras sur les tempes et la nuque » + « veste de suédine aux manches trop courtes »."},
+  {cat:"Compréhension",q:"Qu'est-ce qui rend la voix de Bakroot lors de l'épreuve différente des autres grands ?",opts:["Elle est plus douce et plus ironique","Elle est grossièrement coléreuse, sans sadisme maîtrisé — une fureur impotente","Elle parle une autre langue","Elle est à peine audible"],ans:1,exp:"« non plus sarcastique ni feinte, mais grossièrement coléreuse, grondante et exaspérée » — la maîtrise perverse a disparu, remplacée par une fureur passionnée mais impuissante."},
+  {cat:"Compréhension",q:"Sur quoi se ferme le passage ?",opts:["Le narrateur rentre chez sa mère","Les deux Bakroot se ressemblent comme des frères — leurs deux mentons tremblent sous la même pluie","Bakroot est puni par un pion","Le narrateur s'endort dans le dortoir"],ans:1,exp:"« Ils se ressemblaient comme des frères » — révélation finale qui explique tout : l'aîné et le cadet vivent la même douleur en miroir."},
+  {cat:"Compréhension",q:"Que signifie « à quoi m'en tenir » dans « sus à quoi m'en tenir » ?",opts:["Je sus comment m'en aller","Je sus ce à quoi je pouvais m'attendre, la réalité de ma situation","Je sus comment me tenir assis correctement","Je sus tenir ma langue"],ans:1,exp:"Savoir à quoi s'en tenir = connaître la réalité de sa situation, n'avoir plus d'illusion. Formule idiomatique."},
+  {cat:"Compréhension",q:"Pourquoi le narrateur décrit-il le lycée comme une « caserne de lanciers ou de centaures » ?",opts:["Il confond le lycée avec une caserne militaire réelle","Parce que les professeurs portent des uniformes","Pour exprimer la perception enfantine d'un lieu qui combine la discipline militaire et la dimension mythique/bestiale","Parce que des cavaliers habitaient autrefois le bâtiment"],ans:2,exp:"Lanciers (militaire, réel) et centaures (mythique, bestial) — les deux registres expriment la terreur et la puissance surnaturelle que le lieu inspire à l'enfant."},
+  {cat:"Compréhension",q:"Que fait la mère de son côté pendant l'installation ?",opts:["Elle pleure dans un coin","Elle s'active à la lingerie, au dortoir, à l'étude","Elle parle aux professeurs dans le bureau","Elle attend dans la voiture"],ans:1,exp:"« ma mère s'activait à la lingerie, au dortoir, à l'étude » — elle est pragmatique là où l'enfant est paralysé."},
+  {cat:"Compréhension",q:"Quelle image traduit la solitude de l'enfant après le départ de sa mère ?",opts:["Il s'endort immédiatement","Son cœur s'élance avec celle qui partait, consterné arrivait à Mourioux où il n'était pas","Il court après la voiture","Il écrit une lettre à sa mère"],ans:1,exp:"« mon cœur s'élançait avec celle qui partait, prenait la micheline, consterné arrivait à Mourioux où je n'étais pas » — dissociation entre le cœur (parti avec la mère) et le corps resté."},
+  {cat:"Compréhension",q:"Que désigne « la micheline » dans le passage ?",opts:["Le nom de la mère","Un type d'autocar ou de train léger sur voie ferrée","Une rue de la ville","Un surnom pour la directrice"],ans:1,exp:"La micheline = autorail léger (de la marque Michelin, qui fabriquait des wagons sur pneus). Moyen de transport rural."},
+  {cat:"Compréhension",q:"L'expression « sortir papillon » évoque quel mythe ou image classique ?",opts:["L'Icare qui tombe","La métamorphose d'Ovide / la chrysalide qui devient papillon","Le phénix renaissant de ses cendres","La cigale et la fourmi"],ans:1,exp:"La chrysalide → papillon = transformation, élévation. Image universelle de la métamorphose positive, ici ironisée par la réalité du lycée."},
+  {cat:"Compréhension",q:"Qu'indique le fait que les poches de Bakroot sont « bosselées » ?",opts:["Ses poches sont déchirées","Elles contiennent des objets mystérieux — son bric-à-brac de collections enfantines","Il a rangé ses livres dedans","Sa veste est trop grande"],ans:1,exp:"Le narrateur anticipe « le patient bric-à-brac et les gris-gris qu'amassent certains mômes » — les poches bosselées sont le signe d'un monde intérieur riche et secret."},
+  {cat:"Compréhension",q:"Qu'est-ce que la « récréation nocturne » dans le contexte d'un pensionnat des années 1960 ?",opts:["Une récréation organisée avec des jeux de nuit","La période de liberté entre le dîner et le coucher, en cour","Une punition nocturne","Une promenade organisée la nuit"],ans:1,exp:"Dans les pensionnats français, la récréation nocturne = la promenade/liberté entre le repas du soir et le coucher — les élèves sont dans la cour avant d'aller au dortoir."},
+  {cat:"Compréhension",q:"Comment le narrateur décrit-il la prédictibilité du rituel de violence ?",opts:["Il dit qu'il était impossible de le prévoir","Il dit qu'il était « d'emblée prévisible » — on savait d'avance comment ça se terminerait","Il dit que les pions l'empêchaient parfois","Il dit que ça dépendait du caractère de chaque grand"],ans:1,exp:"« selon un procès pervers et d'emblée prévisible au terme duquel il ne pouvait que se révolter ou éclater en sanglots »."},
+  {cat:"Compréhension",q:"Quel est le trait commun physique entre les deux frères Bakroot dans la scène finale ?",opts:["Leurs cheveux roux","Leurs bras croisés","Leurs mentons tremblants sous la pluie","Leurs vestes identiques"],ans:2,exp:"« je voyais trembler son gros menton ; mais face à lui et le surplombant un peu, un autre gros menton tremblait » — le même menton, la même pluie ou les mêmes larmes."},
+
+  // VOCABULAIRE (21-40)
+  {cat:"Vocabulaire",q:"« Orthogone » signifie :",opts:["De forme ronde","À angles droits, géométrique","En bois","Très ancien"],ans:1,exp:"Orthogone (du gr. orthos = droit + gônia = angle) = à angles droits. Terme mathématique appliqué ici à l'architecture pour insister sur la rigueur froide."},
+  {cat:"Vocabulaire",q:"Un bâtiment « fatal » dans ce contexte est :",opts:["Un bâtiment dangereux pour la santé","Inéluctable, marqué par le destin — qui s'impose comme une nécessité","Un bâtiment où il y a eu des morts","Un bâtiment bien construit"],ans:1,exp:"Fatal (du lat. fatum = destin) = qui appartient au destin, inévitable. Ici le lycée est fatal = il était écrit que le narrateur y entrerait."},
+  {cat:"Vocabulaire",q:"Des questions « captieuses » sont des questions :",opts:["Courtes et faciles","Qui cherchent à piéger par un raisonnement trompeur","Sur des sujets intéressants","Sans réponse correcte"],ans:1,exp:"Captieux (du lat. captiosus = qui cherche à prendre) = insidieux, trompeur, conçu pour faire tomber dans un piège logique."},
+  {cat:"Vocabulaire",q:"« Grossièrement mielleuses » désigne des questions :",opts:["Formulées simplement et honnêtement","Faussement douces — d'une gentillesse hypocrite et évidente","Vulgaires et insultantes d'emblée","Très intelligentes"],ans:1,exp:"Mielleuses = d'une douceur affectée (comme le miel). Grossièrement = de façon peu subtile. Antithèse : la violence se déguise en douceur, mais de façon grossière."},
+  {cat:"Vocabulaire",q:"« Rosser » quelqu'un signifie :",opts:["Le consoler","Le punir en lui donnant une punition scolaire","Le battre, le frapper violemment","L'insulter verbalement"],ans:2,exp:"Rosser = frapper à coups répétés, battre violemment (argot/familier). « il était rossé » = il recevait des coups."},
+  {cat:"Vocabulaire",q:"Un enfant « impavide » est un enfant :",opts:["Très agité et nerveux","Qui ne montre aucune peur, impassible","Particulièrement intelligent","Qui joue l'indifférence mais a peur"],ans:1,exp:"Impavide (du lat. impavidus) = qui n'éprouve pas de peur, qui ne tremble pas face au danger. Terme rare, soutenu, presque héroïque."},
+  {cat:"Vocabulaire",q:"La « suédine » est :",opts:["Un tissu de soie très cher","Un tissu imitation daim (suède), bon marché","Un type de laine épaisse","Une marque de vêtement scolaire"],ans:1,exp:"La suédine = tissu synthétique imitant le daim (suède), moins cher. Signe du milieu social modeste des Bakroot."},
+  {cat:"Vocabulaire",q:"Des cheveux « ras » sur les tempes sont :",opts:["Longs et bouclés","Tondus très courts","Gras et plaqués","Naturellement plats"],ans:1,exp:"Ras = tondu ras, presque à nu. Coupe populaire et rustique — signe de l'origine campagnarde des Bakroot."},
+  {cat:"Vocabulaire",q:"« Sombrer » dans le contexte « tournoyant, ils sombraient » signifie :",opts:["Flotter doucement","Émettre un son grave","Disparaître en tombant dans l'obscurité","S'immobiliser"],ans:2,exp:"Sombrer = couler au fond, disparaître (de l'image du navire qui sombre). Les journaux tourbillonnent puis tombent dans l'obscurité."},
+  {cat:"Vocabulaire",q:"Une voix « grondante » est une voix :",opts:["Très aiguë et stridente","Basse, sourde et menaçante — comme un grondement de tonnerre","Douce et apaisante","Éraillée par le froid"],ans:1,exp:"Gronder = émettre un bruit sourd et continu (tonnerre, animal menaçant). Une voix grondante = sourde, menaçante, irritée."},
+  {cat:"Vocabulaire",q:"« D'emblée » signifie :",opts:["Progressivement","Dès le premier instant, immédiatement","Avec difficulté","À la fin"],ans:1,exp:"D'emblée = dès le premier mouvement, immédiatement. Vient de l'ancien français « embler » = prendre d'assaut."},
+  {cat:"Vocabulaire",q:"Un « procès » dans « un procès pervers » désigne ici :",opts:["Un procès judiciaire","Un processus, un déroulement d'événements (sens littéraire/archaïque)","Une accusation","Un professeur"],ans:1,exp:"Procès (lat. processus) = déroulement, processus. Sens archaïque/littéraire, distinct du sens juridique courant."},
+  {cat:"Vocabulaire",q:"Des poches « bosselées » sont des poches :",opts:["Vides et plates","Trouées","Déformées par leur contenu, couvertes de bosses","Cousues sur l'extérieur"],ans:2,exp:"Bosselé = couvert de bosses, déformé de façon irrégulière. Ici les poches sont pleines d'objets qui les gonflent."},
+  {cat:"Vocabulaire",q:"« Jaillir » dans « cheveux jaillis du front » évoque :",opts:["Pousser lentement et régulièrement","Sortir avec force et brusquerie, comme une source","Tomber vers le bas","Être aplati contre le crâne"],ans:1,exp:"Jaillir = sortir avec force soudaine (source, lumière). Les cheveux jaillissent = sortent en boucles denses et dures, presque violemment."},
+  {cat:"Vocabulaire",q:"Un menton « saillant » est un menton :",opts:["Petit et discret","Proéminent, qui avance vers l'extérieur","Asymétrique","Fendu"],ans:1,exp:"Saillant = qui fait saillie, qui dépasse, proéminent. Un menton saillant = fort, avancé — trait physique des Bakroot."},
+  {cat:"Vocabulaire",q:"« Se détremper » dans « les journaux alourdis se détrempaient » signifie :",opts:["S'allumer de l'intérieur","Être complètement imbibés d'eau, perdre toute consistance","Se déchirer sous le vent","Changer de couleur"],ans:1,exp:"Se détremper = être imbibé d'eau jusqu'à perdre sa consistance. Les journaux gorgés de pluie « devenaient terre » — retour à la matière informe."},
+  {cat:"Vocabulaire",q:"Une « mise en demeure sans issue » est :",opts:["Une invitation ouverte","Une injonction formelle à laquelle il est impossible de répondre correctement","Une punition légère","Un compliment déguisé"],ans:1,exp:"Mise en demeure = injonction formelle d'agir. Sans issue = sans sortie possible. Les questions sont des pièges rhétoriques — aucune réponse n'est bonne."},
+  {cat:"Vocabulaire",q:"Des objets « spectraux » sont des objets :",opts:["Multicolores","Qui évoquent des spectres, des fantômes — blancheur éthérée et inquiétante","Transparents","Très lourds"],ans:1,exp:"Spectral = qui évoque un spectre (fantôme). Les journaux blancs dans la nuit sont spectraux comme des hiboux — image de mort et d'étrangeté."},
+  {cat:"Vocabulaire",q:"« Livrer (quelqu'un à) » dans « cette pluie qui me les livra » signifie :",opts:["Leur apporter un colis","Les remettre à ma connaissance, me les révéler dans leur vérité","Leur commander quelque chose","Les trahir auprès de moi"],ans:1,exp:"Livrer = remettre à, abandonner à. « Cette pluie qui me les livra » = cette pluie qui me les révéla, qui me les abandonna pour que je les découvre."},
+  {cat:"Vocabulaire",q:"Le terme « ténébreux » appliqué à Bakroot cadet signifie :",opts:["Très pâle de peau","Sombre, mystérieux, opaque — plongé dans une obscurité intérieure","Agressif et bruyant","Issu d'un milieu bourgeois"],ans:1,exp:"Ténébreux = plongé dans les ténèbres, sombre et mystérieux. Bakroot est « le petit ténébreux » — il porte en lui une obscurité que le narrateur ne comprend pas encore."},
+
+  // GRAMMAIRE & STYLE (41-55)
+  {cat:"Grammaire",q:"Dans « cette maison magique d'où je pensais sortir papillon », « d'où » est :",opts:["Un adverbe de lieu invariable","Un pronom relatif complément de lieu (lieu de provenance)","Une conjonction de subordination","Un pronom interrogatif"],ans:1,exp:"D'où = pronom relatif (de + où) exprimant le lieu d'où l'on sort. Antécédent : « cette maison magique »."},
+  {cat:"Grammaire",q:"Le mode verbal dans « je pensais sortir papillon » est :",opts:["Le subjonctif présent","L'infinitif présent après un verbe de pensée à l'imparfait","Le conditionnel présent","Le participe présent"],ans:1,exp:"Pensais (imparfait indicatif) + sortir (infinitif complément du verbe penser). Structure : verbe de pensée + infinitif pour exprimer une intention passée."},
+  {cat:"Grammaire",q:"La figure dans « caverneux comme un temple, une caserne de lanciers ou de centaures » est :",opts:["Une métaphore pure","Une comparaison à terme comparé unique et termes comparants multiples (accumulation)","Une antithèse","Une hyperbole simple"],ans:1,exp:"Comparaison (comme) avec accumulation de trois termes comparants en gradation : temple (sacré) → caserne de lanciers (militaire réel) → centaures (mythique)."},
+  {cat:"Grammaire",q:"Dans « la présence de ces garçons malhabiles mais indiscrets m'interdisant de me jeter vers elles », la forme verbale « m'interdisant » est :",opts:["Un gérondif","Un participe présent à valeur causale (= parce que leur présence m'interdisait)","Un adjectif verbal","Une proposition relative"],ans:1,exp:"Participe présent sans préposition = valeur causale. La présence m'interdisait — le participe exprime la cause de la paralysie du narrateur."},
+  {cat:"Grammaire",q:"La valeur de « ou » dans « se révolter ou éclater en sanglots » suivi de « dans l'un et l'autre cas il était rossé » est :",opts:["Disjonctive : les deux options sont différentes et mènent à des résultats différents","Pseudo-disjonctive : les deux options mènent au même résultat tragique","Alternative exclusive","Concessive"],ans:1,exp:"La coordination « ou » semble offrir un choix, mais la clause suivante « dans l'un et l'autre cas » annule la différence — les deux options convergent vers la même violence."},
+  {cat:"Grammaire",q:"Dans « d'emblée prévisible au terme duquel il ne pouvait que », le subjonctif est-il employé ?",opts:["Oui, dans « il ne pouvait que »","Non, c'est un indicatif imparfait dans toute la clause","Oui, dans « d'emblée prévisible »","Oui, dans « se révolter »"],ans:1,exp:"Toute la proposition est à l'indicatif imparfait : « il ne pouvait que se révolter ou éclater » — modalité du possible qui se réalise inévitablement."},
+  {cat:"Grammaire",q:"La construction « sus à quoi m'en tenir » est une forme :",opts:["Du passé simple de savoir — forme rare mais correcte (3e pers. → sut / 1re pers. → sus)","D'un participe passé accordé","Du subjonctif passé","Du conditionnel passé"],ans:0,exp:"Sus = passé simple 1re personne singulier de savoir (je sus). Forme correcte mais rare à l'écrit soutenu. « Sus à quoi m'en tenir » = j'appris ce qu'il fallait savoir de ma situation."},
+  {cat:"Grammaire",q:"L'expression « mon cœur s'élançait avec celle qui partait » utilise l'imparfait pour :",opts:["Exprimer une action ponctuelle dans le passé","Exprimer une action en cours au moment de la séparation, une durée vécue de l'intérieur","Indiquer une action habituelle","Exprimer un souhait impossible"],ans:1,exp:"L'imparfait ici = aspect imperfectif, durée intérieure. Le cœur s'élançait (action en cours, vue de l'intérieur) en même temps que la mère partait."},
+  {cat:"Grammaire",q:"Dans « tout blancs et spectraux comme des hiboux », l'adjectif « tout » devant « blancs » est :",opts:["Un pronom indéfini","Un adverbe d'intensité (= complètement) — invariable avec un masculin pluriel commençant par une consonne","Un déterminant","Un adjectif qualificatif attribut"],ans:1,exp:"Tout adverbe d'intensité = entièrement, complètement. Reste invariable si l'adjectif suivant est masculin ou commence par une voyelle. (Ici : tout blancs = complètement blancs.)"},
+  {cat:"Grammaire",q:"La locution « à la merci de » exprime :",opts:["La générosité envers quelqu'un","La dépendance totale et la vulnérabilité face à une force","La pitié accordée à quelqu'un","La gratitude"],ans:1,exp:"Être à la merci de = être entièrement soumis à, sans pouvoir s'y opposer. Vient de « miséricorde » (merci = pitié au sens ancien)."},
+  {cat:"Grammaire",q:"La figure rhétorique dans « mon cœur s'élançait avec celle qui partait, prenait la micheline, consterné arrivait à Mourioux où je n'étais pas » est :",opts:["Une hyperbole","Une personnification + zeugme sémantique : le cœur fait seul le voyage que le corps ne fait pas","Une litote","Une anaphore"],ans:1,exp:"Le cœur est personnifié (il prend la micheline, arrive à Mourioux). C'est aussi un zeugme : le narrateur dissocie son être en deux — corps ici, cœur là-bas."},
+  {cat:"Grammaire",q:"Dans « Il portait sur sa blouse une veste de suédine aux manches trop courtes, roussâtre aussi, et dont les poches déformées se bosselaient », « dont » est :",opts:["Un adverbe relatif de lieu","Un pronom relatif complément du nom (les poches de quoi ?)","Un pronom relatif sujet","Une conjonction de coordination"],ans:1,exp:"Dont = pronom relatif = de + lequel/laquelle/lesquels. Ici : les poches de la veste (dont = de la veste). Complément du nom « les poches »."},
+  {cat:"Grammaire",q:"La valeur de l'imparfait dans « les grands étaient sur nous » est :",opts:["Imparfait de narration (action brusque)","Imparfait duratif d'arrière-plan — décrit la situation dans laquelle survient l'événement","Imparfait hypothétique","Imparfait de politesse"],ans:1,exp:"Imparfait d'arrière-plan : décrit la situation (les grands sont là) dans laquelle va se dérouler l'action principale. Oppose la durée à la soudaineté."},
+  {cat:"Grammaire",q:"Le pronom « on » dans « on était sur nous » et autres occurrences a ici une valeur :",opts:["Personnelle : désigne le narrateur lui-même","Indéfinie de groupe menaçant — les grands anonymes, la violence collective sans visage","Exclusive : désigne un individu précis","Réfléchie"],ans:1,exp:"On indéfini à valeur de groupe anonyme et menaçant. Il dépersonnalise les bourreaux — ils sont une masse, non des individus nommés."},
+  {cat:"Grammaire",q:"Le style de Michon dans ce passage est marqué par :",opts:["Des phrases courtes et sèches, style télégraphique","Des phrases longues et complexes, mêlant propositions relatives enchâssées, métaphores et syntaxe complexe","Un style oral spontané sans construction élaborée","Un style journalistique neutre et factuel"],ans:1,exp:"Michon construit des phrases longues avec propositions relatives multiples, accumulations, métaphores filées. Style baroque et dense, à l'opposé du dépouillement."},
+
+  // CULTURE & CONTEXTE (56-60)
+  {cat:"Culture",q:"Pierre Michon est né en :",opts:["1935","1945","1955","1965"],ans:1,exp:"Pierre Michon est né en 1945 à Cards (Creuse). Vies minuscules (1984) est son premier livre, publié à 39 ans."},
+  {cat:"Culture",q:"La Creuse, région d'origine de Michon, est caractérisée par :",opts:["Un tissu industriel dense","Une région rurale pauvre du Massif central, à forte émigration — les 'maçons de la Creuse'","Une région viticole prospère","Une grande métropole régionale"],ans:1,exp:"La Creuse est un département pauvre du Massif central, historiquement associé aux maçons migrants. Michon en fait le décor de son imaginaire littéraire."},
+  {cat:"Culture",q:"Le terme « pension » désigne en France :",opts:["Un restaurant bon marché","Un internat scolaire où les élèves vivent, mangent et dorment en dehors de chez eux","Une maison de retraite uniquement","Un hébergement pour touristes"],ans:1,exp:"La pension = l'internat. Les élèves y vivent 5 jours par semaine ou en permanence. Institution commune jusqu'aux années 1970 dans les zones rurales sans lycée proche."},
+  {cat:"Culture",q:"La figure des « centaures » dans la littérature française évoque :",opts:["Des cavaliers nobles et vertueux","Des êtres hybrides mi-hommes mi-chevaux, symbolisant la force bestiale, la brutalité ou l'énergie vitale incontrôlée","Des figures de sagesse antique","Des professeurs de philosophie"],ans:1,exp:"Dans la mythologie grecque et la littérature (Vigny, Michelet), les centaures = hybridité entre l'humain et l'animal, force brutale et liberté sauvage."},
+  {cat:"Culture",q:"La « micheline » évoquée dans le passage est :",opts:["Un surnom affectueux pour la mère du narrateur","Un autorail léger sur pneus, fabriqué par Michelin, utilisé sur lignes secondaires rurales dans les années 1950-60","Une calèche régionale","Un car interurbain"],ans:1,exp:"La micheline = autorail à pneus en caoutchouc Michelin, très répandu sur les lignes rurales françaises des années 1930-1970. Emblème du transport rural de province."},
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let answered = new Set();
+let correct = 0;
+let currentFilter = 'tous';
+
+// ─── VOCAB ─────────────────────────────────────────────────────────────────
+function buildVocab() {
+  const tbody = document.getElementById('vocab-tbody');
+  tbody.innerHTML = vocabData.map(([w,pos,def]) =>
+    `<tr class="vocab-row"><td><span class="word">${w}</span> <span class="pos">${pos}</span></td><td style="color:var(--text-muted);font-size:0.78rem;font-style:italic">${pos}</td><td style="font-size:0.86rem">${def}</td></tr>`
+  ).join('');
+}
+function filterVocab(q) {
+  const rows = document.querySelectorAll('.vocab-row');
+  let visible = 0;
+  rows.forEach(r => {
+    const match = r.textContent.toLowerCase().includes(q.toLowerCase());
+    r.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('vocab-counter').textContent = visible + ' mots affichés';
+}
+
+// ─── QCM ───────────────────────────────────────────────────────────────────
+function buildQCM() {
+  const container = document.getElementById('qcm-container');
+  container.innerHTML = questions.map((q, i) => {
+    const opts = q.opts.map((o, j) =>
+      `<label><input type="radio" name="q${i}" value="${j}" onchange="checkAnswer(${i},${j})"> ${String.fromCharCode(65+j)}. ${o}</label>`
+    ).join('');
+    return `<div class="qcm-item" id="q${i}" data-cat="${q.cat}">
+      <div class="q-text"><span class="q-num">${i+1}.</span><span><span class="badge badge-muted" style="margin-right:6px;font-size:0.7rem">${q.cat}</span>${q.q}</span></div>
+      <div class="options">${opts}</div>
+      <div class="feedback" id="fb${i}"></div>
+    </div>`;
+  }).join('');
+}
+
+function checkAnswer(qi, val) {
+  if (answered.has(qi)) return;
+  answered.add(qi);
+  const fb = document.getElementById('fb' + qi);
+  const isOk = val === questions[qi].ans;
+  if (isOk) { correct++; fb.className = 'feedback correct'; fb.textContent = '✓ Correct ! ' + questions[qi].exp; }
+  else { fb.className = 'feedback wrong'; fb.textContent = `✗ Réponse : ${String.fromCharCode(65+questions[qi].ans)}. ${questions[qi].exp}`; }
+  document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled = true);
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('score-num').textContent = correct;
+  document.getElementById('score-total').textContent = answered.size;
+  const pct = answered.size ? Math.round(correct/answered.size*100)+'%' : '—';
+  document.getElementById('score-pct').textContent = pct;
+  document.getElementById('progress-fill').style.width = (answered.size/questions.length*100)+'%';
+  document.getElementById('nav-score').textContent = correct+'/'+answered.size;
+}
+
+function filterQCM(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.textContent.startsWith(cat==='tous'?'Tous':cat)));
+  document.querySelectorAll('.qcm-item').forEach(item => {
+    item.style.display = (cat==='tous' || item.dataset.cat===cat) ? '' : 'none';
+  });
+}
+
+function showAllAnswers() {
+  questions.forEach((q, i) => {
+    if (answered.has(i)) return;
+    answered.add(i);
+    const fb = document.getElementById('fb' + i);
+    fb.className = 'feedback wrong';
+    fb.textContent = `Réponse : ${String.fromCharCode(65+q.ans)}. ${q.exp}`;
+    document.querySelectorAll(`input[name="q${i}"]`).forEach(r => r.disabled = true);
+  });
+  updateScore();
+}
+
+function resetQCM() {
+  answered = new Set(); correct = 0;
+  document.querySelectorAll('.qcm-item').forEach((item, i) => {
+    document.querySelectorAll(`input[name="q${i}"]`).forEach(r => { r.disabled = false; r.checked = false; });
+    const fb = document.getElementById('fb'+i);
+    fb.className = 'feedback'; fb.textContent = '';
+  });
+  updateScore();
+}
+
+// ─── DIAGRAM ───────────────────────────────────────────────────────────────
+function drawNarrativeDiagram() {
+  const svg = document.getElementById('narrative-svg');
+  if (!svg) return;
+  const n = narrativeSteps.length;
+  const W = svg.clientWidth || 700;
+  const H = 130;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6c8ef7';
+  const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#e2e8f0';
+  const mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#8892a4';
+
+  const step = W / n;
+  let html = `<defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="${accent}" opacity="0.7"/></marker></defs>`;
+
+  for (let i = 0; i < n-1; i++) {
+    const x1 = step*i + step/2 + 18; const x2 = step*(i+1) + step/2 - 18;
+    html += `<line x1="${x1}" y1="34" x2="${x2}" y2="34" stroke="${accent}" stroke-width="1.5" marker-end="url(#arr)" opacity="0.5"/>`;
+  }
+
+  for (let i = 0; i < n; i++) {
+    const cx = step*i + step/2;
+    const s = narrativeSteps[i];
+    html += `<circle cx="${cx}" cy="34" r="15" fill="${accent}" opacity="0.85" class="diag-node" data-i="${i}" style="cursor:pointer;transition:opacity 0.15s"/>`;
+    html += `<text x="${cx}" y="39" text-anchor="middle" fill="white" font-size="12" font-family="Arial" font-weight="bold" pointer-events="none">${i+1}</text>`;
+    const words = s.label.split(' ');
+    const line1 = words.slice(0,2).join(' '); const line2 = words.slice(2,4).join(' ');
+    html += `<text x="${cx}" y="60" text-anchor="middle" fill="${textColor}" font-size="9.5" font-family="Arial">${line1}</text>`;
+    if (line2) html += `<text x="${cx}" y="72" text-anchor="middle" fill="${mutedColor}" font-size="9" font-family="Arial">${line2}</text>`;
+  }
+
+  svg.innerHTML = html;
+
+  svg.querySelectorAll('.diag-node').forEach(c => {
+    c.addEventListener('mouseenter', e => {
+      c.setAttribute('opacity','1');
+      const i = +c.dataset.i;
+      const tt = document.getElementById('diagram-tooltip');
+      tt.textContent = `${i+1}. ${narrativeSteps[i].desc}`;
+      const rect = svg.parentElement.getBoundingClientRect();
+      const cx_px = (parseFloat(c.getAttribute('cx')) / W) * svg.clientWidth;
+      tt.style.left = Math.min(cx_px - 40, svg.clientWidth - 260) + 'px';
+      tt.style.top = '80px';
+      tt.style.display = 'block';
+    });
+    c.addEventListener('mouseleave', () => {
+      c.setAttribute('opacity','0.85');
+      document.getElementById('diagram-tooltip').style.display = 'none';
+    });
+  });
+}
+
+// ─── NAVIGATION ────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'"+id+"'")) l.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+  if (id === 'resume') setTimeout(drawNarrativeDiagram, 80);
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar'), main = document.getElementById('main');
+  const isMobile = window.innerWidth <= 700;
+  if (isMobile) { sb.classList.toggle('visible'); }
+  else { sb.classList.toggle('hidden'); main.classList.toggle('expanded'); }
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙 Sombre' : '☀️ Clair';
+  setTimeout(drawNarrativeDiagram, 50);
+}
+
+function switchTab(group, panel) {
+  document.querySelectorAll(`#page-grammaire .tab-btn`).forEach((b,i) => {
+    const panels = document.querySelectorAll(`#page-grammaire .tab-panel`);
+    b.classList.remove('active'); panels[i] && panels[i].classList.remove('active');
+  });
+  document.querySelectorAll(`#page-grammaire .tab-btn`).forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+panel+"'")) b.classList.add('active');
+  });
+  const target = document.getElementById(group+'-'+panel);
+  if (target) target.classList.add('active');
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────────────
+window.onload = function() {
+  buildVocab();
+  buildQCM();
+  updateScore();
+};
+window.onresize = function() {
+  const resumePage = document.getElementById('page-resume');
+  if (resumePage && resumePage.classList.contains('active')) drawNarrativeDiagram();
+};
+</script>
+</body>
+</html>
