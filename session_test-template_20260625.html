@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Français C2</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+  --radius: 8px;
+  --sidebar-w: 240px;
+  --transition: 0.22s ease;
+}
+[data-theme="dark"] {
+  --bg: #0f1117;  --bg2: #181b24;  --bg3: #1e2130;
+  --border: #2a2d3e; --text: #e2e8f0; --text-muted: #8892a4;
+  --accent: #6c8ef7; --accent2: #a78bfa;
+  --green: #34d399; --amber: #fbbf24; --red: #f87171;
+}
+[data-theme="light"] {
+  --bg: #f4f6fb;  --bg2: #ffffff;  --bg3: #eaecf4;
+  --border: #d0d5e8; --text: #1a1f36; --text-muted: #6b7280;
+  --accent: #4361ee; --accent2: #7c3aed;
+  --green: #059669; --amber: #d97706; --red: #dc2626;
+}
+
+html { font-family: var(--font-sans); font-size: 15px; line-height: 1.75; color: var(--text); background: var(--bg); }
+body { background: var(--bg); color: var(--text); }
+
+/* ── Topbar ── */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 16px; gap: 16px; z-index: 1000;
+}
+#toggle-sidebar-btn, #theme-btn {
+  background: none; border: 1px solid var(--border); color: var(--text);
+  cursor: pointer; font-size: 13px; font-family: var(--font-sans);
+  padding: 5px 12px; border-radius: var(--radius);
+  transition: background var(--transition);
+}
+#toggle-sidebar-btn:hover, #theme-btn:hover { background: var(--bg3); }
+#topbar-title { flex: 1; font-size: 0.92rem; font-weight: 500; color: var(--text-muted); }
+
+/* ── Sidebar ── */
+#sidebar {
+  position: fixed; left: 0; top: 52px; width: var(--sidebar-w);
+  height: calc(100vh - 52px); background: var(--bg2);
+  border-right: 1px solid var(--border); padding: 20px 0;
+  overflow-y: auto; z-index: 900; transition: transform var(--transition);
+}
+#sidebar.hidden { transform: translateX(calc(-1 * var(--sidebar-w))); }
+.sidebar-label {
+  padding: 12px 16px 6px; font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted);
+}
+.nav-link {
+  display: block; padding: 9px 16px; color: var(--text-muted);
+  text-decoration: none; cursor: pointer; border-left: 3px solid transparent;
+  transition: color var(--transition), background var(--transition);
+  font-size: 0.9rem;
+}
+.nav-link:hover { color: var(--text); background: var(--bg3); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--bg3); }
+
+/* ── Main ── */
+#main {
+  margin-left: var(--sidebar-w); margin-top: 52px;
+  min-height: calc(100vh - 52px); transition: margin-left var(--transition);
+}
+#main.expanded { margin-left: 0; }
+.page { display: none; padding: 36px 48px; max-width: 860px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ── Typography ── */
+h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; margin-top: 28px; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin: 20px 0 10px; }
+p { margin-bottom: 14px; }
+
+/* ── Intro block (thème + points saillants) ── */
+.intro-block {
+  background: var(--bg2); border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+}
+.intro-label {
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px;
+}
+.intro-block ul { padding-left: 1.2rem; margin-top: 4px; }
+.intro-block li { margin-bottom: 4px; }
+
+/* ── Passage ── */
+.source-label { color: var(--text-muted); font-size: 0.88rem; font-weight: 500; margin-bottom: 6px; }
+.passage {
+  background: var(--bg3); border-left: 4px solid var(--accent);
+  padding: 1.5rem; margin: 0 0 1rem; font-style: italic;
+  line-height: 1.85; border-radius: var(--radius);
+}
+.citation-source { text-align: right; font-size: 0.83rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+/* ── Narrative diagram ── */
+.diagram-wrap {
+  position: relative; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 1rem 0 1.5rem;
+}
+#narrative-svg { width: 100%; height: auto; min-height: 120px; display: block; }
+.diag-tooltip {
+  display: none; position: absolute; background: var(--bg2);
+  border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 8px 12px; font-size: 13px; max-width: 260px;
+  color: var(--text); z-index: 100; pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-style: normal;
+}
+
+/* ── Vocab ── */
+.search-vocab { margin-bottom: 12px; }
+.search-vocab input {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+  background: var(--bg2); color: var(--text); border-radius: var(--radius);
+  font-family: var(--font-sans); font-size: 14px;
+}
+.search-vocab input:focus { outline: none; border-color: var(--accent); }
+.vocab-count { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
+.vocab-table {
+  width: 100%; border-collapse: collapse; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.vocab-table thead { background: var(--bg3); }
+.vocab-table th { padding: 11px 14px; text-align: left; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.vocab-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 0.91rem; }
+.vocab-table tbody tr:nth-child(odd) td { background: var(--bg2); }
+.vocab-table tbody tr:nth-child(even) td { background: var(--bg3); }
+.vocab-table tbody tr:last-child td { border-bottom: none; }
+.word { color: var(--accent); font-weight: 600; }
+.pos { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+
+/* ── Grammar tabs ── */
+.tabs-container {
+  display: flex; gap: 4px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); padding-bottom: 0;
+}
+.tab-btn {
+  background: none; border: none; color: var(--text-muted); cursor: pointer;
+  padding: 10px 14px; font-family: var(--font-sans); font-size: 0.9rem;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color var(--transition);
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.grammar-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
+}
+.grammar-card-label { font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.grammar-card-exemple {
+  font-style: italic; color: var(--text-muted); margin-bottom: 8px;
+  padding: 7px 10px; background: var(--bg3); border-radius: calc(var(--radius) - 2px);
+  font-size: 0.92rem;
+}
+.grammar-card-note { font-size: 0.88rem; color: var(--text); line-height: 1.6; }
+
+/* ── QCM ── */
+.qcm-score {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.score-text { font-weight: 600; font-size: 1rem; }
+.progress-bar { height: 5px; background: var(--bg3); border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); transition: width 0.4s; width: 0%; }
+.qcm-controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 6px 14px; border: 1px solid var(--border); background: var(--bg2);
+  color: var(--text-muted); border-radius: var(--radius); cursor: pointer;
+  transition: all var(--transition); font-family: var(--font-sans); font-size: 0.88rem;
+}
+.filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.filter-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+.qcm-item {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 14px; display: none;
+}
+.qcm-item.show { display: block; }
+.qcm-number {
+  display: inline-block; background: var(--bg3); color: var(--accent);
+  padding: 1px 8px; border-radius: 4px; font-weight: 600;
+  margin-right: 6px; font-size: 0.82rem;
+}
+.qcm-badge {
+  display: inline-block; background: var(--accent2); color: white;
+  padding: 1px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 6px;
+}
+.qcm-question { font-weight: 500; margin: 10px 0 12px; line-height: 1.5; }
+.qcm-option { display: flex; align-items: flex-start; margin-bottom: 8px; }
+.qcm-option input { margin-right: 8px; margin-top: 3px; cursor: pointer; }
+.qcm-option label { cursor: pointer; flex: 1; font-size: 0.92rem; line-height: 1.5; }
+.qcm-feedback { padding: 10px 14px; border-radius: var(--radius); margin-top: 10px; display: none; font-size: 0.9rem; line-height: 1.55; }
+.qcm-feedback.show { display: block; }
+.qcm-correct { background: rgba(52,211,153,0.1); color: var(--green); border-left: 3px solid var(--green); }
+.qcm-incorrect { background: rgba(248,113,113,0.1); color: var(--red); border-left: 3px solid var(--red); }
+.button-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.btn-action {
+  padding: 9px 18px; border: none; border-radius: var(--radius); cursor: pointer;
+  font-family: var(--font-sans); font-size: 0.9rem; background: var(--accent); color: white;
+  transition: opacity var(--transition);
+}
+.btn-action:hover { opacity: 0.85; }
+.btn-reset { background: var(--red); }
+
+@media (max-width: 700px) {
+  #sidebar { display: none; }
+  #sidebar.mobile-show { display: block; width: 100%; height: auto; position: fixed; }
+  #main { margin-left: 0 !important; }
+  .page { padding: 20px 16px; }
+  .qcm-controls { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <button id="toggle-sidebar-btn" onclick="toggleSidebar()">Menu</button>
+  <span id="topbar-title">Session Français C2</span>
+  <button id="theme-btn" onclick="toggleTheme()">Sombre</button>
+</div>
+
+<div id="sidebar">
+  <div class="sidebar-label">Session</div>
+  <a class="nav-link active" data-page="extrait" onclick="showPage('extrait')">Extrait &amp; Résumé</a>
+  <a class="nav-link" data-page="vocab" onclick="showPage('vocab')">Vocabulaire</a>
+  <a class="nav-link" data-page="grammaire" onclick="showPage('grammaire')">Grammaire</a>
+  <a class="nav-link" data-page="qcm" onclick="showPage('qcm')">QCM</a>
+</div>
+
+<div id="main">
+
+  <!-- Page 1 : Extrait & Résumé -->
+  <div id="page-extrait" class="page active">
+    <h2 id="page1-title">Extrait &amp; Résumé</h2>
+    <div class="intro-block" id="intro-block"></div>
+    <div class="source-label" id="source-label"></div>
+    <div class="passage" id="passage-text"></div>
+    <div class="citation-source" id="citation-source"></div>
+    <h3>Résumé</h3>
+    <p id="resume-text"></p>
+    <h3>Progression narrative</h3>
+    <div class="diagram-wrap">
+      <svg id="narrative-svg"></svg>
+      <div id="diagram-tooltip" class="diag-tooltip"></div>
+    </div>
+  </div>
+
+  <!-- Page 2 : Vocabulaire -->
+  <div id="page-vocab" class="page">
+    <h2>Vocabulaire</h2>
+    <p class="vocab-count" id="vocab-count"></p>
+    <div class="search-vocab">
+      <input type="text" id="vocab-search" placeholder="Filtrer sur toutes les colonnes..." oninput="filterVocab(this.value)">
+    </div>
+    <table class="vocab-table">
+      <thead>
+        <tr>
+          <th>Mot</th>
+          <th>Classe</th>
+          <th>Définition</th>
+          <th>Explication</th>
+        </tr>
+      </thead>
+      <tbody id="vocab-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Page 3 : Grammaire -->
+  <div id="page-grammaire" class="page">
+    <h2>Structures Grammaticales &amp; Stylistiques</h2>
+    <div class="tabs-container">
+      <button class="tab-btn active" onclick="switchTab('syntax',this)">Structures syntaxiques</button>
+      <button class="tab-btn" onclick="switchTab('style',this)">Figures de style</button>
+      <button class="tab-btn" onclick="switchTab('register',this)">Registre &amp; style</button>
+    </div>
+    <div id="tab-syntax" class="tab-content active"></div>
+    <div id="tab-style" class="tab-content"></div>
+    <div id="tab-register" class="tab-content"></div>
+  </div>
+
+  <!-- Page 4 : QCM -->
+  <div id="page-qcm" class="page">
+    <h2>Questions de Compréhension</h2>
+    <div class="qcm-score">
+      <div class="score-text"><span id="qcm-correct">0</span> / <span id="qcm-total">0</span> correctes</div>
+      <div><span id="qcm-pct">0</span>%</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="qcm-controls">
+      <button class="filter-btn active" onclick="filterQCM('all',this)">Tous</button>
+      <button class="filter-btn" onclick="filterQCM('Compréhension',this)">Compréhension</button>
+      <button class="filter-btn" onclick="filterQCM('Vocabulaire',this)">Vocabulaire</button>
+      <button class="filter-btn" onclick="filterQCM('Grammaire',this)">Grammaire</button>
+      <button class="filter-btn" onclick="filterQCM('Culture',this)">Culture</button>
+    </div>
+    <div id="qcm-container"></div>
+    <div class="button-group">
+      <button class="btn-action" onclick="showAllAnswers()">Voir les réponses</button>
+      <button class="btn-action btn-reset" onclick="resetQCM()">Réinitialiser</button>
+    </div>
+  </div>
+
+</div><!-- #main -->
+
+<script>
+const SESSION = {
+  "slug": "test-template",
+  "date": "20260625",
+  "title": "Session Français C2 — Test",
+  "source_label": "Test · Vies minuscules",
+  "citation": "— Test de build_session.py",
+  "theme": "Vérification que le template fonctionne correctement",
+  "points_saillants": [
+    "Le script génère le HTML depuis un JSON",
+    "Aucune ligne HTML écrite à la main"
+  ],
+  "passage_html": "<p>Ceci est un passage de test. Il vérifie que le template et le script de build fonctionnent correctement.</p>",
+  "resume": "Un résumé de test en une seule phrase.",
+  "narrative_steps": [
+    {
+      "label": "Étape initiale",
+      "desc": "Description complète de la première étape narrative."
+    },
+    {
+      "label": "Développement action",
+      "desc": "La deuxième étape avec plus de détails."
+    },
+    {
+      "label": "Climax tension",
+      "desc": "Point culminant du passage."
+    },
+    {
+      "label": "Résolution finale",
+      "desc": "Comment se conclut le passage."
+    }
+  ],
+  "vocabulaire": [
+    [
+      "imprenable",
+      "adj.",
+      "Qui ne peut être pris ou conquis",
+      "Không thể chiếm được"
+    ],
+    [
+      "ténébreux",
+      "adj.",
+      "Plongé dans les ténèbres, obscur",
+      "Tối tăm, bí ẩn"
+    ],
+    [
+      "l'alchimie",
+      "n.f.",
+      "Transformation mystérieuse et profonde",
+      "Sự biến đổi huyền diệu"
+    ]
+  ],
+  "grammaire": {
+    "syntax": [
+      {
+        "label": "Passé simple narratif",
+        "exemple": "« la guerre vînt, il partit »",
+        "note": "Enchaînement d'événements révolu, style lapidaire."
+      }
+    ],
+    "style": [
+      {
+        "label": "Métaphore cristalline",
+        "exemple": "« pur diamant d'orgueil »",
+        "note": "L'orgueil comparé à un diamant : dur, précieux, transparent."
+      }
+    ],
+    "register": [
+      {
+        "label": "Registre soutenu philosophique",
+        "exemple": "« l'entendement éclaire »",
+        "note": "Vocabulaire philosophique (Descartes, Kant) dans un contexte narratif populaire."
+      }
+    ]
+  },
+  "qcm": [
+    {
+      "q": "Que teste ce QCM ?",
+      "options": [
+        "Le fonctionnement du script",
+        "La grammaire française",
+        "Le vocabulaire C2",
+        "La culture littéraire"
+      ],
+      "answer": 0,
+      "explication": "Ce QCM teste uniquement que build_session.py génère correctement le HTML.",
+      "category": "Compréhension"
+    },
+    {
+      "q": "Quel fichier contient le template HTML ?",
+      "options": [
+        "build_session.py",
+        "template.html",
+        "extract.py",
+        "SKILL.md"
+      ],
+      "answer": 1,
+      "explication": "french_reviser/template.html contient le shell CSS+JS réutilisable.",
+      "category": "Vocabulaire"
+    }
+  ]
+};
+
+/* ── State ── */
+let currentTheme = 'dark';
+let qcmAnswers = {};
+
+/* ── Theme & layout ── */
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.getElementById('theme-btn').textContent = currentTheme === 'dark' ? 'Sombre' : 'Clair';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('hidden');
+  document.getElementById('main').classList.toggle('expanded');
+}
+
+/* ── Navigation ── */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  var link = document.querySelector('[data-page="' + id + '"]');
+  if (link) link.classList.add('active');
+  if (id === 'extrait') setTimeout(drawNarrativeDiagram, 50);
+}
+
+/* ── Grammar tabs ── */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+/* ── Vocab filter ── */
+function filterVocab(q) {
+  var lower = q.toLowerCase();
+  var rows = document.querySelectorAll('#vocab-tbody tr');
+  var visible = 0;
+  rows.forEach(function(r) {
+    if (r.textContent.toLowerCase().indexOf(lower) !== -1) {
+      r.style.display = '';
+      visible++;
+    } else {
+      r.style.display = 'none';
+    }
+  });
+  document.getElementById('vocab-count').textContent = visible + ' mots · niveau C2';
+}
+
+/* ── QCM filter ── */
+function filterQCM(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.qcm-item').forEach(function(item) {
+    if (cat === 'all' || item.dataset.category === cat) {
+      item.classList.add('show');
+    } else {
+      item.classList.remove('show');
+    }
+  });
+}
+
+/* ── QCM logic ── */
+function checkAnswer(qi, val) {
+  if (qcmAnswers[qi] !== undefined) return;
+  var q = SESSION.qcm[qi];
+  var isCorrect = (val === q.answer);
+  qcmAnswers[qi] = isCorrect;
+  var fb = document.getElementById('qcm-fb-' + qi);
+  fb.className = 'qcm-feedback show ' + (isCorrect ? 'qcm-correct' : 'qcm-incorrect');
+  fb.innerHTML = (isCorrect ? 'Correct. ' : 'Incorrect. ') + q.explication +
+    (isCorrect ? '' : ' <br><em>Réponse correcte : ' + escHtml(q.options[q.answer]) + '</em>');
+  document.querySelectorAll('[name="q' + qi + '"]').forEach(r => r.disabled = true);
+  updateScore();
+}
+
+function updateScore() {
+  var correct = Object.values(qcmAnswers).filter(Boolean).length;
+  var total = SESSION.qcm.length;
+  document.getElementById('qcm-correct').textContent = correct;
+  document.getElementById('qcm-total').textContent = total;
+  var pct = total ? Math.round(correct / total * 100) : 0;
+  document.getElementById('qcm-pct').textContent = pct;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function showAllAnswers() {
+  SESSION.qcm.forEach(function(q, i) {
+    if (qcmAnswers[i] === undefined) {
+      qcmAnswers[i] = false;
+      var fb = document.getElementById('qcm-fb-' + i);
+      fb.className = 'qcm-feedback show qcm-incorrect';
+      fb.innerHTML = 'Réponse : ' + escHtml(q.options[q.answer]);
+      document.querySelectorAll('[name="q' + i + '"]').forEach(r => r.disabled = true);
+    }
+  });
+  updateScore();
+}
+
+function resetQCM() {
+  qcmAnswers = {};
+  document.querySelectorAll('.qcm-feedback').forEach(function(fb) {
+    fb.className = 'qcm-feedback';
+    fb.innerHTML = '';
+  });
+  document.querySelectorAll('.qcm-item input[type=radio]').forEach(function(r) {
+    r.disabled = false;
+    r.checked = false;
+  });
+  updateScore();
+}
+
+/* ── Narrative diagram ── */
+function drawNarrativeDiagram() {
+  var svg = document.getElementById('narrative-svg');
+  var steps = SESSION.narrative_steps;
+  var n = steps.length;
+  var W = svg.parentElement.clientWidth || 800;
+  var H = 120;
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+  var defs = '<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">' +
+    '<path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/></marker></defs>';
+  var step = W / n;
+  var html = defs;
+
+  for (var i = 0; i < n - 1; i++) {
+    var x1 = step * i + step / 2 + 18;
+    var x2 = step * (i + 1) + step / 2 - 18;
+    html += '<line x1="' + x1 + '" y1="40" x2="' + x2 + '" y2="40"' +
+      ' stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)" opacity="0.6"/>';
+  }
+
+  for (var j = 0; j < n; j++) {
+    var cx = step * j + step / 2;
+    var s = steps[j];
+    html += '<circle cx="' + cx + '" cy="40" r="16" fill="var(--accent)" opacity="0.85"' +
+      ' class="diag-node" data-i="' + j + '" style="cursor:pointer"/>';
+    html += '<text x="' + cx + '" y="45" text-anchor="middle" fill="white"' +
+      ' font-size="13" font-family="Arial" font-weight="bold" pointer-events="none">' + (j + 1) + '</text>';
+    var words = s.label.split(' ');
+    var line1 = words.slice(0, 2).join(' ');
+    var line2 = words.slice(2).join(' ');
+    html += '<text x="' + cx + '" y="68" text-anchor="middle" fill="var(--text)"' +
+      ' font-size="10" font-family="Arial">' + escHtml(line1) + '</text>';
+    if (line2) {
+      html += '<text x="' + cx + '" y="80" text-anchor="middle" fill="var(--text)"' +
+        ' font-size="10" font-family="Arial">' + escHtml(line2) + '</text>';
+    }
+  }
+
+  svg.innerHTML = html;
+
+  svg.querySelectorAll('.diag-node').forEach(function(c) {
+    c.addEventListener('mouseenter', function(e) {
+      var idx = +c.dataset.i;
+      var tt = document.getElementById('diagram-tooltip');
+      tt.textContent = steps[idx].desc;
+      tt.style.display = 'block';
+      tt.style.left = (e.offsetX + 12) + 'px';
+      tt.style.top = (e.offsetY + 20) + 'px';
+    });
+    c.addEventListener('mouseleave', function() {
+      document.getElementById('diagram-tooltip').style.display = 'none';
+    });
+  });
+}
+
+/* ── Populate from SESSION ── */
+function populateIntro() {
+  var pts = (SESSION.points_saillants || []).map(p => '<li>' + escHtml(p) + '</li>').join('');
+  document.getElementById('intro-block').innerHTML =
+    '<div class="intro-label">Thème</div>' +
+    '<div style="margin-bottom:0.6rem">' + escHtml(SESSION.theme) + '</div>' +
+    '<div class="intro-label">Points saillants</div>' +
+    '<ul style="padding-left:1.2rem;margin-top:4px">' + pts + '</ul>';
+}
+
+function populateVocab() {
+  var tbody = document.getElementById('vocab-tbody');
+  (SESSION.vocabulaire || []).forEach(function(row) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><span class="word">' + escHtml(row[0]) + '</span></td>' +
+      '<td><span class="pos">' + escHtml(row[1]) + '</span></td>' +
+      '<td>' + escHtml(row[2]) + '</td>' +
+      '<td>' + escHtml(row[3] || '') + '</td>';
+    tbody.appendChild(tr);
+  });
+  document.getElementById('vocab-count').textContent =
+    (SESSION.vocabulaire || []).length + ' mots · niveau C2';
+}
+
+function populateGrammar() {
+  ['syntax', 'style', 'register'].forEach(function(tab) {
+    var items = (SESSION.grammaire || {})[tab] || [];
+    var container = document.getElementById('tab-' + tab);
+    container.innerHTML = items.map(function(g) {
+      return '<div class="grammar-card">' +
+        '<div class="grammar-card-label">' + escHtml(g.label) + '</div>' +
+        '<div class="grammar-card-exemple">' + escHtml(g.exemple) + '</div>' +
+        '<div class="grammar-card-note">' + escHtml(g.note) + '</div>' +
+        '</div>';
+    }).join('');
+  });
+}
+
+function populateQCM() {
+  var container = document.getElementById('qcm-container');
+  (SESSION.qcm || []).forEach(function(q, i) {
+    var opts = q.options.map(function(opt, oi) {
+      return '<div class="qcm-option">' +
+        '<input type="radio" id="q' + i + 'o' + oi + '" name="q' + i + '" value="' + oi +
+        '" onchange="checkAnswer(' + i + ',' + oi + ')">' +
+        '<label for="q' + i + 'o' + oi + '">' + escHtml(opt) + '</label>' +
+        '</div>';
+    }).join('');
+    var item = document.createElement('div');
+    item.className = 'qcm-item show';
+    item.dataset.category = q.category;
+    item.innerHTML =
+      '<div><span class="qcm-number">#' + (i + 1) + '</span>' +
+      '<span class="qcm-badge">' + escHtml(q.category) + '</span></div>' +
+      '<div class="qcm-question">' + escHtml(q.q) + '</div>' +
+      '<div class="qcm-options">' + opts + '</div>' +
+      '<div class="qcm-feedback" id="qcm-fb-' + i + '"></div>';
+    container.appendChild(item);
+  });
+  document.getElementById('qcm-total').textContent = (SESSION.qcm || []).length;
+}
+
+/* ── Utility ── */
+function escHtml(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ── Init ── */
+window.onload = function() {
+  document.title = SESSION.title || 'Session Français C2';
+  document.getElementById('topbar-title').textContent = SESSION.title || 'Session Français C2';
+  document.getElementById('source-label').textContent = SESSION.source_label || '';
+  document.getElementById('passage-text').innerHTML = SESSION.passage_html || '';
+  document.getElementById('citation-source').textContent = SESSION.citation || '';
+  document.getElementById('resume-text').textContent = SESSION.resume || '';
+
+  populateIntro();
+  populateVocab();
+  populateGrammar();
+  populateQCM();
+
+  showPage('extrait');
+};
+
+window.onresize = function() {
+  if (document.getElementById('page-extrait').classList.contains('active')) {
+    drawNarrativeDiagram();
+  }
+};
+</script>
+</body>
+</html>
